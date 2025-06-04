@@ -266,6 +266,20 @@
     document.querySelectorAll('.form-step').forEach(el => el.style.display = 'none');
     document.getElementById(`step-${step}`).style.display = 'block';
   }
+    document.querySelector('form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  const form = this;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    mode: 'no-cors'
+  }).then(() => {
+    window.location.href = "https://renatodouek.com.br/sucesso"; // ou a página que preferir
+  }).catch(() => {
+    alert("Ocorreu um erro ao enviar o formulário. Tente novamente.");
+  });
+});
+
 </script>
 
 </body>
