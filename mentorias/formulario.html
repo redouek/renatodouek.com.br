@@ -134,9 +134,8 @@
   <div class="form-container">
     <img src="https://renatodouek.com.br/rd_pb_logo.png" alt="LogoRD" class="form-header-image" width="20%">
     <h1>Perfil do Mentorado</h1>
-<form action="https://docs.google.com/forms/d/e/1FAIpQLScB6wDUp4jC6N9Qp9-qNSMC1jTweyHhEUUSXxPbHzX6RkfDJQ/formResponse" method="POST" target="hidden_iframe" onsubmit="enviarSucesso()">
-  <iframe name="hidden_iframe" style="display:none;" onload="checkEnvio()"></iframe>
-  <div class="form-step form-step-active" id="step-1">
+<form action="https://script.google.com/macros/s/AKfycbxW9yAfnWcSzSu_nvhk3_s_taOYaFGr7e7YmQYv30d3mcxI8sRlQBKvvRYPZC0M7CEI/exec" method="POST" onsubmit="enviarSucesso()"></form>
+    <div class="form-step form-step-active" id="step-1">
   <!-- Sessão 1: Campos Nome, CPF, E-mail -->
            <div class="question">
         <label for="nome">Nome completo</label>
@@ -266,34 +265,32 @@
 
     </form>
   </div>
-  <script>
+ <script>
   function goToStep(step) {
     document.querySelectorAll('.form-step').forEach(el => el.style.display = 'none');
     document.getElementById(`step-${step}`).style.display = 'block';
   }
 
-  let envioIniciado = false;
+  function enviarSucesso() {
+    const submitButton = document.querySelector('button[type="submit"]');
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.innerText = "Enviando...";
+      submitButton.style.opacity = "0.6";
+      submitButton.style.cursor = "not-allowed";
+    }
 
-function enviarSucesso() {
-  envioIniciado = true;
-
-  const submitButton = document.querySelector('button[type="submit"]');
-  if (submitButton) {
-    submitButton.disabled = true;
-    submitButton.innerText = "Enviando...";
-    submitButton.style.opacity = "0.6";
-    submitButton.style.cursor = "not-allowed";
-  }
-}
-
-function checkEnvio() {
-  if (envioIniciado) {
+    // Este timeout é para dar um tempo para o formulário ser enviado antes de redirecionar.
+    // O envio real acontece via POST para o Apps Script.
     setTimeout(() => {
       window.location.href = "https://renatodouek.com.br/mentorias/sucesso.html";
-    }, 1000); // aguarda 1 segundo para o Google processar
-  }
-}
+    }, 1500); // Aumentei um pouco o tempo para garantir que o script receba.
 
+    // Retorne true para permitir o envio do formulário.
+    return true;
+  }
+  // A função checkEnvio e o iframe hidden_iframe não são mais necessários.
+  // Você pode remover o iframe e a função checkEnvio completamente.
 </script>
 
 </body>
