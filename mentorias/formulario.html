@@ -249,6 +249,10 @@
         <label><input type="radio" name="entry.2052228368" value="Preciso tomar decisões práticas com rapidez.">Preciso tomar decisões práticas com rapidez.</label>
         <label><input type="radio" name="entry.2052228368" value="Estou perdido(a) e preciso de apoio.">Estou perdido(a) e preciso de apoio.</label>
       </div>
+      <input type="hidden" name="fvv" value="1">
+      <input type="hidden" name="draftResponse" value="[]">
+      <input type="hidden" name="pageHistory" value="0">
+
 <div class="button-wrapper">
   <div class="left-group">
     <button type="button" class="button-outline-yellow" onclick="goToStep(1)">Anterior</button>
@@ -270,15 +274,25 @@
 
   let envioIniciado = false;
 
-  function enviarSucesso() {
-    envioIniciado = true;
-  }
+function enviarSucesso() {
+  envioIniciado = true;
 
-  function checkEnvio() {
-    if (envioIniciado) {
-      window.location.href = "https://renatodouek.com.br/mentorias/sucesso.html";
-    }
+  const submitButton = document.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.innerText = "Enviando...";
+    submitButton.style.opacity = "0.6";
+    submitButton.style.cursor = "not-allowed";
   }
+}
+
+function checkEnvio() {
+  if (envioIniciado) {
+    setTimeout(() => {
+      window.location.href = "https://renatodouek.com.br/mentorias/sucesso.html";
+    }, 1000); // aguarda 1 segundo para o Google processar
+  }
+}
 
 </script>
 
