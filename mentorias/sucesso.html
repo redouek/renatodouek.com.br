@@ -65,8 +65,18 @@
   <div class="success-container">
     <img src="https://renatodouek.com.br/rd_pb_logo.png" alt="Logo" />
     <h1>Respostas enviadas com sucesso!</h1>
-    <p>Agradecemos o envio das respostas,<br>em breve entraremos em contato.</p>
-    <button class="button-outline-yellow" onclick="window.close()">Fechar</button>
+    <p>Agradecemos o envio das respostas, em breve entraremos em contato.</p>
+    <button class="button-outline-yellow" onclick="fecharAba()">Fechar</button>
   </div>
+
+  <script>
+    function fecharAba() {
+      window.open('', '_self', ''); // necessário para navegadores modernos
+      window.close();
+      setTimeout(() => {
+        window.location.href = "https://renatodouek.com.br";
+      }, 500);
+    }
+  </script>
 </body>
 </html>
