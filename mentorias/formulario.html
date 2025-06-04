@@ -134,8 +134,9 @@
   <div class="form-container">
     <img src="https://renatodouek.com.br/rd_pb_logo.png" alt="LogoRD" class="form-header-image" width="20%">
     <h1>Perfil do Mentorado</h1>
- <form action="https://docs.google.com/forms/d/e/1FAIpQLScB6wDUp4jC6N9Qp9-qNSMC1jTweyHhEUUSXxPbHzX6RkfDJQ/formResponse" method="POST">
-    <div class="form-step form-step-active" id="step-1">
+<form action="https://docs.google.com/forms/d/e/1FAIpQLScB6wDUp4jC6N9Qp9-qNSMC1jTweyHhEUUSXxPbHzX6RkfDJQ/formResponse" method="POST" target="hidden_iframe" onsubmit="enviarSucesso()">
+  <iframe name="hidden_iframe" style="display:none;" onload="checkEnvio()"></iframe>
+  <div class="form-step form-step-active" id="step-1">
   <!-- Sessão 1: Campos Nome, CPF, E-mail -->
            <div class="question">
         <label for="nome">Nome completo</label>
@@ -266,19 +267,18 @@
     document.querySelectorAll('.form-step').forEach(el => el.style.display = 'none');
     document.getElementById(`step-${step}`).style.display = 'block';
   }
-    document.querySelector('form').addEventListener('submit', function (e) {
-  e.preventDefault();
-  const form = this;
-  fetch(form.action, {
-    method: 'POST',
-    body: new FormData(form),
-    mode: 'no-cors'
-  }).then(() => {
-    window.location.href = "https://renatodouek.com.br/mentorias/sucesso.html"; // ou a página que preferir
-  }).catch(() => {
-    alert("Ocorreu um erro ao enviar o formulário. Tente novamente.");
-  });
-});
+
+  let envioIniciado = false;
+
+  function enviarSucesso() {
+    envioIniciado = true;
+  }
+
+  function checkEnvio() {
+    if (envioIniciado) {
+      window.location.href = "https://renatodouek.com.br/mentorias/sucesso.html";
+    }
+  }
 
 </script>
 
