@@ -44,6 +44,13 @@
       margin-bottom: 0.5rem;
       color: #FFCE00;
     }
+   /* .question label {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #FFCE00;
+      display: block;
+    }
+*/
     input[type="text"],
     input[type="email"] {
       width: 98%;
@@ -68,57 +75,68 @@
       font-size: 1rem;
       margin-top: 2rem;
     }
-.button-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.right-align-only {
-  justify-content: flex-end !important;
-}
-
-.left-group {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.right-group {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-}
-
-.button-outline-yellow {
-  background-color: #000;
-  color: #FFCE00;
-  border: 2px solid #FFCE00;
-  padding: 0.75rem 1.5rem;
-  border-radius: 32px;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-    .form-header-image {
-  display: block;
-  margin: 0 auto 1.5rem;
-  max-width: 180px;
-    }
-    .form-header-image {
-  display: block;
-  margin: 0 auto 1.5rem;
-  max-width: 180px;
+    .button-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
-    .form-step {
-  display: none;
-}
-.form-step-active {
-  display: block;
-}
+    .right-align-only {
+      justify-content: flex-end !important;
+    }
+
+    .left-group {
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .right-group {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .button-outline-yellow {
+      background-color: #000;
+      color: #FFCE00;
+      border: 2px solid #FFCE00;
+      padding: 0.75rem 1.5rem;
+      border-radius: 32px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+        .form-header-image {
+      display: block;
+      margin: 0 auto 1.5rem;
+      max-width: 180px;
+        }
+        .form-header-image {
+      display: block;
+      margin: 0 auto 1.5rem;
+      max-width: 180px;
+        }
+
+        .form-step {
+      display: none;
+    }
+    .form-step-active {
+      display: block;
+    }
+       .input-error {
+      display: none;
+      color: #FF4C4C;
+      background: #fff;
+      border-left: 4px solid #FF4C4C;
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+      margin-top: 0.25rem;
+      border-radius: 4px;
+    }
+
 
     @media (max-width: 600px) {
       h1 {
@@ -134,138 +152,210 @@
   <div class="form-container">
     <img src="https://renatodouek.com.br/rd_pb_logo.png" alt="LogoRD" class="form-header-image" width="20%">
     <h1>Perfil do Mentorado</h1>
-<form action="https://script.google.com/macros/s/AKfycbxW9yAfnWcSzSu_nvhk3_s_taOYaFGr7e7YmQYv30d3mcxI8sRlQBKvvRYPZC0M7CEI/exec" method="POST" onsubmit="enviarSucesso()">
-    <div class="form-step form-step-active" id="step-1">
-  <!-- Sessão 1: Campos Nome, CPF, E-mail -->
-           <div class="question">
-        <label for="nome">Nome completo</label>
-        <input type="text" name="entry.142014517" id="nome" required>
-      </div>
-      <div class="question">
-        <label for="cpf">CPF</label>
-        <input type="text" name="entry.545418930" id="cpf" required>
-      </div>
-      <div class="question">
-        <label for="email">E-mail</label>
-        <input type="email" name="entry.1693794691" id="email" required>
-      </div>
-<div class="button-wrapper right-align-only">
-  <button type="button" onclick="goToStep(2)">Próximo</button>
-</div>
+    
+    <form action="https://script.google.com/macros/s/AKfycbxW9yAfnWcSzSu_nvhk3_s_taOYaFGr7e7YmQYv30d3mcxI8sRlQBKvvRYPZC0M7CEI/exec" method="POST" onsubmit="enviarSucesso()">
+      <div class="form-step form-step-active" id="step-1">
+        <!-- Sessão 1: Campos Nome, CPF, E-mail -->
+        <div class="question">
+          <p>Nome completo</p>
+          <input type="text" name="nome" id="nome" required>
+        </div>
+        <div class="question">
+          <p>CPF <span class="sub-label">(apenas números)</span></p>
+          <input type="text" id="cpf" name="cpf" required maxlength="14" />
+          <span class="input-error" id="cpf-error">CPF inválido. Por favor revise o número digitado.</span>
+        </div>
+        <div class="question">
+          <p>WhatsApp</p>
+          <input type="tel" name="whatsapp" id="whatsapp" placeholder="Ex (11) 9111-1111" required>
+          <span class="input-error" id="whatsapp-error">Telefone inválido. Por favor revise o número digitado.</span>
+        </div>
+         <div class="question">
+          <p>E-mail</p>
+          <input type="email" id="email" name="email" required />
+          <span class="input-error" id="email-error">E-mail inválido. Por favor revise o e-mail digitado.</span>
+        </div>
+        <div class="button-wrapper right-align-only">
+          <button type="button" onclick="goToStep(2)">Próximo</button>
+        </div>
 
+      </div>
 
-    </div>
+      <div class="form-step" id="step-2" style="display: none;">
+        <!-- PERGUNTAS COMPLETAS INSERIDAS ABAIXO -->
+        <div class="question">
+          <p>1. Ao se deparar com um grande desafio, qual é sua reação mais comum?</p>
+          <label><input type="radio" name="entry.1045579533" value="Analiso com cautela, ponderando os prós e contras." required>Analiso com cautela, ponderando os prós e contras.</label>
+          <label><input type="radio" name="entry.1045579533" value="Busco agir rapidamente, mesmo com poucas informações.">Busco agir rapidamente, mesmo com poucas informações.</label>
+          <label><input type="radio" name="entry.1045579533" value="Tomo decisões por impulso ou deixo para depois.">Tomo decisões por impulso ou deixo para depois.</label>
+        </div>
+        <div class="question">
+          <p>2. O que você espera do mentor durante as sessões?</p>
+          <label><input type="radio" name="entry.1347813754" value="Que me faça refletir e chegar às próprias conclusões." required>Que me faça refletir e chegar às próprias conclusões.</label>
+          <label><input type="radio" name="entry.1347813754" value="Que traga respostas e caminhos claros para seguir.">Que traga respostas e caminhos claros para seguir.</label>
+          <label><input type="radio" name="entry.1347813754" value="Que apenas ouça e me deixe confortável.">Que apenas ouça e me deixe confortável.</label>
+        </div>
+        <div class="question">
+          <p>3. Como você reage ao receber uma crítica construtiva?</p>
+          <label><input type="radio" name="entry.233214643" value="Refletindo e buscando aprender com ela." required>Refletindo e buscando aprender com ela.</label>
+          <label><input type="radio" name="entry.233214643" value="Aceito se fizer sentido, senão sigo em frente.">Aceito se fizer sentido, senão sigo em frente.</label>
+          <label><input type="radio" name="entry.233214643" value="Levo para o lado pessoal e me sinto desconfortável.">Levo para o lado pessoal e me sinto desconfortável.</label>
+        </div>
+        <div class="question">
+          <p>4. Como você costuma planejar suas atividades profissionais?</p>
+          <label><input type="radio" name="entry.1667264997" value="Faço um planejamento detalhado e antecipado." required>Faço um planejamento detalhado e antecipado.</label>
+          <label><input type="radio" name="entry.1667264997" value="Planejo rapidamente de forma prática e direta.">Planejo rapidamente de forma prática e direta.</label>
+          <label><input type="radio" name="entry.1667264997" value="Não tenho muito hábito de planejar, resolvo conforme surge.">Não tenho muito hábito de planejar, resolvo conforme surge.</label>
+        </div>
+        <div class="question">
+          <p>5. Como você costuma tomar decisões importantes?</p>
+          <label><input type="radio" name="entry.1783619808" value="Após analisar com calma todos os aspectos envolvidos." required>Após analisar com calma todos os aspectos envolvidos.</label>
+          <label><input type="radio" name="entry.1783619808" value="Com base na experiência e intuição, rapidamente.">Com base na experiência e intuição, rapidamente.</label>
+          <label><input type="radio" name="entry.1783619808" value="Dependo de conselhos de outras pessoas para decidir.">Dependo de conselhos de outras pessoas para decidir.</label>
+        </div>
+        <div class="question">
+          <p>6. Em situações de pressão, como você costuma agir?</p>
+          <label><input type="radio" name="entry.1129009575" value="Mantenho a calma e reavalio as opções." required>Mantenho a calma e reavalio as opções.</label>
+          <label><input type="radio" name="entry.1129009575" value="Parto para a ação rapidamente." >Parto para a ação rapidamente.</label>
+          <label><input type="radio" name="entry.1129009575" value="Fico paralisado(a) ou procrastino.">Fico paralisado(a) ou procrastino.</label>
+        </div>
+        <div class="question">
+          <p>7. Qual dessas frases mais se aproxima de como você enxerga seus erros?</p>
+          <label><input type="radio" name="entry.1750384325" value="São oportunidades de aprendizado." required>São oportunidades de aprendizado.</label>
+          <label><input type="radio" name="entry.1750384325" value="São parte do processo e bola pra frente.">São parte do processo e bola pra frente.</label>
+          <label><input type="radio" name="entry.1750384325" value="Algo a ser evitado a qualquer custo.">Algo a ser evitado a qualquer custo.</label>
+        </div>
+        <div class="question">
+          <p>8. Como você costuma organizar seu dia a dia?</p>
+          <label><input type="radio" name="entry.2130718311" value="Uso listas, ferramentas e reviso prioridades." required>Uso listas, ferramentas e reviso prioridades.</label>
+          <label><input type="radio" name="entry.2130718311" value="Organizo mentalmente, não gosto de regras.">Organizo mentalmente, não gosto de regras.</label>
+          <label><input type="radio" name="entry.2130718311" value="Tento seguir o fluxo, sem controle rígido.">Tento seguir o fluxo, sem controle rígido.</label>
+        </div>
+        <div class="question">
+          <p>9. O que você valoriza mais em um ambiente de trabalho?</p>
+          <label><input type="radio" name="entry.1653899745" value="Clareza, alinhamento e planejamento." required>Clareza, alinhamento e planejamento.</label>
+          <label><input type="radio" name="entry.1653899745" value="Agilidade, autonomia e ação.">Agilidade, autonomia e ação.</label>
+          <label><input type="radio" name="entry.1653899745" value="Liberdade, leveza e boa convivência.">Liberdade, leveza e boa convivência.</label>
+        </div>
+        <div class="question">
+          <p>10. Quando você precisa resolver um problema novo, como começa?</p>
+          <label><input type="radio" name="entry.1958856161" value="Pesquiso, reflito e tento compreender o todo." required>Pesquiso, reflito e tento compreender o todo.</label>
+          <label><input type="radio" name="entry.1958856161" value="Testo uma solução simples e ajusto depois.">Testo uma solução simples e ajusto depois.</label>
+          <label><input type="radio" name="entry.1958856161" value="Espero alguém ajudar ou espero passar.">Espero alguém ajudar ou espero passar.</label>
+        </div>
+        <div class="question">
+          <p>11. Como você se organiza para atingir metas?</p>
+          <label><input type="radio" name="entry.740301623" value="Crio planos e acompanho o progresso." required>Crio planos e acompanho o progresso.</label>
+          <label><input type="radio" name="entry.740301623" value="Penso no objetivo e vou me adaptando.">Penso no objetivo e vou me adaptando.</label>
+          <label><input type="radio" name="entry.740301623" value="Vou fazendo o que dá, quando dá.">Vou fazendo o que dá, quando dá.</label>
+        </div>
+        <div class="question">
+          <p>12. Como você lida com mudanças inesperadas?</p>
+          <label><input type="radio" name="entry.148565170" value="Avalio impacto e redireciono com estratégia." required>Avalio impacto e redireciono com estratégia.</label>
+          <label><input type="radio" name="entry.148565170" value="Ajusto conforme o que surgir, rápido." >Ajusto conforme o que surgir, rápido.</label>
+          <label><input type="radio" name="entry.148565170" value="Sinto-me perdido(a) e desmotivado(a).">Sinto-me perdido(a) e desmotivado(a).</label>
+        </div>
+        <div class="question">
+          <p>13. Quando surge uma nova ideia ou projeto, qual sua atitude?</p>
+          <label><input type="radio" name="entry.1727702065" value="Analiso o cenário e estruturo um plano." required>Analiso o cenário e estruturo um plano.</label>
+          <label><input type="radio" name="entry.1727702065" value="Já começo a colocar em prática.">Já começo a colocar em prática.</label>
+          <label><input type="radio" name="entry.1727702065" value="Fico animado(a), mas depois desisto.">Fico animado(a), mas depois desisto.</label>
+        </div>
+        <div class="question">
+          <p>14. Como você avalia seus aprendizados até aqui?</p>
+          <label><input type="radio" name="entry.1066981314" value="São resultado de estudo, esforço e análise." required>São resultado de estudo, esforço e análise.</label>
+          <label><input type="radio" name="entry.1066981314" value="Vieram com a prática e erros no caminho.">Vieram com a prática e erros no caminho.</label>
+          <label><input type="radio" name="entry.1066981314" value="Aprendi o que a vida me trouxe, sem planejar.">Aprendi o que a vida me trouxe, sem planejar.</label>
+        </div>
+        <div class="question">
+          <p>15. O que te motiva a buscar essa mentoria?</p>
+          <label><input type="radio" name="entry.2052228368" value="Quero entender melhor quem sou e como agir." required>Quero entender melhor quem sou e como agir.</label>
+          <label><input type="radio" name="entry.2052228368" value="Preciso tomar decisões práticas com rapidez.">Preciso tomar decisões práticas com rapidez.</label>
+          <label><input type="radio" name="entry.2052228368" value="Estou perdido(a) e preciso de apoio.">Estou perdido(a) e preciso de apoio.</label>
+        </div>
+        <input type="hidden" name="fvv" value="1">
+        <input type="hidden" name="draftResponse" value="[]">
+        <input type="hidden" name="pageHistory" value="0">
 
-    <div class="form-step" id="step-2" style="display: none;">
-<!-- PERGUNTAS COMPLETAS INSERIDAS ABAIXO -->
-      <div class="question">
-        <p>1. Ao se deparar com um grande desafio, qual é sua reação mais comum?</p>
-        <label><input type="radio" name="entry.1045579533" value="Analiso com cautela, ponderando os prós e contras." required>Analiso com cautela, ponderando os prós e contras.</label>
-        <label><input type="radio" name="entry.1045579533" value="Busco agir rapidamente, mesmo com poucas informações.">Busco agir rapidamente, mesmo com poucas informações.</label>
-        <label><input type="radio" name="entry.1045579533" value="Tomo decisões por impulso ou deixo para depois.">Tomo decisões por impulso ou deixo para depois.</label>
-      </div>
-      <div class="question">
-        <p>2. O que você espera do mentor durante as sessões?</p>
-        <label><input type="radio" name="entry.1347813754" value="Que me faça refletir e chegar às próprias conclusões." required>Que me faça refletir e chegar às próprias conclusões.</label>
-        <label><input type="radio" name="entry.1347813754" value="Que traga respostas e caminhos claros para seguir.">Que traga respostas e caminhos claros para seguir.</label>
-        <label><input type="radio" name="entry.1347813754" value="Que apenas ouça e me deixe confortável.">Que apenas ouça e me deixe confortável.</label>
-      </div>
-      <div class="question">
-        <p>3. Como você reage ao receber uma crítica construtiva?</p>
-        <label><input type="radio" name="entry.233214643" value="Refletindo e buscando aprender com ela." required>Refletindo e buscando aprender com ela.</label>
-        <label><input type="radio" name="entry.233214643" value="Aceito se fizer sentido, senão sigo em frente.">Aceito se fizer sentido, senão sigo em frente.</label>
-        <label><input type="radio" name="entry.233214643" value="Levo para o lado pessoal e me sinto desconfortável.">Levo para o lado pessoal e me sinto desconfortável.</label>
-      </div>
-      <div class="question">
-        <p>4. Como você costuma planejar suas atividades profissionais?</p>
-        <label><input type="radio" name="entry.1667264997" value="Faço um planejamento detalhado e antecipado." required>Faço um planejamento detalhado e antecipado.</label>
-        <label><input type="radio" name="entry.1667264997" value="Planejo rapidamente de forma prática e direta.">Planejo rapidamente de forma prática e direta.</label>
-        <label><input type="radio" name="entry.1667264997" value="Não tenho muito hábito de planejar, resolvo conforme surge.">Não tenho muito hábito de planejar, resolvo conforme surge.</label>
-      </div>
-      <div class="question">
-        <p>5. Como você costuma tomar decisões importantes?</p>
-        <label><input type="radio" name="entry.1783619808" value="Após analisar com calma todos os aspectos envolvidos." required>Após analisar com calma todos os aspectos envolvidos.</label>
-        <label><input type="radio" name="entry.1783619808" value="Com base na experiência e intuição, rapidamente.">Com base na experiência e intuição, rapidamente.</label>
-        <label><input type="radio" name="entry.1783619808" value="Dependo de conselhos de outras pessoas para decidir.">Dependo de conselhos de outras pessoas para decidir.</label>
-      </div>
-      <div class="question">
-        <p>6. Em situações de pressão, como você costuma agir?</p>
-        <label><input type="radio" name="entry.1129009575" value="Mantenho a calma e reavalio as opções." required>Mantenho a calma e reavalio as opções.</label>
-        <label><input type="radio" name="entry.1129009575" value="Parto para a ação rapidamente." >Parto para a ação rapidamente.</label>
-        <label><input type="radio" name="entry.1129009575" value="Fico paralisado(a) ou procrastino.">Fico paralisado(a) ou procrastino.</label>
-      </div>
-      <div class="question">
-        <p>7. Qual dessas frases mais se aproxima de como você enxerga seus erros?</p>
-        <label><input type="radio" name="entry.1750384325" value="São oportunidades de aprendizado." required>São oportunidades de aprendizado.</label>
-        <label><input type="radio" name="entry.1750384325" value="São parte do processo e bola pra frente.">São parte do processo e bola pra frente.</label>
-        <label><input type="radio" name="entry.1750384325" value="Algo a ser evitado a qualquer custo.">Algo a ser evitado a qualquer custo.</label>
-      </div>
-      <div class="question">
-        <p>8. Como você costuma organizar seu dia a dia?</p>
-        <label><input type="radio" name="entry.2130718311" value="Uso listas, ferramentas e reviso prioridades." required>Uso listas, ferramentas e reviso prioridades.</label>
-        <label><input type="radio" name="entry.2130718311" value="Organizo mentalmente, não gosto de regras.">Organizo mentalmente, não gosto de regras.</label>
-        <label><input type="radio" name="entry.2130718311" value="Tento seguir o fluxo, sem controle rígido.">Tento seguir o fluxo, sem controle rígido.</label>
-      </div>
-      <div class="question">
-        <p>9. O que você valoriza mais em um ambiente de trabalho?</p>
-        <label><input type="radio" name="entry.1653899745" value="Clareza, alinhamento e planejamento." required>Clareza, alinhamento e planejamento.</label>
-        <label><input type="radio" name="entry.1653899745" value="Agilidade, autonomia e ação.">Agilidade, autonomia e ação.</label>
-        <label><input type="radio" name="entry.1653899745" value="Liberdade, leveza e boa convivência.">Liberdade, leveza e boa convivência.</label>
-      </div>
-      <div class="question">
-        <p>10. Quando você precisa resolver um problema novo, como começa?</p>
-        <label><input type="radio" name="entry.1958856161" value="Pesquiso, reflito e tento compreender o todo." required>Pesquiso, reflito e tento compreender o todo.</label>
-        <label><input type="radio" name="entry.1958856161" value="Testo uma solução simples e ajusto depois.">Testo uma solução simples e ajusto depois.</label>
-        <label><input type="radio" name="entry.1958856161" value="Espero alguém ajudar ou espero passar.">Espero alguém ajudar ou espero passar.</label>
-      </div>
-      <div class="question">
-        <p>11. Como você se organiza para atingir metas?</p>
-        <label><input type="radio" name="entry.740301623" value="Crio planos e acompanho o progresso." required>Crio planos e acompanho o progresso.</label>
-        <label><input type="radio" name="entry.740301623" value="Penso no objetivo e vou me adaptando.">Penso no objetivo e vou me adaptando.</label>
-        <label><input type="radio" name="entry.740301623" value="Vou fazendo o que dá, quando dá.">Vou fazendo o que dá, quando dá.</label>
-      </div>
-      <div class="question">
-        <p>12. Como você lida com mudanças inesperadas?</p>
-        <label><input type="radio" name="entry.148565170" value="Avalio impacto e redireciono com estratégia." required>Avalio impacto e redireciono com estratégia.</label>
-        <label><input type="radio" name="entry.148565170" value="Ajusto conforme o que surgir, rápido." >Ajusto conforme o que surgir, rápido.</label>
-        <label><input type="radio" name="entry.148565170" value="Sinto-me perdido(a) e desmotivado(a).">Sinto-me perdido(a) e desmotivado(a).</label>
-      </div>
-      <div class="question">
-        <p>13. Quando surge uma nova ideia ou projeto, qual sua atitude?</p>
-        <label><input type="radio" name="entry.1727702065" value="Analiso o cenário e estruturo um plano." required>Analiso o cenário e estruturo um plano.</label>
-        <label><input type="radio" name="entry.1727702065" value="Já começo a colocar em prática.">Já começo a colocar em prática.</label>
-        <label><input type="radio" name="entry.1727702065" value="Fico animado(a), mas depois desisto.">Fico animado(a), mas depois desisto.</label>
-      </div>
-      <div class="question">
-        <p>14. Como você avalia seus aprendizados até aqui?</p>
-        <label><input type="radio" name="entry.1066981314" value="São resultado de estudo, esforço e análise." required>São resultado de estudo, esforço e análise.</label>
-        <label><input type="radio" name="entry.1066981314" value="Vieram com a prática e erros no caminho.">Vieram com a prática e erros no caminho.</label>
-        <label><input type="radio" name="entry.1066981314" value="Aprendi o que a vida me trouxe, sem planejar.">Aprendi o que a vida me trouxe, sem planejar.</label>
-      </div>
-      <div class="question">
-        <p>15. O que te motiva a buscar essa mentoria?</p>
-        <label><input type="radio" name="entry.2052228368" value="Quero entender melhor quem sou e como agir." required>Quero entender melhor quem sou e como agir.</label>
-        <label><input type="radio" name="entry.2052228368" value="Preciso tomar decisões práticas com rapidez.">Preciso tomar decisões práticas com rapidez.</label>
-        <label><input type="radio" name="entry.2052228368" value="Estou perdido(a) e preciso de apoio.">Estou perdido(a) e preciso de apoio.</label>
-      </div>
-      <input type="hidden" name="fvv" value="1">
-      <input type="hidden" name="draftResponse" value="[]">
-      <input type="hidden" name="pageHistory" value="0">
+        <div class="button-wrapper">
+          <div class="left-group">
+            <button type="button" class="button-outline-yellow" onclick="goToStep(1)">Anterior</button>
+          </div>
+          <div class="right-group">
+            <button type="submit">Enviar respostas</button>
+          </div>
+        </div>
 
-<div class="button-wrapper">
-  <div class="left-group">
-    <button type="button" class="button-outline-yellow" onclick="goToStep(1)">Anterior</button>
-  </div>
-  <div class="right-group">
-    <button type="submit">Enviar respostas</button>
-  </div>
-</div>
-
-    </div>
+      </div>
 
     </form>
   </div>
+
  <script>
+// Validação de CPF, Aplicação Máscará CPF e Validação de email //
+function validarCPF(cpf) {
+  cpf = cpf.replace(/[^\d]+/g,'');
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+
+  let soma = 0;
+  for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
+  let resto = 11 - (soma % 11);
+  if (resto >= 10) resto = 0;
+  if (resto !== parseInt(cpf.charAt(9))) return false;
+
+  soma = 0;
+  for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
+  resto = 11 - (soma % 11);
+  if (resto >= 10) resto = 0;
+  if (resto !== parseInt(cpf.charAt(10))) return false;
+
+  return true;
+}
+
+function aplicarMascaraCPF(valor) {
+  return valor
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+}
+
+const cpfInput = document.getElementById('cpf');
+const emailInput = document.getElementById('email');
+const cpfErro = document.getElementById('cpf-error');
+const emailErro = document.getElementById('email-error');
+
+cpfInput.addEventListener('input', function () {
+  this.value = aplicarMascaraCPF(this.value);
+});
+
+// Informa que erro só deve aparecer após clicar fora do campo quando o dado digitado é inválido //
+cpfInput.addEventListener('blur', function () {
+  const valor = this.value.trim();
+  const valido = validarCPF(valor);
+  cpfErro.style.display = (valor && !valido) ? 'block' : 'none';
+});
+
+emailInput.addEventListener('blur', function () {
+  const valor = this.value.trim();
+const valido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
+  emailErro.style.display = (valor && !valido) ? 'block' : 'none';
+});
+
+
+document.querySelector('form').addEventListener('submit', function (e) {
+  const cpfValido = validarCPF(cpfInput.value);
+const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
+
+
+  if (!cpfValido || !emailValido) {
+    if (!cpfValido) cpfErro.style.display = 'block';
+    if (!emailValido) emailErro.style.display = 'block';
+    e.preventDefault();
+  }
+});
+
+// Botão de próximo e de envio //
   function goToStep(step) {
     document.querySelectorAll('.form-step').forEach(el => el.style.display = 'none');
     document.getElementById(`step-${step}`).style.display = 'block';
