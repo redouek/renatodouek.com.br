@@ -160,6 +160,7 @@
         <div class="question">
           <p>Nome completo</p>
           <input type="text" name="nome" id="nome" required>
+          <span class="input-error" id="nome-error">Por favor, preencha seu nome completo.</span>
         </div>
         <div class="question">
           <p>CPF <span class="sub-label">(apenas números)</span></p>
@@ -177,8 +178,9 @@
           <span class="input-error" id="email-error">E-mail inválido. Por favor revise o e-mail digitado.</span>
         </div>
         <div class="button-wrapper right-align-only">
-          <button type="button" onclick="goToStep(2)">Próximo</button>
+          <button type="button" id="botaoProximo" onclick="validarCamposEtapa1()">Próximo</button>
         </div>
+
 
       </div>
 
@@ -312,7 +314,7 @@ function validarCPF(cpf) {
 
   return true;
 }
-
+// Aplicação de mascara no CPF
 function aplicarMascaraCPF(valor) {
   return valor
     .replace(/\D/g, '')
@@ -330,7 +332,7 @@ cpfInput.addEventListener('input', function () {
   this.value = aplicarMascaraCPF(this.value);
 });
 
-// Informa que erro só deve aparecer após clicar fora do campo quando o dado digitado é inválido //
+// Mostra o erro se sair dos campos CPF e EMAIL sem preencher corretamente
 cpfInput.addEventListener('blur', function () {
   const valor = this.value.trim();
   const valido = validarCPF(valor);
@@ -355,6 +357,52 @@ const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
     e.preventDefault();
   }
 });
+// Validação Whatsapp //
+function aplicarMascaraTelefone(valor) {
+  return valor
+    .replace(/\D/g, '')
+    .replace(/^(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .replace(/(-\d{4})\d+?$/, '$1');
+}
+
+function validarTelefone(telefone) {
+  const regex = /^\(\d{2}\) \d{5}-\d{4}$/;
+  return regex.test(telefone);
+}
+
+const telefoneInput = document.getElementById('whatsapp');
+const telefoneErro = document.getElementById('whatsapp-error');
+
+telefoneInput.addEventListener('input', function () {
+  this.value = aplicarMascaraTelefone(this.value);
+});
+
+telefoneInput.addEventListener('blur', function () {
+  const valor = this.value.trim();
+  telefoneErro.style.display = (valor && !validarTelefone(valor)) ? 'block' : 'none';
+});
+// Botao proximo inativo até ter os campos preenchidos//
+function validarCamposEtapa1() {
+  const nomeInput = document.getElementById('nome');
+  const cpfInput = document.getElementById('cpf');
+  const emailInput = document.getElementById('email');
+  const whatsappInput = document.getElementById('whatsapp');
+
+  const nomeValido = nomeInput.value.trim() !== "";
+  const cpfValido = validarCPF(cpfInput.value);
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
+  const telefoneValido = validarTelefone(whatsappInput.value);
+
+  document.getElementById('nome-error').style.display = nomeValido ? 'none' : 'block';
+  document.getElementById('cpf-error').style.display = cpfValido ? 'none' : 'block';
+  document.getElementById('email-error').style.display = emailValido ? 'none' : 'block';
+  document.getElementById('whatsapp-error').style.display = telefoneValido ? 'none' : 'block';
+
+  if (nomeValido && cpfValido && emailValido && telefoneValido) {
+    goToStep(2);
+  }
+}
 
 // Botão de próximo e de envio //
   function goToStep(step) {
