@@ -177,14 +177,17 @@
           <input type="email" id="email" name="email" required />
           <span class="input-error" id="email-error">E-mail inválido. Por favor revise o e-mail digitado.</span>
         </div>
+
+        <!-- Botão próximo -->
         <div class="button-wrapper right-align-only">
           <button type="button" id="botaoProximo" onclick="validarCamposEtapa1()">Próximo</button>
         </div>
 
-
       </div>
 
+<!--Sessão 2: 15 perguntas de perfil-->
       <div class="form-step" id="step-2" style="display: none;">
+      <div id="perguntas-container">
         <!-- PERGUNTAS COMPLETAS INSERIDAS ABAIXO -->
         <div class="question">
           <p>Ao se deparar com um grande desafio, qual é sua reação mais comum?</p>
@@ -276,10 +279,10 @@
           <label><input type="radio" name="Quando enfrenta uma situação que exige mudança, você:" value="Age rapidamente, ajustando a rota conforme necessário.">Age rapidamente, ajustando a rota conforme necessário.</label>
           <label><input type="radio" name="Quando enfrenta uma situação que exige mudança, você:" value="Fica resistente e prefere não mudar muito.">Fica resistente e prefere não mudar muito.</label>
         </div>
-        <input type="hidden" name="fvv" value="1">
-        <input type="hidden" name="draftResponse" value="[]">
-        <input type="hidden" name="pageHistory" value="0">
+      </div>    
 
+
+<!--Botões Anterior e Enviar Respostas -->
         <div class="button-wrapper">
           <div class="left-group">
             <button type="button" class="button-outline-yellow" onclick="goToStep(1)">Anterior</button>
@@ -403,6 +406,20 @@ function validarCamposEtapa1() {
     goToStep(2);
   }
 }
+// Embaralhamento das perguntas a cada loading //
+  window.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('perguntas-container');
+    const perguntas = Array.from(container.children);
+
+    // Embaralha usando Fisher-Yates
+    for (let i = perguntas.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [perguntas[i], perguntas[j]] = [perguntas[j], perguntas[i]];
+    }
+
+    // Reanexa na nova ordem
+    perguntas.forEach(p => container.appendChild(p));
+  });
 
 // Botão de próximo e de envio //
   function goToStep(step) {
