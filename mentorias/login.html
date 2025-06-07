@@ -120,7 +120,7 @@
 
     const cpf = document.getElementById("cpf").value.trim();
     const senha = document.getElementById("senha").value.trim();
-    const erro = document.getElementById("mensagem-erro");
+    const erro = document.getElementById("mensagem");
 
     try {
       const response = await fetch(
@@ -137,7 +137,7 @@
 
       if (String(data.cpf).trim() === cpf && String(data.senha).trim() === senha) {
         localStorage.setItem("usuarioLogado", JSON.stringify(data));
-        window.location.href = "painel.html";
+        window.location.href = "dashboard.html";
       } else {
         erro.textContent = "Senha incorreta.";
         erro.style.display = "block";
