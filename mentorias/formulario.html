@@ -147,6 +147,68 @@
         justify-content: center;
       }
     }
+    
+    /* Estilização para mobile */
+    @media (max-width: 600px) {
+  .form-container {
+    padding: 1.5rem 1rem;
+    border-radius: 0;
+  }
+
+  .logo {
+    max-width: 180px;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .question {
+    max-width: 100%;
+    margin: 0 auto 1.25rem;
+    padding: 1rem;
+  }
+
+  .question p,
+  .question label {
+    font-size: 1rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"] {
+    font-size: 1rem;
+    padding: 0.75rem;
+  }
+
+  .button-wrapper {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+    margin-top: 2rem;
+  }
+
+  .button-wrapper button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+  }
+
+  .right-align-only {
+    justify-content: center !important;
+  }
+
+  .left-group,
+  .right-group {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
   </style>
 </head>
 <body>
