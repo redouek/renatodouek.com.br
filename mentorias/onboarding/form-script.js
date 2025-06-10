@@ -1,8 +1,7 @@
 // ===============================================================
-// Funções de Validação e Máscara (Mantidas do seu código original)
+// Funções de Validação e Máscara
 // ===============================================================
 
-// Validação de CPF
 function validarCPF(cpf) {
     cpf = cpf.replace(/[^\d]+/g, '');
     if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -22,7 +21,6 @@ function validarCPF(cpf) {
     return true;
 }
 
-// Aplicação de máscara no CPF
 function aplicarMascaraCPF(valor) {
     return valor
         .replace(/\D/g, '')
@@ -31,7 +29,6 @@ function aplicarMascaraCPF(valor) {
         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
 }
 
-// Validação e Máscara de Telefone/WhatsApp
 function aplicarMascaraTelefone(valor) {
     return valor
         .replace(/\D/g, '')
@@ -46,15 +43,16 @@ function validarTelefone(telefone) {
 }
 
 // ===============================================================
-// Seleção de Elementos e Event Listeners de UI (Mantidos)
+// Seleção de Elementos e Event Listeners de UI
 // ===============================================================
 
 const cpfInput = document.getElementById('cpf');
 const emailInput = document.getElementById('email');
-const whatsappInput = document.getElementById('whatsapp'); // Adicionado
+const whatsappInput = document.getElementById('whatsapp'); 
 const cpfErro = document.getElementById('cpf-error');
 const emailErro = document.getElementById('email-error');
-const whatsappErro = document.getElementById('whatsapp-error'); // Adicionado
+const whatsappErro = document.getElementById('whatsapp-error'); 
+const nomeInput = document.getElementById('nome'); 
 
 cpfInput.addEventListener('input', function () {
     this.value = aplicarMascaraCPF(this.value);
@@ -72,17 +70,17 @@ emailInput.addEventListener('blur', function () {
     emailErro.style.display = (valor && !valido) ? 'block' : 'none';
 });
 
-whatsappInput.addEventListener('input', function () { // Adicionado
+whatsappInput.addEventListener('input', function () {
     this.value = aplicarMascaraTelefone(this.value);
 });
 
-whatsappInput.addEventListener('blur', function () { // Adicionado
+whatsappInput.addEventListener('blur', function () {
     const valor = this.value.trim();
     whatsappErro.style.display = (valor && !validarTelefone(valor)) ? 'block' : 'none';
 });
 
 // ===============================================================
-// Navegação entre Etapas (Mantida)
+// Navegação entre Etapas
 // ===============================================================
 
 function goToStep(step) {
@@ -91,15 +89,10 @@ function goToStep(step) {
 }
 
 // ===============================================================
-// Validação da Etapa 1 e Botão Próximo (Mantida)
+// Validação da Etapa 1 e Botão Próximo
 // ===============================================================
 
 function validarCamposEtapa1() {
-    const nomeInput = document.getElementById('nome');
-    const cpfInput = document.getElementById('cpf');
-    const emailInput = document.getElementById('email');
-    const whatsappInput = document.getElementById('whatsapp');
-
     const nomeValido = nomeInput.value.trim() !== "";
     const cpfValido = validarCPF(cpfInput.value);
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
@@ -118,41 +111,34 @@ function validarCamposEtapa1() {
 }
 
 // ===============================================================
-// Embaralhamento das Perguntas (Mantida)
+// Embaralhamento das Perguntas
 // ===============================================================
 
 window.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('perguntas-container');
-    if (container) { // Garante que o container existe
+    if (container) { 
         const perguntas = Array.from(container.children);
 
-        // Embaralha usando Fisher-Yates
         for (let i = perguntas.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [perguntas[i], perguntas[j]] = [perguntas[j], perguntas[i]];
         }
 
-        // Reanexa na nova ordem
         perguntas.forEach(p => container.appendChild(p));
     }
 });
 
 // ===============================================================
-// NOVO: Gerenciamento da Submissão do Formulário com Fetch
+// Gerenciamento da Submissão do Formulário com Fetch
 // ===============================================================
 
-document.querySelector('form').addEventListener('submit', function (e) {
-    e.preventDefault(); // <-- MUITO IMPORTANTE: Impede o envio padrão do formulário
+document.querySelector('form').addEventListener('submit', async function (e) { 
+    e.preventDefault(); // IMPEDE o envio padrão do formulário, faremos via JavaScript
 
     const form = e.target;
     const submitButton = form.querySelector('button[type="submit"]');
 
-    // Re-validar a Etapa 1 antes de tentar enviar (para garantir que nada foi alterado)
-    const nomeInput = document.getElementById('nome');
-    const cpfInput = document.getElementById('cpf');
-    const emailInput = document.getElementById('email');
-    const whatsappInput = document.getElementById('whatsapp');
-
+    // Re-validar a Etapa 1 antes de tentar enviar
     const nomeValido = nomeInput.value.trim() !== "";
     const cpfValido = validarCPF(cpfInput.value);
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
@@ -160,41 +146,34 @@ document.querySelector('form').addEventListener('submit', function (e) {
 
     if (!nomeValido || !cpfValido || !emailValido || !telefoneValido) {
         alert("Por favor, preencha todos os campos obrigatórios da primeira etapa.");
-        goToStep(1); // Volta para a primeira etapa para correção
-        return; // Impede o envio
+        goToStep(1); 
+        return; 
     }
 
     // Validar se todas as perguntas de rádio foram respondidas na Etapa 2
     const perguntasContainer = document.getElementById('perguntas-container');
     let todasPerguntasRespondidas = true;
-    const nomesDasPerguntas = new Set(); // Armazena os nomes dos grupos de rádio (ex: "Ao se deparar...")
+    const nomesDasPerguntas = new Set(); 
 
-    // Coleta todos os nomes das perguntas (do atributo 'name' dos rádios)
     perguntasContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
         nomesDasPerguntas.add(radio.name);
     });
 
-    // Para cada nome de pergunta, verifica se pelo menos um rádio foi selecionado
-    nomesDasPerguntas.forEach(perguntaNome => {
-        const radiosDaPergunta = perguntasContainer.querySelectorAll(`input[name="${perguntaNome}"]:checked`);
+    nomesDasPerguntas.forEach(perguntaName => {
+        const radiosDaPergunta = perguntasContainer.querySelectorAll(`input[name="${perguntaName}"]:checked`);
         if (radiosDaPergunta.length === 0) {
             todasPerguntasRespondidas = false;
-            // Opcional: Você pode adicionar feedback visual aqui, por exemplo,
-            // rolar para a pergunta não respondida ou destacar.
-            // console.log(`Pergunta não respondida: ${perguntaNome}`);
         }
     });
 
     if (!todasPerguntasRespondidas) {
         alert("Por favor, responda a todas as perguntas do questionário na segunda etapa.");
-        goToStep(2); // Volta para a segunda etapa para correção
-        return; // Impede o envio
+        goToStep(2); 
+        return; 
     }
 
-    // Se todas as validações passarem, prepara os dados e envia
-    const formData = new FormData(form); // Coleta todos os dados do formulário
+    const formData = new FormData(form); 
 
-    // Desabilita o botão de envio e muda o texto
     if (submitButton) {
         submitButton.disabled = true;
         submitButton.innerText = "Enviando...";
@@ -202,40 +181,32 @@ document.querySelector('form').addEventListener('submit', function (e) {
         submitButton.style.cursor = "not-allowed";
     }
 
-    // Realiza a requisição Fetch para o Google Apps Script
-    fetch(form.action, {
-        method: 'POST',
-        body: formData // Envia os dados do formulário
-    })
-    .then(response => {
-        // Verifica se a resposta HTTP foi bem-sucedida (status 2xx)
-        if (!response.ok) {
-            // Se não for sucesso, lê a mensagem de erro e a lança
-            return response.text().then(text => {
-                throw new Error("Erro no servidor: " + text);
-            });
-        }
-        return response.text(); // Lê a resposta do Apps Script como texto
-    })
-    .then(data => {
-        // Esta parte será executada se o envio for bem-sucedido
-        console.log("Resposta do Apps Script:", data); // Verifique esta mensagem no console do navegador
+    try {
+        const response = await fetch(form.action, { 
+            method: 'POST',
+            body: formData
+        });
 
-        // Exibe uma mensagem de sucesso e redireciona
-        alert("Formulário enviado com sucesso! Redirecionando...");
-        window.location.href = "https://renatodouek.com.br/mentorias/onboarding/sucesso.html"; // Redireciona para sua página de sucesso
-    })
-    .catch(error => {
-        // Esta parte será executada se houver um erro (de rede ou do Apps Script)
-        console.error("Erro ao enviar formulário:", error); // Verifique esta mensagem no console do navegador
+        if (!response.ok) {
+            const errorText = await response.text(); 
+            throw new Error(`Erro no servidor (Status: ${response.status}): ${errorText}`);
+        }
+
+        const data = await response.text(); 
+        
+        console.log("Resposta do Apps Script:", data); 
+        
+        window.location.href = "https://renatodouek.com.br/mentorias/onboarding/sucesso.html";
+
+    } catch (error) {
+        console.error("Erro ao enviar formulário:", error); 
         alert("Ocorreu um erro ao enviar o formulário. Por favor, tente novamente. Detalhe: " + error.message);
 
-        // Reabilita o botão de envio em caso de erro
         if (submitButton) {
             submitButton.disabled = false;
             submitButton.innerText = "Enviar respostas";
             submitButton.style.opacity = "1";
             submitButton.style.cursor = "pointer";
         }
-    });
+    }
 });
