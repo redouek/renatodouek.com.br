@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil do Mentorado</title>
   <link rel="stylesheet" href="form-style.css" />
-  <script defer src="form_script.js"></script> 
+  <script defer src="form-script.js"></script> 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   
 </head>
 <body>
   <div class="form-container">
     <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="LogoRD" class="form-header-image" width="20%">
-
-    <form action="https://script.google.com/macros/s/AKfycbxWCD07N8_pVMnmCpF5pCnKlnVs97QPijlWwZjYrkheS6sVMU1vd9Xn0Sfx3ec7Rm9f/exec" method="POST"> 
-      <div class="form-step form-step-active" id="step-1">
+    <h1>Perfil do Mentorado</h1>
+    
+    <form action="https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec" method="POST"> 
+      <input type="hidden" name="action" value="submitMentoriaForm"> <div class="form-step form-step-active" id="step-1">
         <div class="question">
           <p>Nome completo</p>
           <input type="text" name="nome" id="nome" required>
