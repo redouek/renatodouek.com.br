@@ -140,7 +140,7 @@ function validarCamposEtapa1() {
     // Este timeout é para dar um tempo para o formulário ser enviado antes de redirecionar.
     // O envio real acontece via POST para o Apps Script.
     setTimeout(() => {
-      window.location.href = "https://renatodouek.com.br/mentorias/sucesso.html";
+      window.location.href = "https://renatodouek.com.br/mentorias/onboarding/sucesso.html";
     }, 1500); // Aumentei um pouco o tempo para garantir que o script receba.
 
     // Retorne true para permitir o envio do formulário.
