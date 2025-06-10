@@ -104,4 +104,9 @@
       margin-top: 1rem;
       display: none;
     }
-
+    .success-message {
+       color: #28a745; /* Verde padrão para sucesso */
+       font-weight: bold;
+       margin-top: 10px;
+       text-align: center;
+     }
