@@ -132,13 +132,18 @@ window.addEventListener('DOMContentLoaded', () => {
 // Gerenciamento da Submissão do Formulário com Fetch
 // ===============================================================
 
-document.querySelector('form').addEventListener('submit', async function (e) { 
+document.querySelector('form').addEventListener('submit', async function (e) {
     e.preventDefault(); // IMPEDE o envio padrão do formulário, faremos via JavaScript
 
     const form = e.target;
     const submitButton = form.querySelector('button[type="submit"]');
 
-    // Re-validar a Etapa 1 antes de tentar enviar
+    // --- REPETIÇÃO DA VALIDAÇÃO (mantida por segurança) ---
+    const nomeInput = document.getElementById('nome');
+    const cpfInput = document.getElementById('cpf');
+    const emailInput = document.getElementById('email');
+    const whatsappInput = document.getElementById('whatsapp');
+
     const nomeValido = nomeInput.value.trim() !== "";
     const cpfValido = validarCPF(cpfInput.value);
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
@@ -146,14 +151,13 @@ document.querySelector('form').addEventListener('submit', async function (e) {
 
     if (!nomeValido || !cpfValido || !emailValido || !telefoneValido) {
         alert("Por favor, preencha todos os campos obrigatórios da primeira etapa.");
-        goToStep(1); 
-        return; 
+        goToStep(1);
+        return;
     }
 
-    // Validar se todas as perguntas de rádio foram respondidas na Etapa 2
     const perguntasContainer = document.getElementById('perguntas-container');
     let todasPerguntasRespondidas = true;
-    const nomesDasPerguntas = new Set(); 
+    const nomesDasPerguntas = new Set();
 
     perguntasContainer.querySelectorAll('input[type="radio"]').forEach(radio => {
         nomesDasPerguntas.add(radio.name);
@@ -168,11 +172,12 @@ document.querySelector('form').addEventListener('submit', async function (e) {
 
     if (!todasPerguntasRespondidas) {
         alert("Por favor, responda a todas as perguntas do questionário na segunda etapa.");
-        goToStep(2); 
-        return; 
+        goToStep(2);
+        return;
     }
+    // --- FIM DA VALIDAÇÃO ---
 
-    const formData = new FormData(form); 
+    const formData = new FormData(form);
 
     if (submitButton) {
         submitButton.disabled = true;
@@ -181,25 +186,29 @@ document.querySelector('form').addEventListener('submit', async function (e) {
         submitButton.style.cursor = "not-allowed";
     }
 
+    // *** PONTO CRÍTICO DE AJUSTE ***
+    // Garanta que a URL do Web App é a string correta
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec"; // Cole a URL exata aqui!
+
     try {
-        const response = await fetch(form.action, { 
+        const response = await fetch(webAppUrl, { // USE webAppUrl AQUI
             method: 'POST',
             body: formData
         });
 
         if (!response.ok) {
-            const errorText = await response.text(); 
+            const errorText = await response.text();
             throw new Error(`Erro no servidor (Status: ${response.status}): ${errorText}`);
         }
 
-        const data = await response.text(); 
-        
-        console.log("Resposta do Apps Script:", data); 
-        
+        const data = await response.text();
+
+        console.log("Resposta do Apps Script:", data);
+
         window.location.href = "https://renatodouek.com.br/mentorias/onboarding/sucesso.html";
 
     } catch (error) {
-        console.error("Erro ao enviar formulário:", error); 
+        console.error("Erro ao enviar formulário:", error);
         alert("Ocorreu um erro ao enviar o formulário. Por favor, tente novamente. Detalhe: " + error.message);
 
         if (submitButton) {
