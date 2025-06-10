@@ -1,0 +1,107 @@
+ body {
+      background-color: #333;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 400px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .login-container img {
+      max-width: 140px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      color: #FFCE00;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #FFCE00;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: none;
+      background-color: #2a2a2a;
+      color: white;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    .toggle-wrapper {
+      text-align: right;
+      margin-top: 0.25rem;
+    }
+
+    .toggle-wrapper button {
+      background: none;
+      border: none;
+      color: #FFCE00;
+      font-size: 0.85rem;
+      cursor: pointer;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #FFCE00;
+      color: black;
+      font-weight: bold;
+      border: none;
+      border-radius: 32px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #e6b800;
+    }
+
+    .button:active {
+      transform: scale(0.98);
+      opacity: 0.8;
+    }
+
+    .button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      color: #FF4C4C;
+      background-color: #fff;
+      border-left: 4px solid #FF4C4C;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      margin-top: 1rem;
+      display: none;
+    }
+

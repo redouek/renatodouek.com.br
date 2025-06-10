@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Mentorado</title>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="app-background">
+    <div class="dashboard-card">
+      
+      <!-- Menu lateral -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="Logo" class="sidebar-logo" />
+          <nav class="sidebar-menu">
+            <div class="active-indicator"></div> <!-- Indicador que desliza -->
+            <button class="icon-btn active" data-section="overview" title="Visão Geral">👤</button>
+            <button class="icon-btn" data-section="sessions" title="Sessões">🗓️</button>
+            <button class="icon-btn" data-section="activities" title="Atividades">✏️</button>
+            <button class="icon-btn" data-section="notes" title="Anotações">📄</button>
+            <button class="icon-btn" data-section="profile" title="Perfil">📞</button>
+          </nav>
+        </div>
+        <button id="logoutBtn" class="logout-btn">Sair</button>
+      </aside>
+
+      <!-- Conteúdo -->
+      <main class="main-area">
+        <header class="main-header">
+          <div class="user-info">
+            <h1 id="userName">Nome do Cliente</h1>
+            <p class="subtitle">Próxima sessão – Data / Não agendada</p>
+          </div>
+          <div class="profile-pic" id="profileAvatar">RC</div>
+        </header>
+        
+        <!-- Sessão abaixo da linha -->
+
+
+
+        <section class="content-section" id="section-overview">
+          <p>Conteúdo da visão geral aqui.</p>
+        </section>
+      </main>
+
+    </div>
+  </div>
+</body>
+</html>

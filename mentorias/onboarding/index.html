@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil do Mentorado</title>
+  <link rel="stylesheet" href="form-style.css" />
+  <script defer src="form-script.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+ 
+</head>
+<body>
+  <div class="form-container">
+    <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="LogoRD" class="form-header-image" width="20%">
+    <h1>Perfil do Mentorado</h1>
+    
+    <form action="https://script.google.com/macros/s/AKfycby7IDmjzf_Niv9h6_3-7-lQNECDmtpU_ig7cURRrXZKNz5rHYeIuxfUEEhyLDeoSI5muw/exec" method="POST" onsubmit="return enviarSucesso()">
+      <div class="form-step form-step-active" id="step-1">
+        <!-- Sessão 1: Campos Nome, CPF, E-mail -->
+        <div class="question">
+          <p>Nome completo</p>
+          <input type="text" name="nome" id="nome" required>
+          <span class="input-error" id="nome-error">Por favor, preencha seu nome completo.</span>
+        </div>
+        <div class="question">
+          <p>CPF</p>
+          <input type="text" id="cpf" name="cpf" placeholder="(apenas números)" required maxlength="14" />
+          <span class="input-error" id="cpf-error">CPF inválido. Por favor revise o número digitado.</span>
+        </div>
+        <div class="question">
+          <p>WhatsApp</p>
+          <input type="tel" name="whatsapp" id="whatsapp" placeholder="Ex (11) 9111-1111" required>
+          <span class="input-error" id="whatsapp-error">Telefone inválido. Por favor revise o número digitado.</span>
+        </div>
+        <div class="question">
+          <p>E-mail</p>
+          <input type="email" id="email" name="email" required />
+          <span class="input-error" id="email-error">E-mail inválido. Por favor revise o e-mail digitado.</span>
+        </div>
+
+        <!-- Botão próximo -->
+        <div class="button-wrapper right-align-only">
+          <button type="button" id="botaoProximo" onclick="validarCamposEtapa1()">Próximo</button>
+        </div>
+
+      </div>
+
+<!--Sessão 2: 15 perguntas de perfil-->
+      <div class="form-step" id="step-2" style="display: none;">
+      <div id="perguntas-container">
+        <!-- PERGUNTAS COMPLETAS INSERIDAS ABAIXO -->
+        <div class="question">
+          <p>Ao se deparar com um grande desafio, qual é sua reação mais comum?</p>
+          <label><input type="radio" name="Ao se deparar com um grande desafio, qual é sua reação mais comum?" value="Analiso cuidadosamente o cenário antes de agir." required>Analiso cuidadosamente o cenário antes de agir.</label>
+          <label><input type="radio" name="Ao se deparar com um grande desafio, qual é sua reação mais comum?" value="Procuro resolver rapidamente com ações diretas e práticas.">Procuro resolver rapidamente com ações diretas e práticas.</label>
+          <label><input type="radio" name="Ao se deparar com um grande desafio, qual é sua reação mais comum?" value="Normalmente fico desconfortável ou evito lidar diretamente.">Normalmente fico desconfortável ou evito lidar diretamente.</label>
+        </div>
+        <div class="question">
+          <p>O que você espera do mentor durante as sessões?</p>
+          <label><input type="radio" name="O que você espera do mentor durante as sessões?" value="Que me ajude a refletir sobre as melhores escolhas." required>Que me ajude a refletir sobre as melhores escolhas.</label>
+          <label><input type="radio" name="O que você espera do mentor durante as sessões?" value="Que me dê orientações objetivas para aplicação imediata.">Que me dê orientações objetivas para aplicação imediata.</label>
+          <label><input type="radio" name="O que você espera do mentor durante as sessões?" value="Que tome decisões por mim e resolva meus problemas.">Que tome decisões por mim e resolva meus problemas.</label>
+        </div>
+        <div class="question">
+          <p>Como você reage quando alguém faz críticas sobre seu desempenho?</p>
+          <label><input type="radio" name="Como você reage quando alguém faz críticas sobre seu desempenho?" value="Costumo refletir com calma antes de responder." required>Costumo refletir com calma antes de responder.</label>
+          <label><input type="radio" name="Como você reage quando alguém faz críticas sobre seu desempenho?" value="Recebo bem, especialmente se forem claras e objetivas.">Recebo bem, especialmente se forem claras e objetivas.</label>
+          <label><input type="radio" name="Como você reage quando alguém faz críticas sobre seu desempenho?" value="Não aceito bem e me sinto incomodado.">Não aceito bem e me sinto incomodado.</label>
+        </div>
+        <div class="question">
+          <p>Como você costuma planejar suas atividades profissionais?</p>
+          <label><input type="radio" name="Como você costuma planejar suas atividades profissionais?" value="Faço um planejamento detalhado e antecipado." required>Faço um planejamento detalhado e antecipado.</label>
+          <label><input type="radio" name="Como você costuma planejar suas atividades profissionais?" value="Planejo rapidamente de forma prática e direta.">Planejo rapidamente de forma prática e direta.</label>
+          <label><input type="radio" name="Como você costuma planejar suas atividades profissionais?" value="Não tenho muito hábito de planejar, resolvo conforme surge.">Não tenho muito hábito de planejar, resolvo conforme surge.</label>
+        </div>
+        <div class="question">
+          <p>Qual dessas afirmações melhor descreve você ao aprender algo novo?</p>
+          <label><input type="radio" name="Qual dessas afirmações melhor descreve você ao aprender algo novo?" value="Prefiro entender primeiro as teorias e contextos." required>Prefiro entender primeiro as teorias e contextos.</label>
+          <label><input type="radio" name="Qual dessas afirmações melhor descreve você ao aprender algo novo?" value="Aprendo fazendo, na prática e rapidamente.">Aprendo fazendo, na prática e rapidamente.</label>
+          <label><input type="radio" name="Qual dessas afirmações melhor descreve você ao aprender algo novo?" value="Não costumo investir tempo aprendendo coisas novas.">Não costumo investir tempo aprendendo coisas novas.</label>
+        </div>
+        <div class="question">
+          <p>Em relação a mudanças bruscas na sua rotina, você:</p>
+          <label><input type="radio" name="Em relação a mudanças bruscas na sua rotina, você:" value="Preciso refletir para entender os impactos primeiro." required>Preciso refletir para entender os impactos primeiro.</label>
+          <label><input type="radio" name="Em relação a mudanças bruscas na sua rotina, você:" value="Me adapto rapidamente e sigo em frente." >Me adapto rapidamente e sigo em frente.</label>
+          <label><input type="radio" name="Em relação a mudanças bruscas na sua rotina, você:" value="Tenho dificuldade em lidar com mudanças repentinas.">Tenho dificuldade em lidar com mudanças repentinas.</label>
+        </div>
+        <div class="question">
+          <p>Diante de decisões difíceis, sua atitude mais frequente é:</p>
+          <label><input type="radio" name="Diante de decisões difíceis, sua atitude mais frequente é:" value="Considero cuidadosamente todas as possibilidades." required>Considero cuidadosamente todas as possibilidades.</label>
+          <label><input type="radio" name="Diante de decisões difíceis, sua atitude mais frequente é:" value="Decido rápido para evitar perder tempo.">Decido rápido para evitar perder tempo.</label>
+          <label><input type="radio" name="Diante de decisões difíceis, sua atitude mais frequente é:" value="Evito ao máximo decidir ou passo a responsabilidade.">Evito ao máximo decidir ou passo a responsabilidade.</label>
+        </div>
+        <div class="question">
+          <p>Em projetos em grupo, geralmente você:</p>
+          <label><input type="radio" name="Em projetos em grupo, geralmente você:" value="Contribuo com ideias estratégicas e reflexões." required>Contribuo com ideias estratégicas e reflexões.</label>
+          <label><input type="radio" name="Em projetos em grupo, geralmente você:" value="Gosto de executar tarefas rapidamente e com clareza.">Gosto de executar tarefas rapidamente e com clareza.</label>
+          <label><input type="radio" name="Em projetos em grupo, geralmente você:" value="Prefiro não me envolver diretamente nas decisões.">Prefiro não me envolver diretamente nas decisões.</label>
+        </div>
+        <div class="question">
+          <p>Ao cometer um erro significativo, você normalmente:</p>
+          <label><input type="radio" name="Ao cometer um erro significativo, você normalmente:" value="Analiso o erro detalhadamente para entender e evitar repetições." required>Analiso o erro detalhadamente para entender e evitar repetições.</label>
+          <label><input type="radio" name="Ao cometer um erro significativo, você normalmente:" value="Corrijo rapidamente e não gasto muito tempo analisando.">Corrijo rapidamente e não gasto muito tempo analisando.</label>
+          <label><input type="radio" name="Ao cometer um erro significativo, você normalmente:" value="Evito assumir responsabilidade ou culpo circunstâncias externas.">Evito assumir responsabilidade ou culpo circunstâncias externas.</label>
+        </div>
+        <div class="question">
+          <p>Qual estilo de comunicação você espera do seu mentor?</p>
+          <label><input type="radio" name="Qual estilo de comunicação você espera do seu mentor?" value="Exploratório, com perguntas e reflexão." required>Exploratório, com perguntas e reflexão.</label>
+          <label><input type="radio" name="Qual estilo de comunicação você espera do seu mentor?" value="Direto, claro e focado em resultados imediatos.">Direto, claro e focado em resultados imediatos.</label>
+          <label><input type="radio" name="Qual estilo de comunicação você espera do seu mentor?" value="Não gosto muito de receber opiniões ou sugestões.">Não gosto muito de receber opiniões ou sugestões.</label>
+        </div>
+        <div class="question">
+          <p>O que mais te motiva em uma mentoria?</p>
+          <label><input type="radio" name="O que mais te motiva em uma mentoria?" value="Ter mais clareza e segurança sobre minhas decisões." required>Ter mais clareza e segurança sobre minhas decisões.</label>
+          <label><input type="radio" name="O que mais te motiva em uma mentoria?" value="Sair com metas claras e aplicáveis imediatamente.">Sair com metas claras e aplicáveis imediatamente.</label>
+          <label><input type="radio" name="O que mais te motiva em uma mentoria?" value="Resolver rapidamente meus problemas com mínimo esforço.">Resolver rapidamente meus problemas com mínimo esforço.</label>
+        </div>
+        <div class="question">
+          <p>Como você lida com sugestões diferentes daquilo que imaginava?</p>
+          <label><input type="radio" name="Como você lida com sugestões diferentes daquilo que imaginava?" value="Analiso com calma e busco compreender o valor real da sugestão." required>Analiso com calma e busco compreender o valor real da sugestão.</label>
+          <label><input type="radio" name="Como você lida com sugestões diferentes daquilo que imaginava?" value="Avalio rapidamente e aceito bem se forem práticas." >Avalio rapidamente e aceito bem se forem práticas.</label>
+          <label><input type="radio" name="Como você lida com sugestões diferentes daquilo que imaginava?" value="Tenho dificuldade em aceitar opiniões diferentes.">Tenho dificuldade em aceitar opiniões diferentes.</label>
+        </div>
+        <div class="question">
+          <p>Em situações difíceis, qual é sua postura mais comum?</p>
+          <label><input type="radio" name="Em situações difíceis, qual é sua postura mais comum?" value="Tomo um tempo para entender profundamente antes de agir." required>Tomo um tempo para entender profundamente antes de agir.</label>
+          <label><input type="radio" name="Em situações difíceis, qual é sua postura mais comum?" value="Busco resolver rapidamente e avançar.">Busco resolver rapidamente e avançar.</label>
+          <label><input type="radio" name="Em situações difíceis, qual é sua postura mais comum?" value="Evito enfrentar diretamente e espero que resolvam por mim.">Evito enfrentar diretamente e espero que resolvam por mim.</label>
+        </div>
+        <div class="question">
+          <p>Sobre a iniciativa no trabalho, você diria que costuma:</p>
+          <label><input type="radio" name="Sobre a iniciativa no trabalho, você diria que costuma:" value="Avaliar bem antes de tomar qualquer atitude." required>Avaliar bem antes de tomar qualquer atitude.</label>
+          <label><input type="radio" name="Sobre a iniciativa no trabalho, você diria que costuma:" value="Tomar rapidamente a frente para solucionar o problema.">Tomar rapidamente a frente para solucionar o problema.</label>
+          <label><input type="radio" name="Sobre a iniciativa no trabalho, você diria que costuma:" value="Esperar que alguém me diga exatamente o que fazer.">Esperar que alguém me diga exatamente o que fazer.</label>
+        </div>
+        <div class="question">
+          <p>Quando enfrenta uma situação que exige mudança, você:</p>
+          <label><input type="radio" name="Quando enfrenta uma situação que exige mudança, você:" value="Gosta de entender profundamente antes de fazer qualquer mudança." required>Gosta de entender profundamente antes de fazer qualquer mudança.</label>
+          <label><input type="radio" name="Quando enfrenta uma situação que exige mudança, você:" value="Age rapidamente, ajustando a rota conforme necessário.">Age rapidamente, ajustando a rota conforme necessário.</label>
+          <label><input type="radio" name="Quando enfrenta uma situação que exige mudança, você:" value="Fica resistente e prefere não mudar muito.">Fica resistente e prefere não mudar muito.</label>
+        </div>
+      </div>    
+
+
+<!--Botões Anterior e Enviar Respostas -->
+        <div class="button-wrapper">
+          <div class="left-group">
+            <button type="button" class="button-outline-yellow" onclick="goToStep(1)">Anterior</button>
+          </div>
+          <div class="right-group">
+            <button type="submit">Enviar respostas</button>
+          </div>
+        </div>
+
+      </div>
+
+    </form>
+  </div>
+
+ </body>
+</html>

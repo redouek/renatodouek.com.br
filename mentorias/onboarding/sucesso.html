@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulário enviado</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #333333;
+      color: #FFFFFF;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .success-container {
+      max-width: 600px;
+      background: #1a1a1a;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .success-container img {
+      max-width: 180px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      color: #FFCE00;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 5rem;
+      line-height: 1.5;
+    }
+
+    .button-outline-yellow {
+      background-color: #000000;
+      color: #FFCE00;
+      padding: 0.75rem 1.5rem;
+      border: 2px solid #FFCE00;
+      border-radius: 32px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .button-outline-yellow:hover {
+      background-color: #FFCE00;
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <div class="success-container">
+    <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo" alt="Logo" />
+    <h1>Respostas enviadas com sucesso!</h1>
+    <p>Agradecemos o envio das respostas, em breve entraremos em contato.</p>
+    <button class="button-outline-yellow" onclick="fecharAba()">Fechar</button>
+  </div>
+
+  <script>
+    function fecharAba() {
+      window.open('', '_self', ''); // necessário para navegadores modernos
+      window.close();
+      setTimeout(() => {
+        window.location.href = "https://renatodouek.com.br";
+      }, 500);
+    }
+  </script>
+</body>
+</html>
