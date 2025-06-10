@@ -1,74 +1,95 @@
-    const senhaInput = document.getElementById("senha");
-    const toggleBtn = document.getElementById("toggle-password");
-    const icon = toggleBtn.querySelector("span");
+// Arquivo: login-script.js
 
-    toggleBtn.addEventListener("click", function () {
-      const isHidden = senhaInput.type === "password";
-      senhaInput.type = isHidden ? "text" : "password";
-      icon.className = isHidden ? "mdi mdi-eye-off-outline" : "mdi mdi-eye-outline";
-      toggleBtn.innerHTML = `<span class="${icon.className}"></span> ${isHidden ? "Ocultar senha" : "Mostrar senha"}`;
+// Função de máscara de CPF (copiada do form-script.js, se você a tiver no login)
+function aplicarMascaraCPF(valor) {
+    return valor
+        .replace(/\D/g, '')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+}
+
+// ===============================================================
+// Event Listeners de UI
+// ===============================================================
+
+const cpfInput = document.getElementById('cpf');
+const senhaInput = document.getElementById('senha');
+const togglePasswordButton = document.getElementById('toggle-password');
+const mensagemDiv = document.getElementById('mensagem');
+const loginForm = document.getElementById('loginForm');
+
+// Máscara de CPF
+cpfInput.addEventListener('input', function () {
+    this.value = aplicarMascaraCPF(this.value);
+});
+
+// Funcionalidade de mostrar/ocultar senha
+togglePasswordButton.addEventListener('click', function() {
+  const type = senhaInput.getAttribute('type') === 'password' ? 'text' : 'password';
+  senhaInput.setAttribute('type', type);
+
+  const iconSpan = this.querySelector('.mdi');
+  if (type === 'password') {
+    iconSpan.classList.remove('mdi-eye-off-outline');
+    iconSpan.classList.add('mdi-eye-outline');
+    this.innerHTML = '<span class="mdi mdi-eye-outline"></span> Mostrar senha';
+  } else {
+    iconSpan.classList.remove('mdi-eye-outline');
+    iconSpan.classList.add('mdi-eye-off-outline');
+    this.innerHTML = '<span class="mdi mdi-eye-off-outline"></span> Ocultar senha';
+  }
+});
+
+
+// ===============================================================
+// Gerenciamento da Submissão do Formulário com Fetch
+// ===============================================================
+
+loginForm.addEventListener('submit', async function(event) {
+  event.preventDefault(); // Impede o envio padrão do formulário
+
+  mensagemDiv.textContent = ''; // Limpa mensagens anteriores
+  mensagemDiv.classList.remove('success-message', 'error-message'); // Limpa classes de estilo
+
+  const cpfValue = cpfInput.value.trim();
+  const senhaValue = senhaInput.value.trim();
+
+  if (cpfValue === "" || senhaValue === "") {
+    mensagemDiv.textContent = "Por favor, preencha o CPF e a senha.";
+    mensagemDiv.classList.add('error-message');
+    return;
+  }
+
+  const formData = new FormData(); // Cria um novo FormData
+  formData.append('action', 'login'); // Adiciona o campo 'action' explicitamente
+  formData.append('cpf', cpfValue);
+  formData.append('senha', senhaValue);
+
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec"; // A URL do seu Web App
+
+  try {
+    const response = await fetch(webAppUrl, {
+      method: 'POST',
+      body: formData
     });
-    function validarCPF(cpf) {
-      cpf = cpf.replace(/[^\d]+/g, '');
-      if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
-      let soma = 0;
-      for (let i = 0; i < 9; i++) soma += parseInt(cpf.charAt(i)) * (10 - i);
-      let resto = 11 - (soma % 11);
-      if (resto >= 10) resto = 0;
-      if (resto !== parseInt(cpf.charAt(9))) return false;
-      soma = 0;
-      for (let i = 0; i < 10; i++) soma += parseInt(cpf.charAt(i)) * (11 - i);
-      resto = 11 - (soma % 11);
-      if (resto >= 10) resto = 0;
-      return resto === parseInt(cpf.charAt(10));
+
+    const result = await response.json(); // Espera uma resposta JSON do Apps Script
+
+    if (result.status === "success") {
+      mensagemDiv.textContent = result.message + " Bem-vindo, " + result.user + "!";
+      mensagemDiv.classList.add('success-message');
+      // Redirecione o usuário ou mostre a área restrita
+      // Ex: window.location.href = "/dashboard.html";
+      console.log("Login successful:", result);
+    } else {
+      mensagemDiv.textContent = "Erro: " + result.message;
+      mensagemDiv.classList.add('error-message');
+      console.error("Login failed:", result.message);
     }
-
-    document.getElementById("loginForm").addEventListener("submit", async function (event) {
-      event.preventDefault();
-
-      const cpf = document.getElementById("cpf").value.trim();
-      const senha = document.getElementById("senha").value.trim();
-      const erro = document.getElementById("mensagem");
-      const botao = document.getElementById("botaoLogin");
-
-      erro.style.display = "none";
-
-      if (!validarCPF(cpf)) {
-        erro.textContent = "CPF inválido. Verifique o número digitado.";
-        erro.style.display = "block";
-        return;
-      }
-
-      botao.disabled = true;
-      botao.innerText = "Verificando...";
-
-      try {
-        const formData = new URLSearchParams();
-        formData.append("acao", "login");
-        formData.append("cpf", cpf);
-        formData.append("senha", senha);
-
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: formData
-        });
-
-        const data = await response.json();
-
-        if (data.status === "ok") {
-          localStorage.setItem("usuarioLogado", JSON.stringify(data));
-          window.location.href = "/mentorias/dashboard/";
-        } else {
-          erro.textContent = data.mensagem || "Senha incorreta.";
-          erro.style.display = "block";
-        }
-      } catch (err) {
-        erro.textContent = "Erro ao verificar login. Tente novamente.";
-        erro.style.display = "block";
-        console.error(err);
-      } finally {
-        botao.disabled = false;
-        botao.innerText = "Entrar";
-      }
-    });
+  } catch (error) {
+    mensagemDiv.textContent = "Ocorreu um erro na comunicação com o servidor.";
+    mensagemDiv.classList.add('error-message');
+    console.error("Erro ao enviar requisição de login:", error);
+  }
+});
