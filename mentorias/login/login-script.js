@@ -48,7 +48,7 @@
         formData.append("cpf", cpf);
         formData.append("senha", senha);
 
-        const response = await fetch("https://script.google.com/macros/s/AKfycby7IDmjzf_Niv9h6_3-7-lQNECDmtpU_ig7cURRrXZKNz5rHYeIuxfUEEhyLDeoSI5muw/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: formData
