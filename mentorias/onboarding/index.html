@@ -5,18 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Perfil do Mentorado</title>
   <link rel="stylesheet" href="form-style.css" />
-  <script defer src="form-script.js"></script>
+  <script defer src="form-script.js"></script> 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
- 
+  
 </head>
 <body>
   <div class="form-container">
     <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="LogoRD" class="form-header-image" width="20%">
     <h1>Perfil do Mentorado</h1>
     
-    <form action="https://script.google.com/macros/s/AKfycbyndSj1poNbEF_js6gukj57l9Nv4KocxrKYtvY64oijtXcmkJ_n9vZky1HB1uk5kR4N9Q/exec" method="POST">
+    <form action="https://script.google.com/macros/s/AKfycbzuZtHcg4NVRidety4fBSEbBRnS7KHnAMU4OiNzJYZ-xoaIXyIKsje5CfKOuUYEg5GjkA/exec" method="POST"> 
       <div class="form-step form-step-active" id="step-1">
-        <!-- Sessão 1: Campos Nome, CPF, E-mail -->
         <div class="question">
           <p>Nome completo</p>
           <input type="text" name="nome" id="nome" required>
@@ -38,17 +37,14 @@
           <span class="input-error" id="email-error">E-mail inválido. Por favor revise o e-mail digitado.</span>
         </div>
 
-        <!-- Botão próximo -->
         <div class="button-wrapper right-align-only">
           <button type="button" id="botaoProximo" onclick="validarCamposEtapa1()">Próximo</button>
         </div>
 
       </div>
 
-<!--Sessão 2: 15 perguntas de perfil-->
-      <div class="form-step" id="step-2" style="display: none;">
+<div class="form-step" id="step-2" style="display: none;">
       <div id="perguntas-container">
-        <!-- PERGUNTAS COMPLETAS INSERIDAS ABAIXO -->
         <div class="question">
           <p>Ao se deparar com um grande desafio, qual é sua reação mais comum?</p>
           <label><input type="radio" name="Ao se deparar com um grande desafio, qual é sua reação mais comum?" value="Analiso cuidadosamente o cenário antes de agir." required>Analiso cuidadosamente o cenário antes de agir.</label>
@@ -141,21 +137,19 @@
         </div>
       </div>    
 
-
-<!--Botões Anterior e Enviar Respostas -->
-        <div class="button-wrapper">
-          <div class="left-group">
-            <button type="button" class="button-outline-yellow" onclick="goToStep(1)">Anterior</button>
-          </div>
-          <div class="right-group">
-            <button type="submit">Enviar respostas</button>
-          </div>
+      <div class="button-wrapper">
+        <div class="left-group">
+          <button type="button" class="button-outline-yellow" onclick="goToStep(1)">Anterior</button>
         </div>
+        <div class="right-group">
+          <button type="submit">Enviar respostas</button>
+        </div>
+      </div>
 
       </div>
 
     </form>
   </div>
 
- </body>
+</body>
 </html>
