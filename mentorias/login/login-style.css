@@ -95,18 +95,28 @@
       cursor: not-allowed;
     }
 
+
     .error-message {
       color: #FF4C4C;
-      background-color: #fff;
+      background-color: #fff; /* Adicionei background-color para consistência */
       border-left: 4px solid #FF4C4C;
       padding: 0.5rem 0.75rem;
       font-size: 0.875rem;
       margin-top: 1rem;
-      display: none;
+      display: none; /* Mantém oculto por padrão */
     }
+    
     .success-message {
-       color: #28a745; /* Verde padrão para sucesso */
-       font-weight: bold;
-       margin-top: 10px;
-       text-align: center;
-     }
+      color: #28a745; /* Verde padrão para sucesso */
+      background-color: #fff; /* Adicionado para consistência */
+      border-left: 4px solid #28a745; /* Borda verde, adicionei para consistência */
+      padding: 0.5rem 0.75rem; /* Adicionado para consistência */
+      font-size: 0.875rem; /* Adicionado para consistência */
+      margin-top: 1rem; /* Adicionado para consistência */
+      display: none; /* MUITO IMPORTANTE: Oculta por padrão */
+    }
+    
+    /* Adicione esta classe para controlar a visibilidade via JavaScript */
+    .message-visible {
+      display: block; /* Classe que o JS adicionará para mostrar a mensagem */
+    }
