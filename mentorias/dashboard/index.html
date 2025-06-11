@@ -36,14 +36,98 @@
           </div>
           <div class="profile-pic" id="profileAvatar">RC</div>
         </header>
+
         
-        <!-- Sessão abaixo da linha -->
-
-
-
+        <!-- Sessão abaixo da linha - área de conteúdo-->
+        
+        <!-- Sessão Visão geral -->
         <section class="content-section" id="section-overview">
           <p>Conteúdo da visão geral aqui.</p>
         </section>
+
+        <!-- Sessão Atividades -->
+<section class="content-section" id="section-activities" style="display: none;">
+    <div class="activities-header">
+        <button class="add-activity-btn" id="addActivityBtn">+ Nova atividade</button>
+        <div class="search-filter-group">
+            <input type="text" id="activitySearch" placeholder="Buscar atividade..." class="search-input">
+            <select id="activityFilter" class="filter-select">
+                <option value="all">Todos os Status</option>
+                <option value="Não iniciada">Não iniciada</option>
+                <option value="Executando">Executando</option>
+                <option value="Concluída">Concluída</option>
+                <option value="Atrasada">Atrasada</option>
+                <option value="Perto de expirar">Perto de expirar</option>
+            </select>
+            <button id="toggleCompletedTasksBtn" class="toggle-completed-btn">
+                <span class="mdi mdi-eye-outline"></span> <span class="toggle-text">Ocultar Concluídas</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th></th> <th>Atividade</th>
+                    <th>Descrição/Observações</th>
+                    <th>Data limite</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="activitiesTableBody">
+                </tbody>
+        </table>
+        <div id="loadingActivities" class="loading-message">
+            Carregando atividades...
+        </div>
+        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">
+            Nenhuma atividade encontrada para os critérios selecionados.
+        </div>
+    </div>
+
+    <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
+        <span>Tarefa concluída!</span>
+        <button id="undoTaskButton" class="undo-button">Desfazer</button>
+        <div class="progress-line"></div>
+    </div>
+
+    <div id="activityModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button" id="closeActivityModal">&times;</span>
+            <h2 id="modalTitle">Adicionar Nova Atividade</h2>
+            <form id="activityForm">
+                <input type="hidden" id="activityId" name="activityId">
+                <div class="form-group">
+                    <label for="activityName">Atividade</label>
+                    <input type="text" id="activityName" name="activityName" required>
+                </div>
+                <div class="form-group">
+                    <label for="activityDescription">Descrição/Observações</label>
+                    <textarea id="activityDescription" name="activityDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="activityDueDate">Data limite</label>
+                    <input type="date" id="activityDueDate" name="activityDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="activityStatus">Status</label>
+                    <select id="activityStatus" name="activityStatus">
+                        <option value="Não iniciada">Não iniciada</option>
+                        <option value="Executando">Executando</option>
+                        <option value="Concluída">Concluída</option>
+                        <option value="Atrasada">Atrasada</option>
+                        <option value="Perto de expirar">Perto de expirar</option>
+                    </select>
+                </div>
+                <button type="submit" class="button">Salvar Atividade</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+
       </main>
 
     </div>
