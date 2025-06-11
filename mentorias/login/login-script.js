@@ -49,19 +49,20 @@ togglePasswordButton.addEventListener('click', function() {
 loginForm.addEventListener('submit', async function(event) {
   event.preventDefault(); // Impede o envio padrão do formulário
 
-  mensagemDiv.textContent = ''; // Limpa mensagens anteriores
-  mensagemDiv.classList.remove('success-message', 'error-message'); // Limpa classes de estilo
+  // Limpa mensagens anteriores e esconde a div
+  mensagemDiv.textContent = '';
+  mensagemDiv.classList.remove('success-message', 'error-message', 'message-visible'); // Garante que todas as classes de estado são removidas
 
   const cpfValue = cpfInput.value.trim();
   const senhaValue = senhaInput.value.trim();
 
   if (cpfValue === "" || senhaValue === "") {
     mensagemDiv.textContent = "Por favor, preencha o CPF e a senha.";
-    mensagemDiv.classList.add('error-message');
+    mensagemDiv.classList.add('error-message', 'message-visible'); // Adiciona a classe de erro E a de visibilidade
     return;
   }
 
-  const formData = new FormData(); // Cria um novo FormData
+  const formData = new FormData();
   formData.append('action', 'login'); // Adiciona o campo 'action' explicitamente
   formData.append('cpf', cpfValue);
   formData.append('senha', senhaValue);
@@ -78,18 +79,18 @@ loginForm.addEventListener('submit', async function(event) {
 
     if (result.status === "success") {
       mensagemDiv.textContent = result.message + " Bem-vindo, " + result.user + "!";
-      mensagemDiv.classList.add('success-message');
+      mensagemDiv.classList.add('success-message', 'message-visible'); // Adiciona a classe de sucesso E a de visibilidade
       // Redirecione o usuário ou mostre a área restrita
       // Ex: window.location.href = "/dashboard.html";
       console.log("Login successful:", result);
     } else {
       mensagemDiv.textContent = "Erro: " + result.message;
-      mensagemDiv.classList.add('error-message');
+      mensagemDiv.classList.add('error-message', 'message-visible'); // Adiciona a classe de erro E a de visibilidade
       console.error("Login failed:", result.message);
     }
   } catch (error) {
     mensagemDiv.textContent = "Ocorreu um erro na comunicação com o servidor.";
-    mensagemDiv.classList.add('error-message');
+    mensagemDiv.classList.add('error-message', 'message-visible'); // Adiciona a classe de erro E a de visibilidade
     console.error("Erro ao enviar requisição de login:", error);
   }
 });
