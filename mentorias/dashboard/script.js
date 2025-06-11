@@ -147,6 +147,7 @@ function filterAndSearchActivities() {
             activity.DescricaoObservacoes.toLowerCase().includes(searchTermLower)
         );
     });
+    console.log("Atividades filtradas e/ou buscadas:", filtered); // Adicione esta linha
     renderActivities(filtered);
 }
 
@@ -170,12 +171,13 @@ async function loadActivities() {
     loadingActivitiesMessage.style.display = 'none';
 
     if (result.status === 'success' && result.activities) {
+        console.log("Atividades recebidas do Apps Script:", result.activities); // Adicione esta linha
         allActivities = result.activities;
-        filterAndSearchActivities(); // Renderiza com base nos filtros e busca atuais
+        filterAndSearchActivities();
     } else {
+        console.error("Falha ao carregar atividades:", result.message); // Verifique se há erro aqui
         allActivities = [];
-        filterAndSearchActivities(); // Renderiza vazio e exibe mensagem de 'Nenhuma atividade'
-        console.error("Falha ao carregar atividades:", result.message);
+        filterAndSearchActivities();
     }
 }
 
