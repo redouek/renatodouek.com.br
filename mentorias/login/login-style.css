@@ -95,7 +95,6 @@
       cursor: not-allowed;
     }
 
-
     .error-message {
       color: #FF4C4C;
       background-color: #fff; /* Adicionei background-color para consistência */
@@ -116,7 +115,7 @@
       display: none; /* MUITO IMPORTANTE: Oculta por padrão */
     }
     
-    /* Adicione esta classe para controlar a visibilidade via JavaScript */
+    /* Esta classe será adicionada/removida pelo JavaScript para mostrar/ocultar */
     .message-visible {
-      display: block; /* Classe que o JS adicionará para mostrar a mensagem */
+      display: block !important; /* Força a exibição */
     }
