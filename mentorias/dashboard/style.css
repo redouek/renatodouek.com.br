@@ -183,3 +183,449 @@ body {
   transition: top 0.3s ease;
   box-shadow: 3px 3px 6px rgba(255, 255, 255, 0.35);
 }
+
+
+
+/* //////////////////////////////////////////////////////////////////////
+-----------   Estilos Específicos para a Seção de ATIVIDADES -----------
+/////////////////////////////////////////////////////////////////////////*/
+
+.activities-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap; /* Para responsividade */
+    gap: 1rem; /* Espaçamento entre os elementos */
+}
+
+.add-activity-btn {
+    background-color: #FFCE00;
+    color: #000;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    border-radius: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    white-space: nowrap; /* Evita quebra de linha em telas pequenas */
+}
+
+.add-activity-btn:hover {
+    background-color: #e6b800;
+}
+
+.search-filter-group {
+    display: flex;
+    gap: 0.75rem;
+    flex-grow: 1; /* Permite que o grupo de busca/filtro cresça */
+    justify-content: flex-end; /* Alinha à direita quando há espaço */
+    flex-wrap: wrap; /* Para responsividade */
+}
+
+.search-input,
+.filter-select {
+    padding: 0.6rem 1rem;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background-color: #333;
+    color: #eee;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    min-width: 150px; /* Garante que os campos não fiquem muito pequenos */
+}
+
+.search-input::placeholder {
+    color: #bbb;
+}
+
+.table-container {
+    overflow-x: auto; /* Permite rolagem horizontal em telas pequenas para a tabela */
+    flex-grow: 1; /* Permite que a tabela ocupe o espaço restante */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    min-width: 700px; /* Garante que a tabela não fique muito espremida */
+}
+
+table th,
+table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #444;
+    white-space: normal; /* Permite quebra de linha dentro das células */
+}
+
+table th {
+    background-color: #FFCE00;
+    color: #000;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+table td {
+    background-color: #2A2A2A;
+    color: #FFFFFF;
+    font-size: 0.9rem;
+}
+
+table tr:hover td {
+    background-color: #3A3A3A;
+}
+
+/* Estilo para o select de status dentro da tabela */
+.status-select {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid #555;
+    border-radius: 4px;
+    background-color: #2A2A2A;
+    color: #FFFFFF;
+    font-size: 0.85rem;
+    appearance: none; /* Remove a seta padrão do select */
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Seta customizada */
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+/* Cores dos status no select (quando selecionados) */
+.status-select option[value="Não iniciada"] { color: #CCCCCC; } /* Cinza */
+.status-select option[value="Executando"] { color: #007bff; } /* Azul */
+.status-select option[value="Concluída"] { color: #28a745; } /* Verde */
+.status-select option[value="Atrasada"] { color: #dc3545; } /* Vermelho */
+.status-select option[value="Perto de expirar"] { color: #ffc107; } /* Amarelo */
+
+/* Estilos para o Toggle de Concluídas (Botão com Ícone) */
+.toggle-completed-btn {
+    background-color: #333;
+    color: #FFCE00;
+    padding: 0.6rem 1rem;
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.toggle-completed-btn .mdi {
+    font-size: 1.25rem; /* Ajuste o tamanho do ícone */
+}
+
+.toggle-completed-btn:hover {
+    background-color: #444;
+    border-color: #FFCE00;
+}
+
+/* Estilo para o Checkbox da Tabela */
+table input[type="checkbox"] {
+    /* Esconde o checkbox padrão */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFCE00;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    transition: background-color 0.3s, border-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto; /* Centraliza o checkbox na célula */
+}
+
+table input[type="checkbox"]::before {
+    content: '✔'; /* Ícone de check */
+    color: #000;
+    font-size: 14px;
+    display: none; /* Oculta o ícone por padrão */
+}
+
+table input[type="checkbox"]:checked {
+    background-color: #FFCE00;
+    border-color: #FFCE00;
+}
+
+table input[type="checkbox"]:checked::before {
+    display: block; /* Exibe o ícone quando marcado */
+}
+
+
+/* Estilo para tarefas concluídas (texto riscado) */
+.completed-task {
+    text-decoration: line-through;
+    color: #888888; /* Uma cor mais discreta para tarefas concluídas */
+    transition: all 0.3s ease-in-out;
+}
+
+/* Estilos para a Notificação de Tarefa Concluída/Desfazer */
+.notification-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2A2A2A;
+    color: #FFFFFF;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 1rem;
+    z-index: 1000;
+    overflow: hidden; /* Para a linha de progresso */
+    min-width: 300px;
+}
+
+.notification-bar span {
+    flex-grow: 1; /* Permite que o texto ocupe o espaço disponível */
+    white-space: nowrap;
+}
+
+.notification-bar .undo-button {
+    background-color: #FFCE00;
+    color: #000;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.notification-bar .undo-button:hover {
+    background-color: #e6b800;
+}
+
+.progress-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #FFCE00;
+    animation: progressAnimation 5s linear forwards; /* Animação de 5 segundos */
+}
+
+@keyframes progressAnimation {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* Estilos para o Modal */
+.modal {
+    /*display: none; /* Oculto por padrão */
+    position: fixed; /* Fica por cima de tudo */
+    z-index: 2000; /* Z-index alto para garantir que esteja no topo */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Habilita rolagem se o conteúdo for muito grande */
+    background-color: rgba(0,0,0,0.7); /* Fundo escuro semi-transparente */
+    display: flex; /* Para centralizar o modal-content */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    margin: auto;
+    padding: 2.5rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+    color: #fff;
+}
+
+.modal-content h2 {
+    color: #FFCE00;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.modal-content .close-button {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.modal-content .close-button:hover,
+.modal-content .close-button:focus {
+    color: #FFCE00;
+    text-decoration: none;
+}
+
+.modal-content .form-group {
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #FFCE00;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content textarea,
+.modal-content select {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.modal-content textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.modal-content .button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #FFCE00;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 32px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.modal-content .button:hover {
+    background-color: #e6b800;
+}
+
+/* Mensagem de estado vazio para a tabela */
+.empty-state-message,
+.loading-message {
+    text-align: center;
+    color: #888;
+    padding: 2rem;
+    font-style: italic;
+}
+
+
+/* Responsividade para o modal e outros elementos */
+@media (max-width: 768px) {
+    .dashboard-card {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        width: 100vw;
+        border-radius: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: center;
+        padding: 1rem 0;
+        border-bottom: 2px solid #FFCE00;
+        position: static; /* Garante que não flutue em mobile */
+    }
+
+    .sidebar-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .sidebar-logo {
+        display: none; /* Oculta o logo em mobile para economizar espaço */
+    }
+
+    .sidebar-menu {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        gap: 0.5rem;
+    }
+
+    .icon-btn {
+        width: 40px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+
+    .hover-box {
+        display: none; /* Desabilita a animação em mobile se preferir */
+    }
+    
+    .logout-btn {
+        display: none; /* Oculta o botão de sair aqui, pode ser movido para o cabeçalho principal ou um menu hamburger */
+    }
+
+    .main-area {
+        padding: 1rem;
+    }
+
+    .activities-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .search-input,
+    .filter-select {
+        width: 100%;
+        min-width: unset;
+    }
+
+    table {
+        min-width: 100%; /* Permite que a tabela se ajuste melhor em telas pequenas */
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+    .notification-bar {
+        width: 90%;
+        left: 5%;
+        transform: translateX(0);
+        flex-direction: column;
+        gap: 0.75rem;
+        bottom: 10px;
+    }
+    .notification-bar .undo-button {
+        width: 100%;
+    }
+}
