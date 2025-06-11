@@ -467,9 +467,9 @@ activityForm.addEventListener('submit', async (event) => {
     submitButton.disabled = false;
     submitButton.textContent = "Salvar Atividade";
 
-    if (result.status === 'success') {
+if (result.status === 'success') {
         activityModal.style.display = 'none';
-        alert(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!");
+        // Não exibe alerta de sucesso, vai direto para a recarga da lista
         loadActivities(); // Recarrega todas as atividades para atualizar a tabela
     } else {
         alert(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`);
