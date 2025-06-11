@@ -41,6 +41,12 @@ togglePasswordButton.addEventListener('click', function() {
   }
 });
 
+// Arquivo: login-script.js
+
+// ... (todo o seu código existente, funções de máscara, event listeners de UI) ...
+
+// Seleção de elementos adicionais necessários para o botão de login
+const botaoLogin = document.getElementById('botaoLogin'); // Certifique-se de que seu HTML tem id="botaoLogin" para o botão de submit
 
 // ===============================================================
 // Gerenciamento da Submissão do Formulário com Fetch
@@ -49,8 +55,17 @@ togglePasswordButton.addEventListener('click', function() {
 loginForm.addEventListener('submit', async function(event) {
   event.preventDefault(); // Impede o envio padrão do formulário
 
+  // Limpa mensagens anteriores e esconde a div
   mensagemDiv.textContent = '';
   mensagemDiv.classList.remove('success-message', 'error-message', 'message-visible');
+
+  // Desabilita o botão e muda o texto
+  if (botaoLogin) {
+    botaoLogin.disabled = true;
+    botaoLogin.textContent = "Validando dados...";
+    botaoLogin.style.opacity = "0.6";
+    botaoLogin.style.cursor = "not-allowed";
+  }
 
   const cpfValue = cpfInput.value.trim();
   const senhaValue = senhaInput.value.trim();
@@ -58,6 +73,13 @@ loginForm.addEventListener('submit', async function(event) {
   if (cpfValue === "" || senhaValue === "") {
     mensagemDiv.textContent = "Por favor, preencha o CPF e a senha.";
     mensagemDiv.classList.add('error-message', 'message-visible');
+    // Restaura o botão em caso de erro na validação do cliente
+    if (botaoLogin) {
+      botaoLogin.disabled = false;
+      botaoLogin.textContent = "Entrar";
+      botaoLogin.style.opacity = "1";
+      botaoLogin.style.cursor = "pointer";
+    }
     return;
   }
 
@@ -77,31 +99,42 @@ loginForm.addEventListener('submit', async function(event) {
     const result = await response.json();
 
     if (result.status === "success") {
-      mensagemDiv.textContent = result.message + " Bem-vindo, " + result.user + "!";
-      mensagemDiv.classList.add('success-message', 'message-visible');
-      console.log("Login successful:", result);
+      // NÃO HÁ MENSAGEM DE SUCESSO AQUI, APENAS REDIRECIONA
+      console.log("Login successful, redirecting to dashboard:", result);
 
-      // --- AJUSTE AQUI: Salvar um objeto JSON no localStorage ---
       const userData = {
-        cpf: cpfValue.replace(/\D/g, ''), // CPF limpo
-        nome: result.user // Nome do usuário retornado pelo Apps Script
-        // Adicione outros dados do usuário que você queira persistir, se houver
+        cpf: cpfValue.replace(/\D/g, ''),
+        nome: result.user
       };
-      localStorage.setItem('usuarioLogado', JSON.stringify(userData)); // Salva o objeto como string JSON
+      localStorage.setItem('usuarioLogado', JSON.stringify(userData));
 
-      // Redirecionar para o Dashboard
-      setTimeout(() => {
-        window.location.href = "https://renatodouek.com.br/mentorias/dashboard/";
-      }, 1500); // Redireciona após 1.5 segundos
+      // Redirecionar imediatamente sem setTimeout
+      window.location.href = "https://renatodouek.com.br/mentorias/dashboard/";
       
     } else {
       mensagemDiv.textContent = "Erro: " + result.message;
       mensagemDiv.classList.add('error-message', 'message-visible');
       console.error("Login failed:", result.message);
+
+      // Restaura o botão em caso de erro do servidor
+      if (botaoLogin) {
+        botaoLogin.disabled = false;
+        botaoLogin.textContent = "Entrar";
+        botaoLogin.style.opacity = "1";
+        botaoLogin.style.cursor = "pointer";
+      }
     }
   } catch (error) {
     mensagemDiv.textContent = "Ocorreu um erro na comunicação com o servidor.";
     mensagemDiv.classList.add('error-message', 'message-visible');
     console.error("Erro ao enviar requisição de login:", error);
+
+    // Restaura o botão em caso de erro de rede/comunicação
+    if (botaoLogin) {
+      botaoLogin.disabled = false;
+      botaoLogin.textContent = "Entrar";
+      botaoLogin.style.opacity = "1";
+      botaoLogin.style.cursor = "pointer";
+    }
   }
 });
