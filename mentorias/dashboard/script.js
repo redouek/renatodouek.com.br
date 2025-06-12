@@ -301,35 +301,21 @@ function addActivityEventListeners() {
         checkbox.addEventListener('change', handleCheckboxChange);
     });
 
-// Função para abrir o modal em modo edição (Item 10)
-function openEditModal(event) {
-    // MUDANÇA: Garante que pega o dataset do botão clicado ou do pai mais próximo que seja o botão de editar ou o badge
-    const clickedElement = event.target.closest('.edit-activity-btn') || event.target.closest('.status-badge');
-    const activityId = clickedElement ? clickedElement.dataset.activityId : null;
-    
-    console.log("openEditModal acionada. ID do elemento clicado:", event.target, "ID da atividade extraído:", activityId); // LOG DE DEBUG
+    // Clique no badge de status abre o modal de edição (Comportamento temporário - Item 3)
+    document.querySelectorAll('#activitiesTableBody .status-badge').forEach(badge => {
+        badge.removeEventListener('click', openEditModal); 
+        badge.addEventListener('click', openEditModal);
+    });
 
-    if (!activityId) {
-        showNotification("Erro: ID da atividade não encontrado para edição. (Debug: Clique no ícone de lápis ou badge).", false);
-        return;
-    }
+    document.querySelectorAll('.edit-activity-btn').forEach(button => {
+        button.removeEventListener('click', openEditModal);
+        button.addEventListener('click', openEditModal);
+    });
 
-    const activityToEdit = allActivities.find(act => act.IDdaAtividade == activityId);
-
-    if (!activityToEdit) {
-        showNotification("Atividade não encontrada para edição.", false);
-        return;
-    }
-
-    modalTitle.textContent = "Editar Atividade";
-    activityIdInput.value = activityToEdit.IDdaAtividade;
-    activityNameInput.value = activityToEdit.Atividade;
-    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || '';
-    activityDueDateInput.value = formatarDataParaInput(activityToEdit.DataLimite);
-    activityStatusSelect.value = activityToEdit.StatusAtual;
-    activityStatusSelect.className = `status-select ${getStatusClass(activityToEdit.StatusAtual)}`; // Aplica a classe do status
-
-    activityModal.style.display = 'flex';
+    document.querySelectorAll('.delete-activity-btn').forEach(button => {
+        button.removeEventListener('click', handleDeleteActivity);
+        button.addEventListener('click', handleDeleteActivity);
+    });
 }
 
 // Lógica do botão "Desfazer" na notificação
@@ -548,16 +534,16 @@ async function customConfirm(title, message) {
     });
 }
 
-// Função para deletar atividade (Item 10)
+// Função para deletar atividade (MODIFICADA para usar customConfirm - Item 1)
 async function handleDeleteActivity(event) {
-    // MUDANÇA: Garante que pega o dataset do botão clicado ou do pai mais próximo que seja o botão de deletar
+    // MUDANÇA (Item 10): Garante que pega o dataset do botão clicado ou do pai mais próximo
     const clickedElement = event.target.closest('.delete-activity-btn');
     const activityId = clickedElement ? clickedElement.dataset.activityId : null;
 
-    console.log("handleDeleteActivity acionada. ID do elemento clicado:", event.target, "ID da atividade extraído:", activityId); // LOG DE DEBUG
+    console.log("Tentando excluir atividade com ID:", activityId); // Log no frontend
 
     if (!activityId) { // Adiciona verificação para ID nulo/vazio
-        showNotification("Erro: ID da atividade não encontrado para exclusão. (Debug: Clique no ícone de lixo).", false);
+        showNotification("Erro: ID da atividade não encontrado para exclusão.", false);
         return;
     }
 
@@ -575,6 +561,7 @@ async function handleDeleteActivity(event) {
         }
     }
 }
+
 
 // ===============================================================
 // Busca e Filtro (Multi-seleção de status - Item 5)
