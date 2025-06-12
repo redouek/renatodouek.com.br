@@ -473,6 +473,7 @@ table input[type="checkbox"]:checked::before {
     align-items: center;
     gap: 0.5rem;
     transition: background-color 0.3s, border-color 0.3s;
+    position: relative; /* MUDANÇA: Necessário para posicionar o contador absolutamente */
 }
 
 .filter-dropdown-btn:hover {
@@ -497,6 +498,11 @@ table input[type="checkbox"]:checked::before {
     text-align: center;
     display: inline-block; /* Para padding e width */
     line-height: 1rem; /* Centraliza o texto verticalmente */
+    position: absolute;
+    top: -5px; /* Ajuste a posição vertical */
+    right: -5px; /* Ajuste a posição horizontal para o canto superior direito do botão */
+    transform: translate(50%, -50%); /* Ajuste fino para centralizar o círculo na esquina */
+    z-index: 10; /* Garante que ele fique acima de outros elementos */
 }
 
 .filter-options-dropdown {
