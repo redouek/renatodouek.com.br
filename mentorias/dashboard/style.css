@@ -689,6 +689,7 @@ table input[type="checkbox"]:checked::before {
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     margin-top: 24px;
+    margin-botton:24px;
 }
 
 .modal-buttons .button-outline-yellow:hover {
