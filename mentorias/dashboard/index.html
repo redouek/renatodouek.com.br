@@ -1,136 +1,144 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - Mentorado</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Mentorado</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
+    <script defer src="script.js"></script>
 </head>
 <body>
-  <div class="app-background">
-    <div class="dashboard-card">
-      
-      <!-- Menu lateral -->
-      <aside class="sidebar">
-        <div class="sidebar-top">
-          <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="Logo" class="sidebar-logo" />
-          <nav class="sidebar-menu">
-            <div class="active-indicator"></div> <!-- Indicador que desliza -->
-            <button class="icon-btn active" data-section="overview" title="Visão Geral">👤</button>
-            <button class="icon-btn" data-section="sessions" title="Sessões">🗓️</button>
-            <button class="icon-btn" data-section="activities" title="Atividades">✏️</button>
-            <button class="icon-btn" data-section="notes" title="Anotações">📄</button>
-            <button class="icon-btn" data-section="profile" title="Perfil">📞</button>
-          </nav>
-        </div>
-        <button id="logoutBtn" class="logout-btn">Sair</button>
-      </aside>
+    <div class="app-background">
+        <div class="dashboard-card">
 
-      <!-- Conteúdo -->
-      <main class="main-area">
-        <header class="main-header">
-          <div class="user-info">
-            <h1 id="userName">Nome do Cliente</h1>
-            <p class="subtitle">Próxima sessão – Data / Não agendada</p>
-          </div>
-          <div class="profile-pic" id="profileAvatar">RC</div>
-        </header>
-
-        
-        <!-- Sessão abaixo da linha - área de conteúdo-->
-        
-        <!-- Sessão Visão geral -->
-        <section class="content-section" id="section-overview">
-          <p>Conteúdo da visão geral aqui.</p>
-        </section>
-
-        <!-- Sessão Atividades -->
-<section class="content-section" id="section-activities" style="display: none;">
-    <div class="activities-header">
-        <button class="add-activity-btn" id="addActivityBtn">+ Nova atividade</button>
-        <div class="search-filter-group">
-    <button id="toggleCompletedTasksBtn" class="toggle-completed-btn">
-        <span class="mdi mdi-eye-outline"></span> <span class="toggle-text">Ocultar Concluídas</span>
-    </button>
-    <input type="text" id="activitySearch" placeholder="Buscar atividade..." class="search-input">
-    <select id="activityFilter" class="filter-select">
-        <option value="all">Todos os Status</option>
-        <option value="Não iniciada">Não iniciada</option>
-        <option value="Executando">Executando</option>
-        <option value="Concluída">Concluída</option>
-        <option value="Atrasada">Atrasada</option>
-        <option value="Perto de expirar">Perto de expirar</option>
-    </select>
-</div>
-    </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th></th> <th>Atividade</th>
-                    <th>Descrição/Observações</th>
-                    <th>Data limite</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="activitiesTableBody">
-                </tbody>
-        </table>
-        <div id="loadingActivities" class="loading-message">
-            Carregando atividades...
-        </div>
-        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">
-            Nenhuma atividade encontrada para os critérios selecionados.
-        </div>
-    </div>
-
-    <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
-        <span>Tarefa concluída!</span>
-        <button id="undoTaskButton" class="undo-button">Desfazer</button>
-        <div class="progress-line"></div>
-    </div>
-
-    <div id="activityModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-button" id="closeActivityModal">&times;</span>
-            <h2 id="modalTitle">Adicionar Nova Atividade</h2>
-            <form id="activityForm">
-                <input type="hidden" id="activityId" name="activityId">
-                <div class="form-group">
-                    <label for="activityName">Atividade</label>
-                    <input type="text" id="activityName" name="activityName" required>
+            <aside class="sidebar">
+                <div class="sidebar-top">
+                    <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="Logo" class="sidebar-logo" />
+                    <nav class="sidebar-menu">
+                        <div class="active-indicator"></div> <button class="icon-btn active" data-section="overview" title="Visão Geral">👤</button>
+                        <button class="icon-btn" data-section="activities" title="Atividades">🗓️</button>
+                        <button class="icon-btn" data-section="sessions" title="Sessões">✏️</button>
+                        <button class="icon-btn" data-section="notes" title="Anotações">📄</button>
+                        <button class="icon-btn" data-section="profile" title="Perfil">📞</button>
+                    </nav>
                 </div>
-                <div class="form-group">
-                    <label for="activityDescription">Descrição/Observações</label>
-                    <textarea id="activityDescription" name="activityDescription"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="activityDueDate">Data limite</label>
-                    <input type="date" id="activityDueDate" name="activityDueDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="activityStatus">Status</label>
-                    <select id="activityStatus" name="activityStatus">
-                        <option value="Não iniciada">Não iniciada</option>
-                        <option value="Executando">Executando</option>
-                        <option value="Concluída">Concluída</option>
-                        <option value="Atrasada">Atrasada</option>
-                        <option value="Perto de expirar">Perto de expirar</option>
-                    </select>
-                </div>
-                <button type="submit" class="button">Salvar Atividade</button>
-            </form>
+                <button id="logoutBtn" class="logout-btn">Sair</button>
+            </aside>
+
+            <main class="main-area">
+                <header class="main-header">
+                    <div class="user-info">
+                        <h1 id="userName">Nome do Cliente</h1>
+                        <p class="subtitle">Próxima sessão – Data / Não agendada</p>
+                    </div>
+                    <div class="profile-pic" id="profileAvatar">RC</div>
+                </header>
+
+                <section class="content-section" id="section-overview">
+                    <p>Conteúdo da visão geral aqui.</p>
+                </section>
+
+                <section class="content-section" id="section-activities" style="display: none;">
+                    <div class="activities-header">
+                        <button class="add-activity-btn" id="addActivityBtn">+ Nova atividade</button>
+                        <div class="search-filter-group">
+                            <button id="toggleCompletedTasksBtn" class="toggle-completed-btn">
+                                <span class="mdi mdi-eye-outline"></span> <span class="toggle-text">Ocultar Concluídas</span>
+                            </button>
+                            <div class="search-input-wrapper"> <input type="text" id="activitySearch" placeholder="Buscar atividade..." class="search-input">
+                                <span class="mdi mdi-magnify search-icon"></span>
+                                <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+                                    <span class="mdi mdi-close-circle"></span>
+                                </button>
+                            </div>
+                            <select id="activityFilter" class="filter-select">
+                                <option value="all">Todos os Status</option>
+                                <option value="Não iniciada">Não iniciada</option>
+                                <option value="Executando">Executando</option>
+                                <option value="Concluída">Concluída</option>
+                                <option value="Atrasada">Atrasada</option>
+                                <option value="Perto de expirar">Perto de expirar</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th></th> <th>Atividade</th>
+                                    <th>Descrição/Observações</th>
+                                    <th>Data limite</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activitiesTableBody">
+                                </tbody>
+                        </table>
+                        <div id="loadingActivities" class="loading-message">
+                            Carregando atividades...
+                        </div>
+                        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">
+                            Nenhuma atividade encontrada para os critérios selecionados.
+                        </div>
+                    </div>
+
+                    <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
+                        <span>Tarefa concluída!</span>
+                        <button id="undoTaskButton" class="undo-button">Desfazer</button>
+                        <div class="progress-line"></div>
+                    </div>
+
+                    <div id="activityModal" class="modal" style="display: none;">
+                        <div class="modal-content">
+                            <span class="close-button" id="closeActivityModal">&times;</span>
+                            <h2 id="modalTitle">Adicionar Nova Atividade</h2>
+                            <form id="activityForm">
+                                <input type="hidden" id="activityId" name="activityId">
+                                <div class="form-group">
+                                    <label for="activityName">Atividade</label>
+                                    <input type="text" id="activityName" name="activityName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="activityDescription">Descrição/Observações</label>
+                                    <textarea id="activityDescription" name="activityDescription"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="activityDueDate">Data limite</label>
+                                    <input type="date" id="activityDueDate" name="activityDueDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="activityStatus">Status</label>
+                                    <select id="activityStatus" name="activityStatus">
+                                        <option value="Não iniciada">Não iniciada</option>
+                                        <option value="Executando">Executando</option>
+                                        <option value="Concluída">Concluída</option>
+                                        <option value="Atrasada">Atrasada</option>
+                                        <option value="Perto de expirar">Perto de expirar</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="button">Salvar Atividade</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+                <section class="content-section" id="section-sessions" style="display: none;">
+                    <p>Conteúdo das sessões aqui.</p>
+                </section>
+                <section class="content-section" id="section-activities-placeholder" style="display: none;">
+                    <p>Conteúdo das atividades aqui (placeholder antigo, remover).</p>
+                </section>
+                <section class="content-section" id="section-notes" style="display: none;">
+                    <p>Conteúdo das anotações aqui.</p>
+                </section>
+                <section class="content-section" id="section-profile" style="display: none;">
+                    <p>Conteúdo do perfil aqui.</p>
+                </section>
+
+            </main>
         </div>
     </div>
-</section>
-
-
-      </main>
-
-    </div>
-  </div>
 </body>
 </html>
