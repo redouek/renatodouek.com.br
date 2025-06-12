@@ -35,7 +35,7 @@ function formatarDataParaInput(dataString) {
     return `${ano}-${mes}-${dia}`;
 }
 
-// MUDANÇA: getStatusClass agora define background e color para o select
+// MUDANÇA: getStatusClass agora define classes para o BADGE
 function getStatusClass(status) {
     switch (status) {
         case "Não iniciada": return "status-nao-iniciada";
@@ -73,7 +73,7 @@ async function callAppsScript(action, data = {}) {
     } catch (error) {
         console.error(`Erro ao chamar Apps Script para ação ${action}:`, error);
         // MUDANÇA: Usa showNotification para erros de comunicação
-        showNotification(`Erro de comunicação: ${error.message}.`, false);
+        showNotification(`Erro de comunicação: ${error.message}. Por favor, verifique sua conexão ou tente novamente.`, false);
         return { status: 'error', message: error.message };
     }
 }
@@ -110,35 +110,31 @@ function renderActivities(activitiesToRender) {
             <td>${activity.Atividade}</td>
             <td>${activity.DescricaoObservacoes || ''}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
             <td>
-                <select class="status-select ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}">
-                    <option value="Não iniciada" ${activity.StatusAtual === 'Não iniciada' ? 'selected' : ''}>Não iniciada</option>
-                    <option value="Executando" ${activity.StatusAtual === 'Executando' ? 'selected' : ''}>Executando</option>
-                    <option value="Concluída" ${activity.StatusAtual === 'Concluída' ? 'selected' : ''}>Concluída</option>
-                    <option value="Atrasada" ${activity.StatusAtual === 'Atrasada' ? 'selected' : ''}>Atrasada</option>
-                    <option value="Perto de expirar" ${activity.StatusAtual === 'Perto de expirar' ? 'selected' : ''}>Perto de expirar</option>
-                </select>
+                <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
             </td>
             <td>
                 <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
-                    <span class="mdi mdi-pencil"></span> </button>
+                    <span class="mdi mdi-pencil"></span>
+                </button>
                 <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
-                    <span class="mdi mdi-delete"></span> </button>
+                    <span class="mdi mdi-delete"></span>
+                </button>
             </td>
         `;
         activitiesTableBody.appendChild(row);
     });
 
-    // Adiciona event listeners aos novos elementos (checkboxes, selects, botões)
+    // Adiciona event listeners aos novos elementos (checkboxes, badges, botões)
     addActivityEventListeners();
 }
 
 // Filtra e busca as atividades carregadas
 function filterAndSearchActivities() {
     let filtered = allActivities.filter(activity => {
-        // Lógica do toggle "Ocultar Concluídas"
-        // MUDANÇA: Se showCompletedTasks for FALSE (significa que queremos ocultar as concluídas)
+        // MUDANÇA: Lógica do toggle "Ver Concluídas" / "Ocultar Concluídas"
+        // Se showCompletedTasks for FALSE (significa que queremos ocultar as concluídas)
         if (!showCompletedTasks && activity.StatusAtual === 'Concluída') {
-            return false;
+            return false; // Não inclui atividades concluídas se o toggle estiver para "Ocultar Concluídas"
         }
         // Lógica do filtro de status
         if (currentFilter !== 'all' && activity.StatusAtual !== currentFilter) {
@@ -147,8 +143,8 @@ function filterAndSearchActivities() {
         // Lógica da busca
         const searchTermLower = currentSearchTerm.toLowerCase();
         return (
-            String(activity.Atividade).toLowerCase().includes(searchTermLower) || // MUDANÇA: String() para evitar erro se for null/undefined
-            String(activity.DescricaoObservacoes).toLowerCase().includes(searchTermLower)
+            String(activity.Atividade || '').toLowerCase().includes(searchTermLower) || // MUDANÇA: String() e || '' para evitar erro se for null/undefined
+            String(activity.DescricaoObservacoes || '').toLowerCase().includes(searchTermLower)
         );
     });
     console.log("Atividades filtradas e/ou buscadas:", filtered); // Log para depuração
@@ -170,7 +166,6 @@ async function loadActivities() {
     noActivitiesMessage.style.display = 'none';
     activitiesTableBody.innerHTML = ''; // Limpa a tabela antes de carregar
 
-    // MUDANÇA: Remover a máscara do CPF antes de enviar
     const result = await callAppsScript('getActivitiesByCpf', { cpf: usuario.cpf.replace(/\D/g, '') });
 
     loadingActivitiesMessage.style.display = 'none';
@@ -270,10 +265,10 @@ async function handleCheckboxChange(event) {
             updatedActivity.ConcluidaPorCheckbox = isChecked ? 'Sim' : 'Não';
         }
         activityRow.classList.toggle('completed-task', newStatus === 'Concluída');
-        // MUDANÇA: Garante que o select também reflita o novo status
-        const selectElement = activityRow.querySelector('.status-select');
-        selectElement.value = newStatus;
-        selectElement.className = `status-select ${getStatusClass(newStatus)}`;
+        // MUDANÇA: Atualiza o SPAN do status no frontend
+        const statusBadge = activityRow.querySelector('.status-badge');
+        statusBadge.textContent = newStatus;
+        statusBadge.className = `status-badge ${getStatusClass(newStatus)}`;
 
         filterAndSearchActivities(); // Re-renderiza para aplicar filtros/toggle se necessário
     } else {
@@ -283,54 +278,8 @@ async function handleCheckboxChange(event) {
     }
 }
 
-async function handleStatusSelectChange(event) {
-    const select = event.target;
-    const activityId = select.dataset.activityId;
-    const newStatus = select.value;
-    const checkbox = select.closest('tr').querySelector('input[type="checkbox"]');
-
-    const activity = allActivities.find(act => act.IDdaAtividade == activityId);
-    if (!activity) return;
-
-    let oldStatusForUndo = activity.StatusAtual;
-
-    // Lógica para desmarcar/marcar checkbox ao mudar o select
-    if (newStatus === 'Concluída' && !checkbox.checked) {
-        checkbox.checked = true;
-    } else if (activity.StatusAtual === 'Concluída' && newStatus !== 'Concluída') {
-        checkbox.checked = false;
-    }
-
-    // Atualiza a classe de estilo do select
-    select.className = `status-select ${getStatusClass(newStatus)}`;
-
-    const result = await callAppsScript('updateActivityStatus', {
-        id: activityId,
-        newStatus: newStatus,
-        oldStatusForUndo: oldStatusForUndo,
-        concluidaPorCheckbox: checkbox.checked ? 'Sim' : 'Não'
-    });
-
-    if (result.status === 'success') {
-        const updatedActivity = allActivities.find(act => act.IDdaAtividade == activityId);
-        if (updatedActivity) {
-            updatedActivity.StatusAtual = newStatus;
-            if (newStatus !== 'Concluída') { // Só atualiza StatusAnterior se não estiver virando Concluída
-                updatedActivity.StatusAnterior = oldStatusForUndo;
-            }
-            updatedActivity.ConcluidaPorCheckbox = checkbox.checked ? 'Sim' : 'Não';
-        }
-        select.closest('tr').classList.toggle('completed-task', newStatus === 'Concluída');
-        filterAndSearchActivities();
-        showNotification("Status da tarefa atualizado.");
-    } else {
-        // Em caso de erro, reverte o select e o checkbox no frontend
-        select.value = activity.StatusAtual;
-        checkbox.checked = activity.ConcluidaPorCheckbox === 'Sim';
-        select.className = `status-select ${getStatusClass(activity.StatusAtual)}`;
-        showNotification("Erro ao atualizar status: " + result.message);
-    }
-}
+// REMOVIDA A FUNÇÃO handleStatusSelectChange, pois o select não está mais na tabela.
+// O clique no badge de status agora abrirá o modal de edição.
 
 // Adiciona event listeners para os elementos dinâmicos da tabela
 function addActivityEventListeners() {
@@ -339,9 +288,10 @@ function addActivityEventListeners() {
         checkbox.addEventListener('change', handleCheckboxChange);
     });
 
-    document.querySelectorAll('#activitiesTableBody .status-select').forEach(select => {
-        select.removeEventListener('change', handleStatusSelectChange);
-        select.addEventListener('change', handleStatusSelectChange);
+    // MUDANÇA: Event listener para o SPAN do status (badge)
+    document.querySelectorAll('#activitiesTableBody .status-badge').forEach(badge => {
+        badge.removeEventListener('click', openEditModal); // Clicar no badge abre edição
+        badge.addEventListener('click', openEditModal);
     });
 
     document.querySelectorAll('.edit-activity-btn').forEach(button => {
@@ -361,14 +311,17 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
         const activityId = lastCompletedActivity.IDdaAtividade;
         const previousStatus = lastCompletedActivity.StatusAnterior;
         const checkbox = document.querySelector(`#activitiesTableBody input[type="checkbox"][data-activity-id="${activityId}"]`);
-        const select = document.querySelector(`#activitiesTableBody .status-select[data-activity-id="${activityId}"]`);
+        // Não há select na tabela, então remove a referência a ele aqui.
+        // const select = document.querySelector(`#activitiesTableBody .status-select[data-activity-id="${activityId}"]`);
         const activityRow = checkbox.closest('tr');
 
         // Reverte no frontend imediatamente para feedback visual
         if (checkbox) checkbox.checked = false;
-        if (select) {
-            select.value = previousStatus;
-            select.className = `status-select ${getStatusClass(previousStatus)}`; // MUDANÇA: Atualiza classe CSS
+        // Atualiza o SPAN do status no frontend
+        const statusBadge = activityRow.querySelector('.status-badge');
+        if(statusBadge) {
+            statusBadge.textContent = previousStatus;
+            statusBadge.className = `status-badge ${getStatusClass(previousStatus)}`;
         }
         activityRow.classList.remove('completed-task');
 
@@ -411,7 +364,7 @@ const activityIdInput = document.getElementById('activityId');
 const activityNameInput = document.getElementById('activityName');
 const activityDescriptionInput = document.getElementById('activityDescription');
 const activityDueDateInput = document.getElementById('activityDueDate');
-const activityStatusSelect = document.getElementById('activityStatus');
+const activityStatusSelect = document.getElementById('activityStatus'); // Este SELECT ainda é usado no modal
 
 addActivityBtn.addEventListener('click', () => {
     modalTitle.textContent = "Adicionar Nova Atividade";
@@ -437,7 +390,7 @@ activityForm.addEventListener('submit', async (event) => {
 
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
     if (!usuario || !usuario.cpf) {
-        showNotification("Erro: Usuário não identificado para salvar atividade.", false); // MUDANÇA: Usa notificação
+        showNotification("Erro: Usuário não identificado para salvar atividade.", false);
         return;
     }
 
@@ -465,21 +418,28 @@ activityForm.addEventListener('submit', async (event) => {
 
     if (result.status === 'success') {
         activityModal.style.display = 'none';
-        // MUDANÇA: Não exibe alerta de sucesso, vai direto para a recarga da lista
-        showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false); // MUDANÇA: Usa notificação customizada
+        showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false);
         loadActivities(); // Recarrega todas as atividades para atualizar a tabela
     } else {
-        showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false); // MUDANÇA: Usa notificação customizada
+        showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false);
     }
 });
 
 // Função para abrir o modal em modo edição
+// A chamada agora virá do botão de editar OU do clique no badge de status
 function openEditModal(event) {
-    const activityId = event.target.dataset.activityId;
+    // Tenta pegar o ID do dataset do elemento clicado, ou do closest .status-badge
+    const activityId = event.target.dataset.activityId || event.target.closest('.status-badge')?.dataset.activityId;
+    
+    if (!activityId) {
+        showNotification("Erro: ID da atividade não encontrado para edição.", false);
+        return;
+    }
+
     const activityToEdit = allActivities.find(act => act.IDdaAtividade == activityId);
 
     if (!activityToEdit) {
-        showNotification("Atividade não encontrada para edição.", false); // MUDANÇA: Usa notificação
+        showNotification("Atividade não encontrada para edição.", false);
         return;
     }
 
@@ -493,22 +453,25 @@ function openEditModal(event) {
     activityModal.style.display = 'flex';
 }
 
-// Função para deletar atividade (JÁ MUDADA PARA SER MAIS RÁPIDA)
-// MUDANÇA: Remover o alert() de confirmação nativo do navegador
-// ATENÇÃO: Se você QUER uma confirmação de exclusão, precisaremos de um modal de confirmação customizado.
-// Por enquanto, o `confirm()` nativo do navegador permanecerá, mas as mensagens de sucesso/erro usarão showNotification.
-// Para eliminar o `confirm()` nativo, seria necessário um modal de confirmação customizado (nova funcionalidade).
+// Função para deletar atividade (MODIFICADA para showNotification e depuração)
 async function handleDeleteActivity(event) {
     const activityId = event.target.dataset.activityId;
-    // MUDANÇA: O 'confirm' nativo ainda será usado aqui. Se quiser um modal, precisaremos de um novo componente.
+    console.log("Tentando excluir atividade com ID:", activityId); // Log no frontend
+
+    // ATENÇÃO: confirm() é um alert nativo do navegador.
+    // Para uma solução customizada, precisaríamos de um novo modal de confirmação.
+    // Por enquanto, o `confirm()` nativo do navegador permanecerá.
     if (confirm("Tem certeza que deseja excluir esta atividade?")) {
         const result = await callAppsScript('deleteActivity', { id: activityId });
         if (result.status === 'success') {
+            // Ao invés de recarregar tudo, remove da lista local e re-renderiza
             allActivities = allActivities.filter(act => act.IDdaAtividade != activityId);
             filterAndSearchActivities(); // Re-renderiza a tabela após a exclusão
-            showNotification("Atividade excluída com sucesso!", false); // MUDANÇA: Usa notificação customizada
+            showNotification("Atividade excluída com sucesso!", false);
         } else {
-            showNotification("Erro ao excluir atividade: " + result.message, false); // MUDANÇA: Usa notificação customizada
+            showNotification("Erro ao excluir atividade: " + result.message, false);
+            // Log de depuração mais específico para o erro de exclusão
+            console.error("Erro detalhado ao excluir atividade:", result.message, "ID:", activityId);
         }
     }
 }
@@ -643,25 +606,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Lógica do toggle "Ocultar Concluídas"
     toggleCompletedTasksBtn.addEventListener('click', () => {
-        // MUDANÇA: showCompletedTasks agora é false por padrão (ver concluídas)
         showCompletedTasks = !showCompletedTasks; // Inverte o estado
-        if (showCompletedTasks) { // Se o estado agora é 'true' (ocultar concluídas)
-            toggleIconSpan.classList.remove('mdi-eye-off-outline'); // Ícone de olho aberto
+        if (showCompletedTasks) { // Se o estado agora é 'true' (significa VER concluídas)
+            toggleIconSpan.classList.remove('mdi-eye-off-outline');
             toggleIconSpan.classList.add('mdi-eye-outline');
-            toggleTextSpan.textContent = "Ocultar Concluídas";
-        } else { // Se o estado agora é 'false' (ver concluídas)
-            toggleIconSpan.classList.remove('mdi-eye-outline'); // Ícone de olho fechado
+            toggleTextSpan.textContent = "Ocultar Concluídas"; // O texto mostra a AÇÃO que o botão fará
+        } else { // Se o estado agora é 'false' (significa OCULTAR concluídas)
+            toggleIconSpan.classList.remove('mdi-eye-outline');
             toggleIconSpan.classList.add('mdi-eye-off-outline');
-            toggleTextSpan.textContent = "Ver Concluídas";
+            toggleTextSpan.textContent = "Ver Concluídas"; // O texto mostra a AÇÃO que o botão fará
         }
-        filterAndSearchActivities(); // Re-renderiza para aplicar o novo estado
+        filterAndSearchActivities();
     });
 
     // Carrega as atividades se a seção de atividades for a inicial ou a primeira a ser mostrada
     // Verifica se a seção de atividades é a ativa ao carregar a página
     if (document.getElementById('section-activities') && document.getElementById('section-activities').classList.contains('form-step-active')) {
         loadActivities();
-    } else if (initialBtn.dataset.section === 'activities') {
+    } else if (initialBtn.dataset.section === 'activities') { // Se o botão de atividades é o padrão ativo (pode ser ajustado)
         loadActivities();
+    } else if (initialBtn.dataset.section === 'overview') { // Se a visão geral é o padrão ativo, mostra ela
+        document.getElementById('section-overview').style.display = 'block';
     }
+    // ... para outras seções padrão se houver
 });
