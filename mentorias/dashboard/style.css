@@ -765,3 +765,163 @@ table input[type="checkbox"]:checked::before {
     opacity: 1;
     visibility: visible;
     transition: opacity 0.3s ease-in-out; /* Transição para aparecer */
+}
+
+.notification-bar span {
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+.notification-bar .undo-button {
+    background-color: #FFCE00;
+    color: #000;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.notification-bar .undo-button:hover {
+    background-color: #e6b800;
+}
+
+.progress-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #FFCE00;
+    animation: progressAnimation 3s linear forwards; /* MUDANÇA: 3 segundos */
+}
+
+@keyframes progressAnimation {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+
+/* Responsividade Geral */
+@media (max-width: 768px) {
+    body {
+        /* Remove centralização absoluta para mobile para evitar scroll desnecessário */
+        display: block; 
+        height: auto;
+        min-height: 100vh;
+        overflow-x: hidden; /* Evita scroll horizontal */
+    }
+    .app-background {
+        height: auto;
+        min-height: 100vh; /* Garante que o fundo ocupe a tela em mobile */
+        padding: 0; /* Remove padding extra */
+        display: block; /* Para que o card se adapte melhor */
+    }
+    .dashboard-card {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        width: 100vw;
+        border-radius: 0;
+        box-shadow: none; /* Remove sombra em mobile */
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: center;
+        padding: 1rem 0;
+        border-bottom: 2px solid #FFCE00;
+        position: static;
+    }
+
+    .sidebar-top {
+        flex-direction: row; /* Para alinhar logo e menu horizontalmente */
+        justify-content: center;
+        width: 100%;
+    }
+
+    .sidebar-logo {
+        display: none;
+    }
+
+    .sidebar-menu {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        gap: 0.5rem;
+    }
+
+    .icon-btn {
+        width: 40px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+
+    .hover-box {
+        display: none;
+    }
+    
+    .logout-btn {
+        display: none;
+    }
+
+    .main-area {
+        padding: 1rem;
+    }
+
+    .activities-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-filter-group {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+
+    .search-input-wrapper,
+    .filter-dropdown-btn { /* Também o botão do filtro */
+        width: 100%;
+        min-width: unset;
+    }
+
+    .search-input-wrapper .search-input {
+        width: 100%;
+    }
+
+    .multi-select-filter-wrapper {
+        width: 100%;
+    }
+    .filter-options-dropdown {
+        min-width: 100%;
+    }
+
+
+    table {
+        min-width: 100%;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        width: 95%;
+    }
+    .notification-bar {
+        width: 90%;
+        left: 5%;
+        transform: translateX(0);
+        flex-direction: column;
+        gap: 0.75rem;
+        bottom: 10px;
+    }
+    .notification-bar .undo-button {
+        width: 100%;
+    }
+
+    .modal-content.small-modal {
+        width: 95%;
+    }
+}
