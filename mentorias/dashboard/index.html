@@ -16,7 +16,8 @@
                 <div class="sidebar-top">
                     <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="Logo" class="sidebar-logo" />
                     <nav class="sidebar-menu">
-                        <div class="active-indicator"></div> <button class="icon-btn active" data-section="overview" title="Visão Geral">👤</button>
+                        <div class="active-indicator"></div>
+                        <button class="icon-btn active" data-section="overview" title="Visão Geral">👤</button>
                         <button class="icon-btn" data-section="sessions" title="Sessões">🗓️</button>
                         <button class="icon-btn" data-section="activities" title="Atividades">✏️</button>
                         <button class="icon-btn" data-section="notes" title="Anotações">📄</button>
@@ -35,7 +36,7 @@
                     <div class="profile-pic" id="profileAvatar">RC</div>
                 </header>
 
-                <section class="content-section" id="section-overview">
+                <section class="content-section" id="section-overview" style="display: block;">
                     <p>Conteúdo da visão geral aqui.</p>
                 </section>
 
@@ -53,14 +54,18 @@
                                     <span class="mdi mdi-close-circle"></span>
                                 </button>
                             </div>
-                            <select id="activityFilter" class="filter-select">
-                                <option value="all">Todos os Status</option>
-                                <option value="Não iniciada">Não iniciada</option>
-                                <option value="Executando">Executando</option>
-                                <option value="Concluída">Concluída</option>
-                                <option value="Atrasada">Atrasada</option>
-                                <option value="Perto de expirar">Perto de expirar</option>
-                            </select>
+                            <div class="multi-select-filter-wrapper">
+                                <button class="filter-dropdown-btn" id="statusFilterDropdownBtn">
+                                    Filtrar Status <span class="mdi mdi-filter-variant"></span>
+                                </button>
+                                <div class="filter-options-dropdown" id="statusFilterOptions" style="display: none;">
+                                    <label><input type="checkbox" value="Não iniciada"> Não iniciada</label>
+                                    <label><input type="checkbox" value="Executando"> Executando</label>
+                                    <label><input type="checkbox" value="Concluída"> Concluída</label>
+                                    <label><input type="checkbox" value="Atrasada"> Atrasada</label>
+                                    <label><input type="checkbox" value="Perto de expirar"> Perto de expirar</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -68,7 +73,8 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th></th> <th>Atividade</th>
+                                    <th></th>
+                                    <th>Atividade</th>
                                     <th>Descrição/Observações</th>
                                     <th>Data limite</th>
                                     <th>Status</th> <th>Ações</th>
@@ -77,12 +83,8 @@
                             <tbody id="activitiesTableBody">
                                 </tbody>
                         </table>
-                        <div id="loadingActivities" class="loading-message">
-                            Carregando atividades...
-                        </div>
-                        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">
-                            Nenhuma atividade encontrada para os critérios selecionados.
-                        </div>
+                        <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
+                        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
                     </div>
 
                     <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
@@ -133,6 +135,18 @@
                 <section class="content-section" id="section-profile" style="display: none;">
                     <p>Conteúdo do perfil aqui.</p>
                 </section>
+
+                <div id="customConfirmModal" class="modal" style="display: none;">
+                    <div class="modal-content small-modal">
+                        <span class="close-button" id="closeCustomConfirmModal">&times;</span>
+                        <h2 id="customConfirmTitle">Confirmação</h2>
+                        <p id="customConfirmMessage">Você tem certeza?</p>
+                        <div class="modal-buttons">
+                            <button class="button-outline-yellow" id="customConfirmCancel">Cancelar</button>
+                            <button class="button" id="customConfirmOK">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
 
             </main>
         </div>
