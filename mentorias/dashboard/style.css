@@ -387,8 +387,9 @@ table input[type="checkbox"]:checked::before {
 /* Estilo para tarefas concluídas (texto riscado) - Item 6 */
 .completed-task {
     text-decoration: line-through; /* Garante que a linha esteja presente */
-    text-decoration-thickness: 1.5px; /* Tenta deixar a linha um pouco mais grossa (suporte pode variar) */
-    color: rgba(255, 255, 255, 0.4); /* MUDANÇA: Texto mais sutil/claro (40% de opacidade) */
+    text-decoration-thickness: 3px; /* Tenta deixar a linha um pouco mais grossa (suporte pode variar) */
+    text-decoration-color: #FFCE00; /* MUDANÇA: Cor amarela para o riscado */
+    color: rgba(255, 255, 255, 0.3); /* MUDANÇA: Texto mais sutil/claro (40% de opacidade) */
     background-color: rgba(0, 0, 0, 0.2); /* MUDANÇA: Um fundo levemente mais escuro para a linha da tabela */
     transition: all 0.3s ease-in-out;
 }
