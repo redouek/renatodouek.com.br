@@ -1,6 +1,6 @@
-/* Arquivo: mentorias/dashboard/style.css */
+/* Arquivo: mentorias/dashboard/style.css (COMPLETO E REVISADO) */
 
-/* Reset */
+/* Reset Básico */
 * {
     margin: 0;
     padding: 0;
@@ -11,35 +11,47 @@ body {
     font-family: "Inter", sans-serif;
     background-color: #000000;
     color: #FFFFFF;
+    /* Certifique-se de que o body ocupa 100% da viewport para o layout flex */
+    min-height: 100vh; /* Garante que o body tenha altura mínima */
+    display: flex; /* Para centralizar o app-background */
+    justify-content: center;
+    align-items: center;
 }
 
-/* Fundo geral e card central */
+/* Fundo geral e card central do Dashboard */
 .app-background {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh; /* Ocupa a altura total da viewport */
+    width: 100vw; /* Ocupa a largura total da viewport */
 }
 
 .dashboard-card {
     display: flex;
     background-color: #1A1A1A;
     border-radius: 12px;
-    height: 90vh;
-    width: 95vw;
-    max-width: 1400px;
-    overflow: hidden;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
+    height: 90vh; /* Altura do card principal */
+    width: 95vw; /* Largura do card principal */
+    max-width: 1400px; /* Limite de largura para o card */
+    overflow: hidden; /* Garante que o conteúdo interno não vaze */
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8); /* Sombra para o card */
 }
 
-/* Sidebar lateral */
+/* Sidebar Lateral (Menu) */
 .sidebar {
     background-color: #1a1a1a;
-    width: 64px;
+    width: 64px; /* Largura fixa da sidebar */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; /* Espaço entre logo/menu e botão sair */
     padding: 1rem 0.5rem;
+}
+
+.sidebar-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza logo e menu verticalmente */
 }
 
 .sidebar-logo {
@@ -52,10 +64,10 @@ body {
 }
 
 .sidebar-menu {
-    position: relative;
+    position: relative; /* Para o active-indicator */
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1rem; /* Espaçamento entre os botões */
     align-items: center;
 }
 
@@ -73,18 +85,22 @@ body {
     border-radius: 8px;
     transition: background 0.3s, color 0.3s;
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Acima do hover-box */
 }
 
-/* Remove qualquer cor do botão ativo e hover */
-.icon-btn.active,
-.icon-btn:hover {
-    background-color: transparent;
-    color: #000;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+/* Estilo para botão de menu ativo e no hover */
+.icon-btn.active {
+    background-color: transparent; /* Será coberto pelo hover-box */
+    color: #000; /* Cor preta quando ativo, para contraste com o amarelo */
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8); /* Sombra sutil */
 }
 
-/* Botão sair */
+.icon-btn:hover:not(.active) { /* Hover para botões NÃO ativos */
+    background-color: rgba(255, 255, 255, 0.1); /* Leve fundo branco no hover */
+    color: #FFFFFF; /* Mantém branco */
+}
+
+/* Botão Sair */
 .logout-btn {
     background: none;
     border: 1px solid #FFCE00;
@@ -93,7 +109,7 @@ body {
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
     cursor: pointer;
-    align-self: center;
+    align-self: center; /* Centraliza na sidebar */
     transition: all 0.3s ease;
 }
 
@@ -102,16 +118,16 @@ body {
     color: #000;
 }
 
-/* Área principal */
+/* Área Principal do Conteúdo */
 .main-area {
-    flex: 1;
+    flex: 1; /* Ocupa o espaço restante */
     padding: 2rem;
     background-color: #2A2A2A;
     display: flex;
     flex-direction: column;
 }
 
-/* Cabeçalho com nome + avatar */
+/* Cabeçalho da Área Principal (Nome do Usuário + Avatar) */
 .main-header {
     display: flex;
     justify-content: space-between;
@@ -132,7 +148,7 @@ body {
     color: #CCCCCC;
 }
 
-/* Avatar circular */
+/* Avatar Circular */
 .profile-pic {
     width: 70px;
     height: 70px;
@@ -147,17 +163,17 @@ body {
     font-size: 0.9rem;
 }
 
-/* Conteúdo da seção */
+/* Seções de Conteúdo (Visão Geral, Atividades, etc.) */
 .content-section {
     flex: 1;
-    overflow-y: auto;
-    padding-right: 0.5rem;
+    overflow-y: auto; /* Permite rolagem interna */
+    padding-right: 0.5rem; /* Espaço para barra de rolagem */
     font-size: 1rem;
     color: #FFFFFF;
     margin-top: 10px;
 }
 
-/* Caixa amarela deslizante */
+/* Caixa Amarela Deslizante (Menu Lateral) */
 .hover-box {
     position: absolute;
     left: 0;
@@ -171,14 +187,13 @@ body {
 }
 
 /* Estilos Específicos para a Seção de Atividades */
-
 .activities-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    flex-wrap: wrap; /* Para responsividade */
-    gap: 1rem; /* Espaçamento entre os elementos */
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .add-activity-btn {
@@ -191,7 +206,7 @@ body {
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s ease;
-    white-space: nowrap; /* Evita quebra de linha em telas pequenas */
+    white-space: nowrap;
 }
 
 .add-activity-btn:hover {
@@ -201,18 +216,42 @@ body {
 .search-filter-group {
     display: flex;
     gap: 0.75rem;
-    flex-grow: 1; /* Permite que o grupo de busca/filtro cresça */
-    justify-content: flex-end; /* Alinha à direita quando há espaço */
-    flex-wrap: wrap; /* Para responsividade */
+    flex-grow: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
 }
 
-/* Campo de Busca com ícones */
+/* Estilo para o Toggle de Concluídas (Botão com Ícone) - Item 4: OK */
+.toggle-completed-btn {
+    background: none;
+    border: none;
+    color: #FFCE00;
+    padding: 0; /* Sem padding visual extra */
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+    margin: 0; /* Garante que não há margens */
+    white-space: nowrap;
+}
+
+.toggle-completed-btn:hover {
+    color: #e6b800;
+}
+
+.toggle-completed-btn .mdi {
+    font-size: 1.25rem;
+}
+
+/* Campo de Busca com ícones (Lupa e X de Limpar) - Item 9: OK */
 .search-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
-    flex-grow: 1; /* Permite que o wrapper cresça */
-    max-width: 300px; /* Limita a largura do campo de busca */
+    flex-grow: 1;
+    max-width: 300px; /* Limite de largura para o campo */
 }
 
 .search-input-wrapper .search-input {
@@ -223,8 +262,8 @@ body {
     color: #eee;
     font-size: 0.95rem;
     box-sizing: border-box;
-    min-width: 150px; /* Garante que os campos não fiquem muito pequenos */
-    width: 100%; /* Ocupa a largura total do wrapper */
+    min-width: 150px;
+    width: 100%;
     padding-right: 2.5rem; /* Espaço para o ícone de limpar */
     padding-left: 2.5rem; /* Espaço para o ícone de lupa */
 }
@@ -251,7 +290,7 @@ body {
     background: none;
     border: none;
     padding: 0;
-    display: flex; /* Para centralizar o ícone mdi */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -260,33 +299,17 @@ body {
     color: #FFCE00;
 }
 
-.filter-select {
-    padding: 0.6rem 1rem;
-    border: 1px solid #444;
-    border-radius: 8px;
-    background-color: #333;
-    color: #eee;
-    font-size: 0.95rem;
-    box-sizing: border-box;
-    min-width: 150px; /* Garante que os campos não fiquem muito pequenos */
-    appearance: none; /* Remove a seta padrão do select */
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Seta customizada */
-    background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 16px;
-    cursor: pointer;
-}
-
+/* Tabela de Atividades */
 .table-container {
-    overflow-x: auto; /* Permite rolagem horizontal em telas pequenas para a tabela */
-    flex-grow: 1; /* Permite que a tabela ocupe o espaço restante */
+    overflow-x: auto;
+    flex-grow: 1;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
-    min-width: 700px; /* Garante que a tabela não fique muito espremida */
+    min-width: 700px;
 }
 
 table th,
@@ -294,7 +317,7 @@ table td {
     padding: 0.8rem;
     text-align: left;
     border-bottom: 1px solid #444;
-    white-space: normal; /* Permite quebra de linha dentro das células */
+    white-space: normal; /* Permite quebra de linha nas células */
 }
 
 table th {
@@ -315,140 +338,7 @@ table tr:hover td {
     background-color: #3A3A3A;
 }
 
-
-/* NOVO: Estilo para o Toggle de Concluídas (Botão com Ícone) - Substitui o bloco anterior para .toggle-completed-btn */
-.toggle-completed-btn {
-    background: none; /* Sem fundo */
-    border: none; /* Sem borda */
-    color: #FFCE00; /* Cor do ícone e texto */
-    padding: 0; /* Ajustado para 0, espaçamento será pelo gap */
-    font-size: 0.95rem; /* Tamanho da fonte para o texto */
-    cursor: pointer;
-    display: flex; /* Para alinhar ícone e texto */
-    align-items: center;
-    gap: 0.5rem; /* Espaçamento entre ícone e texto */
-    transition: color 0.3s ease; /* Transição apenas na cor */
-    margin: 0; /* Remove qualquer margin ou padding extra */
-}
-
-.toggle-completed-btn:hover {
-    color: #e6b800; /* Cor um pouco mais escura no hover */
-    /* Remove background-color se houver um aqui para evitar fundo */
-}
-
-.toggle-completed-btn .mdi {
-    font-size: 1.25rem; /* Tamanho do ícone */
-}
-
-/* NOVO: Estilo para botões de ação (Editar/Excluir) - Substitui o bloco anterior para .icon-action-btn */
-.icon-action-btn {
-    background: none; /* Sem fundo */
-    border: none; /* Sem borda */
-    color: #FFCE00; /* Cor padrão para os ícones de ação */
-    cursor: pointer;
-    font-size: 1.2rem; /* Tamanho dos ícones */
-    padding: 0.3rem; /* Pequeno padding para área de clique */
-    border-radius: 4px; /* Pequeno border-radius para hover visual */
-    transition: color 0.3s ease; /* Transição suave na cor */
-    display: inline-flex; /* Para alinhar ícones */
-    align-items: center;
-    justify-content: center;
-}
-
-.icon-action-btn:hover {
-    color: #e6b800; /* Amarelo um pouco mais escuro no hover */
-    /* Remova background-color ou box-shadow se houver um aqui para evitar fundo */
-}
-
-/* Estilo para o botão de exclusão especificamente */
-.delete-activity-btn:hover {
-    color: #dc3545; /* Vermelho no hover para exclusão */
-}
-
-/* NOVO: Estilos para o Status como Badge na Tabela */
-.status-badge {
-    display: inline-block; /* Para ter padding e border-radius */
-    padding: 0.4rem 0.7rem;
-    border-radius: 12px; /* Cantos arredondados */
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
-    min-width: 80px; /* Garante que todos os badges tenham uma largura mínima */
-    white-space: nowrap; /* Evita quebra de linha no texto do status */
-    cursor: pointer; /* Indica que é clicável (para abrir modal de edição) */
-    transition: background-color 0.3s, color 0.3s;
-}
-
-/* Cores dos Badges de Status (mesmas cores que o select, mas aplicadas ao span) */
-.status-badge.status-nao-iniciada {
-    background-color: #4A4A4A; /* Cinza mais escuro */
-    color: #CCCCCC;
-}
-.status-badge.status-executando {
-    background-color: #004A7D; /* Azul mais escuro */
-    color: #72C0FC;
-}
-.status-badge.status-concluida {
-    background-color: #1A6C2F; /* Verde mais escuro */
-    color: #7BE093;
-}
-.status-badge.status-atrasada {
-    background-color: #8D2A31; /* Vermelho mais escuro */
-    color: #FF8A90;
-}
-.status-badge.status-perto-expirar {
-    background-color: #9C6C00; /* Amarelo/Laranja mais escuro */
-    color: #FFE082;
-}
-
-/* Estilo para tarefas concluídas (texto riscado) - Ajuste de opacidade */
-.completed-task {
-    text-decoration: line-through;
-    color: rgba(255, 255, 255, 0.4); /* Branco com 40% de opacidade */
-    transition: all 0.3s ease-in-out;
-}
-
-/* Estilo para o select de status dentro da tabela */
-.status-select {
-    width: 100%;
-    padding: 0.4rem;
-    border: 1px solid #555;
-    border-radius: 4px;
-    background-color: #2A2A2A; /* Fundo do select */
-    color: #FFFFFF; /* Cor do texto no select */
-    font-size: 0.85rem;
-    appearance: none; /* Remove a seta padrão do select */
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Seta customizada */
-    background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 16px;
-    cursor: pointer;
-}
-
-/* Cores dos status no select (quando selecionados e para a classe do select) */
-.status-select.status-nao-iniciada {
-    background-color: #4A4A4A; /* Cinza mais escuro */
-    color: #CCCCCC;
-}
-.status-select.status-executando {
-    background-color: #004A7D; /* Azul mais escuro */
-    color: #72C0FC;
-}
-.status-select.status-concluida {
-    background-color: #1A6C2F; /* Verde mais escuro */
-    color: #7BE093;
-}
-.status-select.status-atrasada {
-    background-color: #8D2A31; /* Vermelho mais escuro */
-    color: #FF8A90;
-}
-.status-select.status-perto-expirar {
-    background-color: #9C6C00; /* Amarelo/Laranja mais escuro */
-    color: #FFE082;
-}
-
-
-/* Estilos para o Checkbox da Tabela */
+/* Estilo para o Checkbox da Tabela */
 table input[type="checkbox"] {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -464,7 +354,7 @@ table input[type="checkbox"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto; /* Centraliza o checkbox na célula */
+    margin: 0 auto;
 }
 
 table input[type="checkbox"]::before {
@@ -486,81 +376,170 @@ table input[type="checkbox"]:checked::before {
 /* Estilo para tarefas concluídas (texto riscado) */
 .completed-task {
     text-decoration: line-through;
-    color: rgba(255, 255, 255, 0.5); /* Cor branca com 50% de opacidade */
+    color: rgba(255, 255, 255, 0.4); /* Branco com 40% de opacidade */
     transition: all 0.3s ease-in-out;
 }
 
-/* Estilos para a Notificação de Tarefa Concluída/Desfazer */
-.notification-bar {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #2A2A2A;
-    color: #FFFFFF;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    display: flex;
+/* Estilo para os botões de ação (Editar/Excluir) - Item 6: OK (re-incluído para consistência) */
+.icon-action-btn {
+    background: none;
+    border: none;
+    color: #FFCE00;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.3rem;
+    border-radius: 4px;
+    transition: color 0.3s ease;
+    display: inline-flex;
     align-items: center;
-    gap: 1.5rem;
-    font-size: 1rem;
-    z-index: 1000;
-    overflow: hidden; /* Para a linha de progresso */
-    min-width: 300px;
+    justify-content: center;
 }
 
-.notification-bar span {
-    flex-grow: 1; /* Permite que o texto ocupe o espaço disponível */
+.icon-action-btn:hover {
+    color: #e6b800;
+}
+
+.delete-activity-btn:hover {
+    color: #dc3545;
+}
+
+
+/* Estilos para o Status como Badge na Tabela - Item 3 */
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 0.7rem;
+    border-radius: 32px; /* Cantos arredondados */
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    min-width: 100px; /* Largura mínima para uniformidade */
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Cores dos Badges de Status */
+.status-badge.status-nao-iniciada {
+    background-color: #4A4A4A;
+    color: #CCCCCC;
+}
+.status-badge.status-executando {
+    background-color: #004A7D;
+    color: #72C0FC;
+}
+.status-badge.status-concluida {
+    background-color: #1A6C2F;
+    color: #7BE093;
+}
+.status-badge.status-atrasada {
+    background-color: #8D2A31;
+    color: #FF8A90;
+}
+.status-badge.status-perto-expirar {
+    background-color: #9C6C00;
+    color: #FFE082;
+}
+
+/* Estilos para o Multi-select de filtro (checkboxes em dropdown) - Item 8 */
+.multi-select-filter-wrapper {
+    position: relative;
+    display: inline-block;
     white-space: nowrap;
 }
 
-.notification-bar .undo-button {
-    background-color: #FFCE00;
-    color: #000;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 20px;
-    font-weight: bold;
+.filter-dropdown-btn {
+    background-color: #333;
+    color: #eee;
+    padding: 0.6rem 1rem;
+    border: 1px solid #444;
+    border-radius: 8px;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
-.notification-bar .undo-button:hover {
-    background-color: #e6b800;
+.filter-dropdown-btn:hover {
+    background-color: #444;
+    border-color: #FFCE00;
 }
 
-.progress-line {
+.filter-dropdown-btn .mdi {
+    font-size: 1.1rem;
+}
+
+.filter-options-dropdown {
     position: absolute;
-    bottom: 0;
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    z-index: 1001;
+    padding: 0.5rem;
+    min-width: 180px;
+    top: 100%;
     left: 0;
-    width: 100%;
-    height: 4px;
+    margin-top: 5px;
+}
+
+.filter-options-dropdown label {
+    display: flex;
+    align-items: center;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.filter-options-dropdown label:hover {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+.filter-options-dropdown input[type="checkbox"] {
+    margin-right: 0.5rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #FFCE00;
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+}
+
+.filter-options-dropdown input[type="checkbox"]:checked {
     background-color: #FFCE00;
-    animation: progressAnimation 5s linear forwards; /* Animação de 5 segundos */
+    border-color: #FFCE00;
 }
 
-@keyframes progressAnimation {
-    from {
-        width: 100%;
-    }
-    to {
-        width: 0%;
-    }
+.filter-options-dropdown input[type="checkbox"]:checked::before {
+    content: '✔';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: #000;
 }
 
-/* Estilos para o Modal */
+/* Estilos para o Modal de Confirmação Customizado (Item 2) */
 .modal {
-    /*display: none; /* Oculto por padrão */
-    position: fixed; /* Fica por cima de tudo */
-    z-index: 2000; /* Z-index alto para garantir que esteja no topo */
+    position: fixed;
+    z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto; /* Habilita rolagem se o conteúdo for muito grande */
-    background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
-    display: flex; /* Para centralizar o modal-content */
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    display: flex;
     align-items: center;
     justify-content: center;
 }
@@ -573,8 +552,13 @@ table input[type="checkbox"]:checked::before {
     width: 90%;
     max-width: 500px;
     position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
     color: #fff;
+}
+
+.modal-content.small-modal { /* Para o modal de confirmação */
+    max-width: 350px;
+    text-align: center;
 }
 
 .modal-content h2 {
@@ -582,6 +566,17 @@ table input[type="checkbox"]:checked::before {
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 1.5rem;
+}
+
+.modal-content.small-modal h2 { /* Título do modal de confirmação */
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.modal-content.small-modal p { /* Texto do modal de confirmação */
+    font-size: 1rem;
+    color: #ccc;
+    margin-bottom: 2rem;
 }
 
 .modal-content .close-button {
@@ -649,6 +644,50 @@ table input[type="checkbox"]:checked::before {
     background-color: #e6b800;
 }
 
+.modal-buttons { /* Botões do modal de confirmação */
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Estilo para os SELECTs dentro do modal (com cores de status) - Item 3 */
+.modal-content select#activityStatus {
+    background-color: #2a2a2a; /* Fundo base */
+    color: #eee; /* Texto base */
+    border: 1px solid #444;
+    transition: background-color 0.3s, color 0.3s;
+    /* Para a seta customizada no select, se necessário */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 16px;
+}
+
+.modal-content select#activityStatus.status-nao-iniciada {
+    background-color: #4A4A4A;
+    color: #CCCCCC;
+}
+.modal-content select#activityStatus.status-executando {
+    background-color: #004A7D;
+    color: #72C0FC;
+}
+.modal-content select#activityStatus.status-concluida {
+    background-color: #1A6C2F;
+    color: #7BE093;
+}
+.modal-content select#activityStatus.status-atrasada {
+    background-color: #8D2A31;
+    color: #FF8A90;
+}
+.modal-content select#activityStatus.status-perto-expirar {
+    background-color: #9C6C00;
+    color: #FFE082;
+}
+
+
 /* Mensagem de estado vazio para a tabela */
 .empty-state-message,
 .loading-message {
@@ -658,8 +697,64 @@ table input[type="checkbox"]:checked::before {
     font-style: italic;
 }
 
+/* Notificação inferior (showNotification) */
+.notification-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2A2A2A;
+    color: #FFFFFF;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 1rem;
+    z-index: 1000;
+    overflow: hidden;
+    min-width: 300px;
+    transition: opacity 0.3s ease-in-out;
+}
 
-/* Responsividade para o modal e outros elementos */
+.notification-bar span {
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+.notification-bar .undo-button {
+    background-color: #FFCE00;
+    color: #000;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.notification-bar .undo-button:hover {
+    background-color: #e6b800;
+}
+
+.progress-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background-color: #FFCE00;
+    animation: progressAnimation 5s linear forwards;
+}
+
+@keyframes progressAnimation {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+
+/* Responsividade Geral */
 @media (max-width: 768px) {
     .dashboard-card {
         flex-direction: column;
@@ -676,14 +771,12 @@ table input[type="checkbox"]:checked::before {
         justify-content: center;
         padding: 1rem 0;
         border-bottom: 2px solid #FFCE00;
-        position: static; /* Garante que não flutue em mobile */
+        position: static;
     }
 
     .sidebar-top {
-        display: flex;
-        flex-direction: row;
+        flex-direction: row; /* Para alinhar logo e menu horizontalmente */
         justify-content: center;
-        align-items: center;
         width: 100%;
     }
 
@@ -705,11 +798,11 @@ table input[type="checkbox"]:checked::before {
     }
 
     .hover-box {
-        display: none; /* Desabilita a animação em mobile se preferir */
+        display: none; /* Desabilita a animação em mobile */
     }
-
+    
     .logout-btn {
-        display: none; /* Oculta o botão de sair aqui, pode ser movido para o cabeçalho principal ou um menu hamburger */
+        display: none; /* Pode ser movido para um menu hamburger ou cabeçalho principal */
     }
 
     .main-area {
@@ -727,11 +820,23 @@ table input[type="checkbox"]:checked::before {
         width: 100%;
     }
 
-    .search-input,
-    .filter-select {
+    .search-input-wrapper,
+    .filter-dropdown-btn { /* Também o botão do filtro */
         width: 100%;
         min-width: unset;
     }
+
+    .search-input-wrapper .search-input {
+        width: 100%;
+    }
+
+    .multi-select-filter-wrapper {
+        width: 100%;
+    }
+    .filter-options-dropdown {
+        min-width: 100%; /* Ocupa a largura total do pai */
+    }
+
 
     table {
         min-width: 100%; /* Permite que a tabela se ajuste melhor em telas pequenas */
@@ -751,5 +856,9 @@ table input[type="checkbox"]:checked::before {
     }
     .notification-bar .undo-button {
         width: 100%;
+    }
+
+    .modal-content.small-modal { /* Para o modal de confirmação em mobile */
+        width: 95%;
     }
 }
