@@ -17,8 +17,8 @@
                     <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="Logo" class="sidebar-logo" />
                     <nav class="sidebar-menu">
                         <div class="active-indicator"></div> <button class="icon-btn active" data-section="overview" title="Visão Geral">👤</button>
-                        <button class="icon-btn" data-section="activities" title="Atividades">🗓️</button>
-                        <button class="icon-btn" data-section="sessions" title="Sessões">✏️</button>
+                        <button class="icon-btn" data-section="sessions" title="Sessões">🗓️</button>
+                        <button class="icon-btn" data-section="activities" title="Atividades">✏️</button>
                         <button class="icon-btn" data-section="notes" title="Anotações">📄</button>
                         <button class="icon-btn" data-section="profile" title="Perfil">📞</button>
                     </nav>
@@ -46,7 +46,8 @@
                             <button id="toggleCompletedTasksBtn" class="toggle-completed-btn">
                                 <span class="mdi mdi-eye-outline"></span> <span class="toggle-text">Ocultar Concluídas</span>
                             </button>
-                            <div class="search-input-wrapper"> <input type="text" id="activitySearch" placeholder="Buscar atividade..." class="search-input">
+                            <div class="search-input-wrapper">
+                                <input type="text" id="activitySearch" placeholder="Buscar atividade..." class="search-input">
                                 <span class="mdi mdi-magnify search-icon"></span>
                                 <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
                                     <span class="mdi mdi-close-circle"></span>
@@ -70,8 +71,7 @@
                                     <th></th> <th>Atividade</th>
                                     <th>Descrição/Observações</th>
                                     <th>Data limite</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
+                                    <th>Status</th> <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="activitiesTableBody">
@@ -126,9 +126,6 @@
                 </section>
                 <section class="content-section" id="section-sessions" style="display: none;">
                     <p>Conteúdo das sessões aqui.</p>
-                </section>
-                <section class="content-section" id="section-activities-placeholder" style="display: none;">
-                    <p>Conteúdo das atividades aqui (placeholder antigo, remover).</p>
                 </section>
                 <section class="content-section" id="section-notes" style="display: none;">
                     <p>Conteúdo das anotações aqui.</p>
