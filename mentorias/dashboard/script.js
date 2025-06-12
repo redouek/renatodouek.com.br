@@ -98,26 +98,17 @@ const filterCountBadge = document.querySelector('.filter-count-badge'); // Conta
 
 // Função para renderizar as atividades na tabela
 function renderActivities(activitiesToRender) {
-    activitiesTableBody.innerHTML = ''; // Limpa a tabela
-
-    if (activitiesToRender.length === 0) {
-        noActivitiesMessage.style.display = 'block';
-        return;
-    } else {
-        noActivitiesMessage.style.display = 'none';
-    }
-
+    // ...
     activitiesToRender.forEach(activity => {
-        const isCompleted = activity.StatusAtual === 'Concluída';
-        const row = document.createElement('tr');
-        row.classList.toggle('completed-task', isCompleted); // Adiciona classe riscada
-
-        console.log("Atividade a ser renderizada:", activity); // LOG DE DEBUG PARA DESCRIÇÃO (Item 9)
+        // ...
+        console.log("Atividade a ser renderizada (para descrição):", activity.descricaoObservacoes); // LOG DE DEBUG: Use a nova chave aqui
+        console.log("Valor a ser injetado na descrição:", String(activity.descricaoObservacoes || 'VAZIO_NO_OBJETO')); // LOG DE DEBUG: Use a nova chave aqui
 
         row.innerHTML = `
             <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
             <td>${activity.Atividade || ''}</td>
-            <td>${activity.DescricaoObservacoes || ''}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
+            <td>${activity.descricaoObservacoes || ''}</td>
+            <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
             <td>
                 <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
             </td>
@@ -130,11 +121,16 @@ function renderActivities(activitiesToRender) {
                 </button>
             </td>
         `;
-        activitiesTableBody.appendChild(row);
+        // ...
     });
+    // ...
+}
 
-    // Adiciona event listeners aos novos elementos (checkboxes, badges, botões)
-    addActivityEventListeners();
+// ... (Também na função openEditModal, mude activityToEdit.DescricaoObservacoes para activityToEdit.descricaoObservacoes) ...
+function openEditModal(event) {
+    // ...
+    activityDescriptionInput.value = activityToEdit.descricaoObservacoes || ''; // MUDANÇA AQUI
+    // ...
 }
 
 // Filtra e busca as atividades carregadas
