@@ -503,6 +503,8 @@ table input[type="checkbox"]:checked::before {
     right: -5px; /* Ajuste a posição horizontal para o canto superior direito do botão */
     transform: translate(50%, -50%); /* Ajuste fino para centralizar o círculo na esquina */
     z-index: 10; /* Garante que ele fique acima de outros elementos */
+    margin-right: 30px;
+    margin-top: 25px;
 }
 
 .filter-options-dropdown {
