@@ -315,6 +315,99 @@ table tr:hover td {
     background-color: #3A3A3A;
 }
 
+
+/* NOVO: Estilo para o Toggle de Concluídas (Botão com Ícone) - Substitui o bloco anterior para .toggle-completed-btn */
+.toggle-completed-btn {
+    background: none; /* Sem fundo */
+    border: none; /* Sem borda */
+    color: #FFCE00; /* Cor do ícone e texto */
+    padding: 0; /* Ajustado para 0, espaçamento será pelo gap */
+    font-size: 0.95rem; /* Tamanho da fonte para o texto */
+    cursor: pointer;
+    display: flex; /* Para alinhar ícone e texto */
+    align-items: center;
+    gap: 0.5rem; /* Espaçamento entre ícone e texto */
+    transition: color 0.3s ease; /* Transição apenas na cor */
+    margin: 0; /* Remove qualquer margin ou padding extra */
+}
+
+.toggle-completed-btn:hover {
+    color: #e6b800; /* Cor um pouco mais escura no hover */
+    /* Remove background-color se houver um aqui para evitar fundo */
+}
+
+.toggle-completed-btn .mdi {
+    font-size: 1.25rem; /* Tamanho do ícone */
+}
+
+/* NOVO: Estilo para botões de ação (Editar/Excluir) - Substitui o bloco anterior para .icon-action-btn */
+.icon-action-btn {
+    background: none; /* Sem fundo */
+    border: none; /* Sem borda */
+    color: #FFCE00; /* Cor padrão para os ícones de ação */
+    cursor: pointer;
+    font-size: 1.2rem; /* Tamanho dos ícones */
+    padding: 0.3rem; /* Pequeno padding para área de clique */
+    border-radius: 4px; /* Pequeno border-radius para hover visual */
+    transition: color 0.3s ease; /* Transição suave na cor */
+    display: inline-flex; /* Para alinhar ícones */
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-action-btn:hover {
+    color: #e6b800; /* Amarelo um pouco mais escuro no hover */
+    /* Remova background-color ou box-shadow se houver um aqui para evitar fundo */
+}
+
+/* Estilo para o botão de exclusão especificamente */
+.delete-activity-btn:hover {
+    color: #dc3545; /* Vermelho no hover para exclusão */
+}
+
+/* NOVO: Estilos para o Status como Badge na Tabela */
+.status-badge {
+    display: inline-block; /* Para ter padding e border-radius */
+    padding: 0.4rem 0.7rem;
+    border-radius: 12px; /* Cantos arredondados */
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    min-width: 80px; /* Garante que todos os badges tenham uma largura mínima */
+    white-space: nowrap; /* Evita quebra de linha no texto do status */
+    cursor: pointer; /* Indica que é clicável (para abrir modal de edição) */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Cores dos Badges de Status (mesmas cores que o select, mas aplicadas ao span) */
+.status-badge.status-nao-iniciada {
+    background-color: #4A4A4A; /* Cinza mais escuro */
+    color: #CCCCCC;
+}
+.status-badge.status-executando {
+    background-color: #004A7D; /* Azul mais escuro */
+    color: #72C0FC;
+}
+.status-badge.status-concluida {
+    background-color: #1A6C2F; /* Verde mais escuro */
+    color: #7BE093;
+}
+.status-badge.status-atrasada {
+    background-color: #8D2A31; /* Vermelho mais escuro */
+    color: #FF8A90;
+}
+.status-badge.status-perto-expirar {
+    background-color: #9C6C00; /* Amarelo/Laranja mais escuro */
+    color: #FFE082;
+}
+
+/* Estilo para tarefas concluídas (texto riscado) - Ajuste de opacidade */
+.completed-task {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.4); /* Branco com 40% de opacidade */
+    transition: all 0.3s ease-in-out;
+}
+
 /* Estilo para o select de status dentro da tabela */
 .status-select {
     width: 100%;
