@@ -226,14 +226,14 @@ body {
     background: none;
     border: none;
     color: #FFCE00;
-    padding: 0; /* Sem padding visual extra */
+    padding: 0;
     font-size: 0.95rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     transition: color 0.3s ease;
-    margin: 0; /* Garante que não há margens */
+    margin: 0;
     white-space: nowrap;
 }
 
@@ -251,7 +251,7 @@ body {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    max-width: 300px; /* Limite de largura para o campo */
+    max-width: 300px;
 }
 
 .search-input-wrapper .search-input {
@@ -264,12 +264,23 @@ body {
     box-sizing: border-box;
     min-width: 150px;
     width: 100%;
-    padding-right: 2.5rem; /* Espaço para o ícone de limpar */
-    padding-left: 2.5rem; /* Espaço para o ícone de lupa */
+    padding-right: 2.5rem;
+    padding-left: 2.5rem;
 }
 
 .search-input-wrapper .search-input::placeholder {
     color: #bbb;
+}
+
+/* Estilo para o ícone de calendário em input[type="date"] (Item 8) */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(100%) brightness(100%) sepia(100%) saturate(0%) hue-rotate(0deg) !important; /* Tenta deixar branco */
+    /* Para deixar amarelo: filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(0deg) brightness(100%) contrast(100%); */
+}
+input[type="date"] {
+    color-scheme: dark; /* Ajuda a estilizar o widget do calendário em alguns browsers */
+    /* Cor do texto do input, que as vezes influencia o ícone */
+    color: #FFCE00;
 }
 
 .search-input-wrapper .search-icon,
@@ -317,7 +328,7 @@ table td {
     padding: 0.8rem;
     text-align: left;
     border-bottom: 1px solid #444;
-    white-space: normal; /* Permite quebra de linha nas células */
+    white-space: normal;
 }
 
 table th {
@@ -373,14 +384,14 @@ table input[type="checkbox"]:checked::before {
     display: block;
 }
 
-/* Estilo para tarefas concluídas (texto riscado) */
+/* Estilo para tarefas concluídas (texto riscado) - Item 6 */
 .completed-task {
     text-decoration: line-through;
-    color: rgba(255, 255, 255, 0.4); /* Branco com 40% de opacidade */
+    color: rgba(255, 255, 255, 0.6); /* MUDANÇA: Opacidade para 60% (mais visível) */
     transition: all 0.3s ease-in-out;
 }
 
-/* Estilo para os botões de ação (Editar/Excluir) - Item 6: OK (re-incluído para consistência) */
+/* Estilo para os botões de ação (Editar/Excluir) - Item 6: OK */
 .icon-action-btn {
     background: none;
     border: none;
@@ -403,16 +414,15 @@ table input[type="checkbox"]:checked::before {
     color: #dc3545;
 }
 
-
-/* Estilos para o Status como Badge na Tabela - Item 3 */
+/* Estilos para o Status como Badge na Tabela - Item 2 */
 .status-badge {
     display: inline-block;
     padding: 0.4rem 0.7rem;
-    border-radius: 32px; /* Cantos arredondados */
+    border-radius: 32px; /* MUDANÇA: Cantos mais arredondados */
     font-size: 0.8rem;
     font-weight: bold;
     text-align: center;
-    min-width: 100px; /* Largura mínima para uniformidade */
+    min-width: 120px; /* MUDANÇA: Aumenta a largura mínima para uniformidade */
     white-space: nowrap;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -440,7 +450,7 @@ table input[type="checkbox"]:checked::before {
     color: #FFE082;
 }
 
-/* Estilos para o Multi-select de filtro (checkboxes em dropdown) - Item 8 */
+/* Estilos para o Multi-select de filtro (checkboxes em dropdown) - Item 5 */
 .multi-select-filter-wrapper {
     position: relative;
     display: inline-block;
@@ -529,7 +539,21 @@ table input[type="checkbox"]:checked::before {
     color: #000;
 }
 
-/* Estilos para o Modal de Confirmação Customizado (Item 2) */
+/* Contador de filtros no botão (Item 5) */
+.filter-count-badge {
+    background-color: #FFCE00;
+    color: #000;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.1rem 0.4rem;
+    border-radius: 50%; /* Circular */
+    margin-left: 0.5rem;
+    min-width: 1rem; /* Garante que o círculo não fique muito pequeno */
+    text-align: center;
+    display: inline-block; /* Para padding e width */
+}
+
+/* Estilos para o Modal Customizado e seus botões */
 .modal {
     position: fixed;
     z-index: 2000;
@@ -556,7 +580,7 @@ table input[type="checkbox"]:checked::before {
     color: #fff;
 }
 
-.modal-content.small-modal { /* Para o modal de confirmação */
+.modal-content.small-modal { /* Para o modal de confirmação (Item 2) */
     max-width: 350px;
     text-align: center;
 }
@@ -644,19 +668,36 @@ table input[type="checkbox"]:checked::before {
     background-color: #e6b800;
 }
 
-.modal-buttons { /* Botões do modal de confirmação */
+.modal-buttons {
     display: flex;
     justify-content: center;
     gap: 1rem;
 }
 
-/* Estilo para os SELECTs dentro do modal (com cores de status) - Item 3 */
+.modal-buttons .button-outline-yellow { /* Botão Cancelar no customConfirm (Item 1) */
+    background-color: transparent; /* Sem fundo */
+    color: #FFCE00; /* Texto amarelo */
+    border: 2px solid #FFCE00; /* Borda amarela */
+    padding: 0.75rem 1.5rem;
+    border-radius: 32px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.modal-buttons .button-outline-yellow:hover {
+    background-color: #FFCE00; /* Fundo amarelo no hover */
+    color: #000; /* Texto preto no hover */
+}
+
+/* Estilo para os SELECTs dentro do modal (com cores de status) - Item 4 */
 .modal-content select#activityStatus {
     background-color: #2a2a2a; /* Fundo base */
     color: #eee; /* Texto base */
     border: 1px solid #444;
     transition: background-color 0.3s, color 0.3s;
-    /* Para a seta customizada no select, se necessário */
+    /* Para a seta customizada no select */
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -715,7 +756,15 @@ table input[type="checkbox"]:checked::before {
     z-index: 1000;
     overflow: hidden;
     min-width: 300px;
-    transition: opacity 0.3s ease-in-out;
+    opacity: 0; /* Começa oculto */
+    visibility: hidden; /* Item 10: Garante que não ocupa espaço nem interage */
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s; /* Item 10: Transição para sumir totalmente */
+}
+
+.notification-bar.show { /* Classe para mostrar a notificação */
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-in-out; /* Item 10: Transição para aparecer */
 }
 
 .notification-bar span {
@@ -745,7 +794,7 @@ table input[type="checkbox"]:checked::before {
     width: 100%;
     height: 4px;
     background-color: #FFCE00;
-    animation: progressAnimation 5s linear forwards;
+    animation: progressAnimation 3s linear forwards; /* MUDANÇA: 3 segundos - Item 7 */
 }
 
 @keyframes progressAnimation {
@@ -756,12 +805,26 @@ table input[type="checkbox"]:checked::before {
 
 /* Responsividade Geral */
 @media (max-width: 768px) {
+    body {
+        /* Remove centralização absoluta para mobile para evitar scroll desnecessário */
+        display: block; 
+        height: auto;
+        min-height: 100vh;
+        overflow-x: hidden; /* Evita scroll horizontal */
+    }
+    .app-background {
+        height: auto;
+        min-height: 100vh; /* Garante que o fundo ocupe a tela em mobile */
+        padding: 0; /* Remove padding extra */
+        display: block; /* Para que o card se adapte melhor */
+    }
     .dashboard-card {
         flex-direction: column;
         height: auto;
         min-height: 100vh;
         width: 100vw;
         border-radius: 0;
+        box-shadow: none; /* Remove sombra em mobile */
     }
 
     .sidebar {
@@ -775,13 +838,13 @@ table input[type="checkbox"]:checked::before {
     }
 
     .sidebar-top {
-        flex-direction: row; /* Para alinhar logo e menu horizontalmente */
+        flex-direction: row;
         justify-content: center;
         width: 100%;
     }
 
     .sidebar-logo {
-        display: none; /* Oculta o logo em mobile para economizar espaço */
+        display: none;
     }
 
     .sidebar-menu {
@@ -798,11 +861,11 @@ table input[type="checkbox"]:checked::before {
     }
 
     .hover-box {
-        display: none; /* Desabilita a animação em mobile */
+        display: none;
     }
     
     .logout-btn {
-        display: none; /* Pode ser movido para um menu hamburger ou cabeçalho principal */
+        display: none;
     }
 
     .main-area {
@@ -821,7 +884,7 @@ table input[type="checkbox"]:checked::before {
     }
 
     .search-input-wrapper,
-    .filter-dropdown-btn { /* Também o botão do filtro */
+    .filter-dropdown-btn {
         width: 100%;
         min-width: unset;
     }
@@ -834,12 +897,12 @@ table input[type="checkbox"]:checked::before {
         width: 100%;
     }
     .filter-options-dropdown {
-        min-width: 100%; /* Ocupa a largura total do pai */
+        min-width: 100%;
     }
 
 
     table {
-        min-width: 100%; /* Permite que a tabela se ajuste melhor em telas pequenas */
+        min-width: 100%;
     }
 
     .modal-content {
@@ -858,7 +921,7 @@ table input[type="checkbox"]:checked::before {
         width: 100%;
     }
 
-    .modal-content.small-modal { /* Para o modal de confirmação em mobile */
+    .modal-content.small-modal {
         width: 95%;
     }
 }
