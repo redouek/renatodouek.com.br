@@ -98,17 +98,34 @@ const filterCountBadge = document.querySelector('.filter-count-badge'); // Conta
 
 // Função para renderizar as atividades na tabela
 function renderActivities(activitiesToRender) {
-    // ...
-    activitiesToRender.forEach(activity => {
-        // ...
-        console.log("Atividade a ser renderizada (para descrição):", activity.descricaoObservacoes); // LOG DE DEBUG: Use a nova chave aqui
-        console.log("Valor a ser injetado na descrição:", String(activity.descricaoObservacoes || 'VAZIO_NO_OBJETO')); // LOG DE DEBUG: Use a nova chave aqui
+    activitiesTableBody.innerHTML = ''; // Limpa a tabela
 
+    if (activitiesToRender.length === 0) {
+        noActivitiesMessage.style.display = 'block';
+        return;
+    } else {
+        noActivitiesMessage.style.display = 'none';
+    }
+
+    activitiesToRender.forEach(activity => {
+        // MUDANÇA: Adiciona log para verificar o objeto 'activity' no início do loop
+        console.log("Início do loop: Processando atividade para renderização:", activity);
+        
+        const isCompleted = activity.StatusAtual === 'Concluída';
+        const row = document.createElement('tr'); // Linha 102 (ou próxima)
+        row.classList.toggle('completed-task', isCompleted);
+
+        // MUDANÇA: Adiciona log para verificar se 'row' foi criado com sucesso
+        console.log("Elemento 'row' criado com document.createElement('tr'):", row);
+
+        // LOGS DE DEBUG DA DESCRIÇÃO (Mantenho para quando este bug for resolvido)
+        console.log("Atividade.descricaoObservacoes (do objeto):", activity.descricaoObservacoes); 
+        console.log("Valor final para injetar na descrição:", String(activity.descricaoObservacoes || 'VAZIO_NO_OBJETO_OU_CAMPO')); 
+
+        // MUDANÇA: Conteúdo de innerHTML para depuração e exibição
         row.innerHTML = `
             <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
-            <td>${activity.Atividade || ''}</td>
-            <td>${activity.descricaoObservacoes || ''}</td>
-            <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
+            <td>${activity.Atividade || 'Atividade Vazia'}</td> <td>${String(activity.descricaoObservacoes || 'Descrição Vazia')}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
             <td>
                 <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
             </td>
@@ -121,10 +138,17 @@ function renderActivities(activitiesToRender) {
                 </button>
             </td>
         `;
-        // ...
+        
+        // MUDANÇA: Adiciona log para verificar o HTML gerado antes de anexar
+        console.log("InnerHTML gerado para a linha:", row.innerHTML);
+
+        activitiesTableBody.appendChild(row); // Linha 107 (ou próxima)
     });
-    // ...
+
+    // Adiciona event listeners aos novos elementos (checkboxes, badges, botões)
+    addActivityEventListeners();
 }
+
 
 // ... (Também na função openEditModal, mude activityToEdit.descricaoObservacoes para activityToEdit.descricaoObservacoes) ...
 function openEditModal(event) {
