@@ -2,16 +2,10 @@
 
 // Variáveis globais para armazenar as atividades e o estado do toggle de concluídas
 let allActivities = []; // Armazenará todas as atividades carregadas do servidor
+let currentFilter = 'all';
 let currentSearchTerm = '';
-let showCompletedTasks = false; // False = Ocultar Concluídas, True = Ver Concluídas.
-let selectedStatusFilters = []; // Para o filtro multi-seleção de status
-
-// Variáveis para o modal de confirmação customizado
-let customConfirmPromiseResolve;
-let customConfirmPromiseReject;
-let notificationBarTimeoutId; // Para limpar o timeout da notificação ao trocar de seção
-let undoTimeout; // Variável para controlar o timeout da notificação "Desfazer"
-
+// MUDANÇA: showCompletedTasks = false (Ver Concluídas por padrão)
+let showCompletedTasks = false; // False = Ocultar Concluídas, True = Ver Concluídas. (No front, se false o ícone é eye-off-outline)
 
 // ===============================================================
 // Funções Auxiliares
@@ -41,7 +35,7 @@ function formatarDataParaInput(dataString) {
     return `${ano}-${mes}-${dia}`;
 }
 
-// getStatusClass agora define classes para o BADGE (Item 2)
+// MUDANÇA: getStatusClass agora define classes para o BADGE
 function getStatusClass(status) {
     switch (status) {
         case "Não iniciada": return "status-nao-iniciada";
@@ -78,6 +72,7 @@ async function callAppsScript(action, data = {}) {
         return await response.json();
     } catch (error) {
         console.error(`Erro ao chamar Apps Script para ação ${action}:`, error);
+        // MUDANÇA: Usa showNotification para erros de comunicação
         showNotification(`Erro de comunicação: ${error.message}. Por favor, verifique sua conexão ou tente novamente.`, false);
         return { status: 'error', message: error.message };
     }
@@ -93,8 +88,6 @@ const noActivitiesMessage = document.getElementById('noActivitiesMessage');
 const toggleCompletedTasksBtn = document.getElementById('toggleCompletedTasksBtn');
 const toggleTextSpan = toggleCompletedTasksBtn.querySelector('.toggle-text');
 const toggleIconSpan = toggleCompletedTasksBtn.querySelector('.mdi');
-const filterCountBadge = document.querySelector('.filter-count-badge'); // Contador de filtros (Item 5)
-
 
 // Função para renderizar as atividades na tabela
 function renderActivities(activitiesToRender) {
@@ -108,24 +101,14 @@ function renderActivities(activitiesToRender) {
     }
 
     activitiesToRender.forEach(activity => {
-        // MUDANÇA: Adiciona log para verificar o objeto 'activity' no início do loop
-        console.log("Início do loop: Processando atividade para renderização:", activity);
-        
         const isCompleted = activity.StatusAtual === 'Concluída';
-        const row = document.createElement('tr'); // Linha 102 (ou próxima)
-        row.classList.toggle('completed-task', isCompleted);
+        const row = document.createElement('tr');
+        row.classList.toggle('completed-task', isCompleted); // Adiciona classe riscada
 
-        // MUDANÇA: Adiciona log para verificar se 'row' foi criado com sucesso
-        console.log("Elemento 'row' criado com document.createElement('tr'):", row);
-
-        // LOGS DE DEBUG DA DESCRIÇÃO (Mantenho para quando este bug for resolvido)
-        console.log("Atividade.descricaoObservacoes (do objeto):", activity.descricaoObservacoes); 
-        console.log("Valor final para injetar na descrição:", String(activity.descricaoObservacoes || 'VAZIO_NO_OBJETO_OU_CAMPO')); 
-
-        // MUDANÇA: Conteúdo de innerHTML para depuração e exibição
         row.innerHTML = `
             <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
-            <td>${activity.Atividade || 'Atividade Vazia'}</td> <td>${String(activity.descricaoObservacoes || 'Descrição Vazia')}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
+            <td>${activity.Atividade}</td>
+            <td>${activity.DescricaoObservacoes || ''}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
             <td>
                 <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
             </td>
@@ -138,55 +121,34 @@ function renderActivities(activitiesToRender) {
                 </button>
             </td>
         `;
-        
-        // MUDANÇA: Adiciona log para verificar o HTML gerado antes de anexar
-        console.log("InnerHTML gerado para a linha:", row.innerHTML);
-
-        activitiesTableBody.appendChild(row); // Linha 107 (ou próxima)
+        activitiesTableBody.appendChild(row);
     });
 
     // Adiciona event listeners aos novos elementos (checkboxes, badges, botões)
     addActivityEventListeners();
 }
 
-
-// ... (Também na função openEditModal, mude activityToEdit.descricaoObservacoes para activityToEdit.descricaoObservacoes) ...
-function openEditModal(event) {
-    // ...
-    activityDescriptionInput.value = activityToEdit.descricaoObservacoes || ''; // MUDANÇA AQUI
-    // ...
-}
-
 // Filtra e busca as atividades carregadas
 function filterAndSearchActivities() {
     let filtered = allActivities.filter(activity => {
-        // Lógica do toggle "Ver Concluídas" / "Ocultar Concluídas"
+        // MUDANÇA: Lógica do toggle "Ver Concluídas" / "Ocultar Concluídas"
+        // Se showCompletedTasks for FALSE (significa que queremos ocultar as concluídas)
         if (!showCompletedTasks && activity.StatusAtual === 'Concluída') {
+            return false; // Não inclui atividades concluídas se o toggle estiver para "Ocultar Concluídas"
+        }
+        // Lógica do filtro de status
+        if (currentFilter !== 'all' && activity.StatusAtual !== currentFilter) {
             return false;
         }
-        // Lógica do filtro de status multi-seleção (Item 5)
-        if (selectedStatusFilters.length > 0 && !selectedStatusFilters.includes(activity.StatusAtual)) {
-            return false;
-        }
-        // Lógica da busca (Item 9)
+        // Lógica da busca
         const searchTermLower = currentSearchTerm.toLowerCase();
         return (
-            String(activity.Atividade || '').toLowerCase().includes(searchTermLower) ||
-            String(activity.descricaoObservacoes || '').toLowerCase().includes(searchTermLower)
+            String(activity.Atividade || '').toLowerCase().includes(searchTermLower) || // MUDANÇA: String() e || '' para evitar erro se for null/undefined
+            String(activity.DescricaoObservacoes || '').toLowerCase().includes(searchTermLower)
         );
     });
     console.log("Atividades filtradas e/ou buscadas:", filtered); // Log para depuração
     renderActivities(filtered);
-
-    // Atualiza o contador de filtros selecionados (Item 5)
-    if (filterCountBadge) {
-        if (selectedStatusFilters.length > 0) {
-            filterCountBadge.textContent = selectedStatusFilters.length;
-            filterCountBadge.style.display = 'inline-block';
-        } else {
-            filterCountBadge.style.display = 'none';
-        }
-    }
 }
 
 // Carregar atividades do Apps Script
@@ -205,7 +167,7 @@ async function loadActivities() {
     activitiesTableBody.innerHTML = ''; // Limpa a tabela antes de carregar
 
     const result = await callAppsScript('getActivitiesByCpf', { cpf: usuario.cpf.replace(/\D/g, '') });
-    console.log("Resposta bruta do Apps Script (loadActivities):", result);
+
     loadingActivitiesMessage.style.display = 'none';
 
     if (result.status === 'success' && result.activities) {
@@ -215,8 +177,8 @@ async function loadActivities() {
     } else {
         allActivities = [];
         filterAndSearchActivities(); // Renderiza vazio e exibe mensagem de 'Nenhuma atividade'
-        console.error("Falha ao carregar atividades (frontend interpretado):", result.message);
-        showNotification("Erro ao carregar atividades: " + result.message, false);
+        console.error("Falha ao carregar atividades:", result.message);
+        showNotification("Erro ao carregar atividades: " + result.message, false); // MUDANÇA: Notificação para erro
     }
 }
 
@@ -224,9 +186,10 @@ async function loadActivities() {
 // Interações da Tabela de Atividades
 // ===============================================================
 
+let undoTimeout; // Variável para controlar o timeout da notificação "Desfazer"
+let lastCompletedActivity = null; // Armazena a última atividade marcada como concluída para o "Desfazer"
+
 function showNotification(message, showUndo = false) {
-    // Garante que a notificação anterior seja limpa antes de mostrar uma nova
-    clearTimeout(notificationBarTimeoutId);
     const notificationBar = document.getElementById('taskCompletedNotification');
     const notificationText = notificationBar.querySelector('span');
     const undoButton = document.getElementById('undoTaskButton');
@@ -236,33 +199,33 @@ function showNotification(message, showUndo = false) {
     undoButton.style.display = showUndo ? 'inline-block' : 'none';
     progressLine.style.display = showUndo ? 'block' : 'none';
 
-    notificationBar.classList.add('show'); // Adiciona a classe 'show' para visibilidade
-    notificationBar.style.display = 'flex'; // Garante que o display seja flex para layout
+    notificationBar.style.display = 'flex';
+    notificationBar.style.opacity = '1';
 
     // Reinicia a animação da linha de progresso
     if (showUndo) {
         progressLine.style.animation = 'none';
         void progressLine.offsetWidth; // Trigger reflow
         progressLine.style.animation = null;
-        progressLine.style.animation = 'progressAnimation 3s linear forwards'; // MUDANÇA: 3 segundos (Item 7)
+        progressLine.style.animation = 'progressAnimation 5s linear forwards';
 
         clearTimeout(undoTimeout);
         undoTimeout = setTimeout(() => {
-            notificationBar.classList.remove('show'); // Remove a classe 'show' para ocultar
-            notificationBarTimeoutId = setTimeout(() => { // Usa notificationBarTimeoutId
+            notificationBar.style.opacity = '0';
+            setTimeout(() => {
                 notificationBar.style.display = 'none';
                 lastCompletedActivity = null; // Limpa a atividade após o tempo
             }, 300); // Espera a transição de opacidade
-        }, 3000); // MUDANÇA: 3 segundos (Item 7)
+        }, 5000);
     } else {
         // Para outras notificações, apenas desaparece após um tempo menor
         clearTimeout(undoTimeout);
-        notificationBarTimeoutId = setTimeout(() => { // Usa notificationBarTimeoutId
-            notificationBar.classList.remove('show'); // Remove a classe 'show' para ocultar
+        undoTimeout = setTimeout(() => {
+            notificationBar.style.opacity = '0';
             setTimeout(() => {
                 notificationBar.style.display = 'none';
             }, 300);
-        }, 3000); // MUDANÇA: 3 segundos (Item 7)
+        }, 3000); // 3 segundos para mensagens sem "Desfazer"
     }
 }
 
@@ -302,28 +265,32 @@ async function handleCheckboxChange(event) {
             updatedActivity.ConcluidaPorCheckbox = isChecked ? 'Sim' : 'Não';
         }
         activityRow.classList.toggle('completed-task', newStatus === 'Concluída');
+        // MUDANÇA: Atualiza o SPAN do status no frontend
         const statusBadge = activityRow.querySelector('.status-badge');
         statusBadge.textContent = newStatus;
         statusBadge.className = `status-badge ${getStatusClass(newStatus)}`;
 
-        filterAndSearchActivities();
+        filterAndSearchActivities(); // Re-renderiza para aplicar filtros/toggle se necessário
     } else {
         checkbox.checked = !isChecked; // Reverte o checkbox no frontend
         activityRow.classList.toggle('completed-task', !isChecked);
-        showNotification("Erro ao atualizar tarefa: " + result.message, false);
+        showNotification("Erro ao atualizar tarefa: " + result.message);
     }
 }
+
+// REMOVIDA A FUNÇÃO handleStatusSelectChange, pois o select não está mais na tabela.
+// O clique no badge de status agora abrirá o modal de edição.
 
 // Adiciona event listeners para os elementos dinâmicos da tabela
 function addActivityEventListeners() {
     document.querySelectorAll('#activitiesTableBody input[type="checkbox"]').forEach(checkbox => {
-        checkbox.removeEventListener('change', handleCheckboxChange);
+        checkbox.removeEventListener('change', handleCheckboxChange); // Remove para evitar duplicidade
         checkbox.addEventListener('change', handleCheckboxChange);
     });
 
-    // Clique no badge de status abre o modal de edição (Comportamento temporário - Item 3)
+    // MUDANÇA: Event listener para o SPAN do status (badge)
     document.querySelectorAll('#activitiesTableBody .status-badge').forEach(badge => {
-        badge.removeEventListener('click', openEditModal); 
+        badge.removeEventListener('click', openEditModal); // Clicar no badge abre edição
         badge.addEventListener('click', openEditModal);
     });
 
@@ -344,10 +311,13 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
         const activityId = lastCompletedActivity.IDdaAtividade;
         const previousStatus = lastCompletedActivity.StatusAnterior;
         const checkbox = document.querySelector(`#activitiesTableBody input[type="checkbox"][data-activity-id="${activityId}"]`);
+        // Não há select na tabela, então remove a referência a ele aqui.
+        // const select = document.querySelector(`#activitiesTableBody .status-select[data-activity-id="${activityId}"]`);
         const activityRow = checkbox.closest('tr');
 
         // Reverte no frontend imediatamente para feedback visual
         if (checkbox) checkbox.checked = false;
+        // Atualiza o SPAN do status no frontend
         const statusBadge = activityRow.querySelector('.status-badge');
         if(statusBadge) {
             statusBadge.textContent = previousStatus;
@@ -355,9 +325,10 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
         }
         activityRow.classList.remove('completed-task');
 
-        showNotification("Desfeito!", false);
-        clearTimeout(undoTimeout);
+        showNotification("Desfeito!");
+        clearTimeout(undoTimeout); // Impede a notificação de desaparecer automaticamente
 
+        // Envia a reversão para o Apps Script
         const result = await callAppsScript('updateActivityStatus', {
             id: activityId,
             newStatus: previousStatus,
@@ -373,7 +344,7 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
             }
             filterAndSearchActivities();
         } else {
-            showNotification("Erro ao desfazer: " + result.message, false);
+            showNotification("Erro ao desfazer: " + result.message);
         }
         lastCompletedActivity = null;
     }
@@ -381,7 +352,7 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
 
 
 // ===============================================================
-// Modal de Adição/Edição de Atividade (Comportamento real-time - Item 12)
+// Modal de Adição/Edição de Atividade
 // ===============================================================
 
 const activityModal = document.getElementById('activityModal');
@@ -395,27 +366,16 @@ const activityDescriptionInput = document.getElementById('activityDescription');
 const activityDueDateInput = document.getElementById('activityDueDate');
 const activityStatusSelect = document.getElementById('activityStatus'); // Este SELECT ainda é usado no modal
 
-// Adiciona Event Listener para aplicar a classe de status ao select do modal (Item 4)
-activityStatusSelect.addEventListener('change', (event) => {
-    // Remove todas as classes de status existentes
-    activityStatusSelect.classList.remove('status-nao-iniciada', 'status-executando', 'status-concluida', 'status-atrasada', 'status-perto-expirar');
-    // Adiciona a classe correspondente ao status selecionado
-    activityStatusSelect.classList.add(getStatusClass(event.target.value));
-});
-
-
 addActivityBtn.addEventListener('click', () => {
     modalTitle.textContent = "Adicionar Nova Atividade";
-    activityForm.reset();
-    activityIdInput.value = '';
+    activityForm.reset(); // Limpa o formulário
+    activityIdInput.value = ''; // Limpa o ID para indicar nova atividade
     activityStatusSelect.value = 'Não iniciada'; // Status padrão
-    // Aplica a classe inicial ao select do modal ao abrir para nova atividade
-    activityStatusSelect.className = `status-select ${getStatusClass('Não iniciada')}`;
-    activityModal.style.display = 'flex';
+    activityModal.style.display = 'flex'; // Exibe o modal
 });
 
 closeActivityModalBtn.addEventListener('click', () => {
-    activityModal.style.display = 'none';
+    activityModal.style.display = 'none'; // Esconde o modal
 });
 
 // Fechar modal ao clicar fora
@@ -459,29 +419,17 @@ activityForm.addEventListener('submit', async (event) => {
     if (result.status === 'success') {
         activityModal.style.display = 'none';
         showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false);
-        
-        // MUDANÇA (Item 12): Atualiza o array allActivities localmente sem recarregar tudo
-        if (result.activity) { // O Apps Script deve retornar a atividade salva/atualizada
-            if (isEditing) {
-                const index = allActivities.findIndex(act => act.IDdaAtividade == result.activity.IDdaAtividade);
-                if (index !== -1) {
-                    allActivities[index] = result.activity;
-                }
-            } else {
-                allActivities.push(result.activity);
-            }
-        }
-        filterAndSearchActivities(); // Re-renderiza a tabela para refletir a mudança local
+        loadActivities(); // Recarrega todas as atividades para atualizar a tabela
     } else {
         showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false);
     }
 });
 
-// Função para abrir o modal em modo edição (Item 10)
+// Função para abrir o modal em modo edição
+// A chamada agora virá do botão de editar OU do clique no badge de status
 function openEditModal(event) {
-    // MUDANÇA (Item 10): Garante que pega o dataset do botão clicado ou do pai mais próximo
-    const clickedElement = event.target.closest('.edit-activity-btn') || event.target.closest('.status-badge');
-    const activityId = clickedElement ? clickedElement.dataset.activityId : null;
+    // Tenta pegar o ID do dataset do elemento clicado, ou do closest .status-badge
+    const activityId = event.target.dataset.activityId || event.target.closest('.status-badge')?.dataset.activityId;
     
     if (!activityId) {
         showNotification("Erro: ID da atividade não encontrado para edição.", false);
@@ -498,108 +446,49 @@ function openEditModal(event) {
     modalTitle.textContent = "Editar Atividade";
     activityIdInput.value = activityToEdit.IDdaAtividade;
     activityNameInput.value = activityToEdit.Atividade;
-    activityDescriptionInput.value = activityToEdit.descricaoObservacoes || '';
+    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || ''; // MUDANÇA: Handle undefined/null
     activityDueDateInput.value = formatarDataParaInput(activityToEdit.DataLimite);
     activityStatusSelect.value = activityToEdit.StatusAtual;
-    activityStatusSelect.className = `status-select ${getStatusClass(activityToEdit.StatusAtual)}`; // Aplica a classe do status
 
     activityModal.style.display = 'flex';
 }
 
-// MUDANÇA: Função de confirmação customizada para substituir alert/confirm nativo (Item 1)
-async function customConfirm(title, message) {
-    const modal = document.getElementById('customConfirmModal');
-    const confirmTitle = document.getElementById('customConfirmTitle');
-    const confirmMessage = document.getElementById('customConfirmMessage');
-    const confirmOKBtn = document.getElementById('customConfirmOK');
-    const confirmCancelBtn = document.getElementById('customConfirmCancel');
-    const closeConfirmModalBtn = document.getElementById('closeCustomConfirmModal');
-
-    confirmTitle.textContent = title;
-    confirmMessage.textContent = message;
-    modal.style.display = 'flex';
-
-    return new Promise((resolve, reject) => {
-        // Limpa listeners anteriores para evitar duplicação (se o modal for reutilizado)
-        const removeListeners = () => {
-            confirmOKBtn.removeEventListener('click', handleConfirmClick);
-            confirmCancelBtn.removeEventListener('click', handleCancelClick);
-            closeConfirmModalBtn.removeEventListener('click', handleCancelClick);
-            window.removeEventListener('click', handleOutsideClick); // Remove listener de clique fora
-        };
-
-        const handleConfirmClick = () => {
-            removeListeners();
-            modal.style.display = 'none';
-            resolve(true);
-        };
-
-        const handleCancelClick = () => {
-            removeListeners();
-            modal.style.display = 'none';
-            resolve(false);
-        };
-
-        confirmOKBtn.addEventListener('click', handleConfirmClick);
-        confirmCancelBtn.addEventListener('click', handleCancelClick);
-        closeConfirmModalBtn.addEventListener('click', handleCancelClick);
-        
-        const handleOutsideClick = (event) => {
-            if (event.target === modal) {
-                handleCancelClick();
-            }
-        };
-        // Usa { once: true } ou remove o listener explicitamente se o modal for reutilizado
-        window.addEventListener('click', handleOutsideClick);
-    });
-}
-
-// Função para deletar atividade (MODIFICADA para usar customConfirm - Item 1)
+// Função para deletar atividade (MODIFICADA para showNotification e depuração)
 async function handleDeleteActivity(event) {
-    // MUDANÇA (Item 10): Garante que pega o dataset do botão clicado ou do pai mais próximo
-    const clickedElement = event.target.closest('.delete-activity-btn');
-    const activityId = clickedElement ? clickedElement.dataset.activityId : null;
-
+    const activityId = event.target.dataset.activityId;
     console.log("Tentando excluir atividade com ID:", activityId); // Log no frontend
 
-    if (!activityId) { // Adiciona verificação para ID nulo/vazio
-        showNotification("Erro: ID da atividade não encontrado para exclusão.", false);
-        return;
-    }
-
-    const confirmed = await customConfirm("Confirmar Exclusão", "Tem certeza que deseja excluir esta atividade?");
-
-    if (confirmed) {
+    // ATENÇÃO: confirm() é um alert nativo do navegador.
+    // Para uma solução customizada, precisaríamos de um novo modal de confirmação.
+    // Por enquanto, o `confirm()` nativo do navegador permanecerá.
+    if (confirm("Tem certeza que deseja excluir esta atividade?")) {
         const result = await callAppsScript('deleteActivity', { id: activityId });
         if (result.status === 'success') {
+            // Ao invés de recarregar tudo, remove da lista local e re-renderiza
             allActivities = allActivities.filter(act => act.IDdaAtividade != activityId);
-            filterAndSearchActivities();
+            filterAndSearchActivities(); // Re-renderiza a tabela após a exclusão
             showNotification("Atividade excluída com sucesso!", false);
         } else {
             showNotification("Erro ao excluir atividade: " + result.message, false);
+            // Log de depuração mais específico para o erro de exclusão
             console.error("Erro detalhado ao excluir atividade:", result.message, "ID:", activityId);
         }
     }
 }
 
-
 // ===============================================================
-// Busca e Filtro (Multi-seleção de status - Item 5)
+// Busca e Filtro (Adicionado lógica para o botão "X" de limpar)
 // ===============================================================
 
 const activitySearchInput = document.getElementById('activitySearch');
-const clearSearchBtn = document.getElementById('clearSearchBtn'); // OK
-
-// Elementos para o filtro multi-seleção de status (Item 5)
-const statusFilterDropdownBtn = document.getElementById('statusFilterDropdownBtn');
-const statusFilterOptions = document.getElementById('statusFilterOptions');
-const statusFilterCheckboxes = statusFilterOptions.querySelectorAll('input[type="checkbox"]');
-// filterCountBadge já existe e é atualizado em filterAndSearchActivities
+const activityFilterSelect = document.getElementById('activityFilter');
+const clearSearchBtn = document.getElementById('clearSearchBtn'); // Novo elemento
 
 activitySearchInput.addEventListener('input', (event) => {
     currentSearchTerm = event.target.value;
+    // Mostra/oculta o botão de limpar
     if (currentSearchTerm.length > 0) {
-        clearSearchBtn.style.display = 'flex';
+        clearSearchBtn.style.display = 'flex'; // Usar 'flex' para centralizar o ícone
     } else {
         clearSearchBtn.style.display = 'none';
     }
@@ -613,51 +502,15 @@ clearSearchBtn.addEventListener('click', () => {
     filterAndSearchActivities();
 });
 
-// Lógica para abrir/fechar o dropdown de filtro de status
-statusFilterDropdownBtn.addEventListener('click', (event) => {
-    event.stopPropagation(); // Evita que o clique feche o dropdown imediatamente
-    statusFilterOptions.style.display = statusFilterOptions.style.display === 'block' ? 'none' : 'block';
-});
-
-// Lógica para selecionar/desselecionar filtros de status
-statusFilterCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-        selectedStatusFilters = Array.from(statusFilterCheckboxes)
-                                .filter(cb => cb.checked)
-                                .map(cb => cb.value);
-        filterAndSearchActivities();
-    });
-});
-
-// Fechar dropdown de filtro de status ao clicar fora
-window.addEventListener('click', (event) => {
-    // Certifique-se de que o clique não foi dentro do dropdown ou no botão que o abre
-    if (statusFilterOptions.style.display === 'block' && 
-        !statusFilterOptions.contains(event.target) && 
-        event.target !== statusFilterDropdownBtn && 
-        !statusFilterDropdownBtn.contains(event.target)) { // Inclui o botão para evitar fechar ao clicar nele
-        statusFilterOptions.style.display = 'none';
-    }
-});
-
-
 // ===============================================================
 // Evento principal DOMContentLoaded
 // ===============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Esconde a notificação "Desfeito!" se estiver visível ao carregar a página (Item 10)
-    const notificationBar = document.getElementById('taskCompletedNotification');
-    if (notificationBar) {
-        notificationBar.classList.remove('show'); // Esconde usando a classe
-        notificationBar.style.display = 'none'; // Garante que não ocupa espaço
-        clearTimeout(notificationBarTimeoutId);
-        clearTimeout(undoTimeout);
-    }
-
-
+    // Recupera o usuário do localStorage
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
 
+    // Exibe pagina de acesso restrito se não estiver autenticado
     if (!usuario) {
         document.body.innerHTML = `
             <div style="min-height: 100vh; background-color: #333333; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif;">
@@ -681,9 +534,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    // Preenche o nome do usuário
     const nomeEl = document.getElementById("userName");
     if (nomeEl) nomeEl.textContent = usuario.nome || "Mentorado";
 
+    // Gera iniciais do nome para o avatar
     const avatarEl = document.getElementById("profileAvatar");
     if (avatarEl && usuario.nome) {
         const partes = usuario.nome.trim().split(" ");
@@ -693,6 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
         avatarEl.textContent = iniciais.toUpperCase();
     }
 
+    // Lógica de logout
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
@@ -701,77 +557,76 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ======== MENU LATERAL COM HOVER DESLIZANTE =========
+
     const menu = document.querySelector(".sidebar-menu");
     const buttons = document.querySelectorAll(".icon-btn");
     const sections = document.querySelectorAll(".content-section");
 
+    // Cria a caixa animada amarela
     const hoverBox = document.createElement("div");
     hoverBox.classList.add("hover-box");
     menu.appendChild(hoverBox);
 
+    // Função que move a hoverBox até o botão clicado
     const moveHoverBox = (button) => {
         const topPos = button.offsetTop;
         hoverBox.style.top = `${topPos}px`;
     };
 
+    // Inicia na posição do botão com a classe "active"
     const initialBtn = document.querySelector(".icon-btn.active") || buttons[0];
     moveHoverBox(initialBtn);
 
-    // Limpa a notificação ao trocar de seção no menu lateral (Item 10)
+    // Adiciona event listeners para os botões do menu lateral
     buttons.forEach((btn) => {
         btn.addEventListener("click", async () => {
+            // Remove classe active de todos
             buttons.forEach((b) => b.classList.remove("active"));
             btn.classList.add("active");
+
+            // Move a animação para o novo botão
             moveHoverBox(btn);
 
+            // Exibe a seção correspondente
             const sectionId = btn.dataset.section;
             sections.forEach((s) => {
                 s.style.display = s.id === `section-${sectionId}` ? "block" : "none";
             });
 
-            // Oculta a notificação ao trocar de seção
-            if (notificationBar) {
-                notificationBar.classList.remove('show');
-                notificationBar.style.display = 'none';
-                clearTimeout(notificationBarTimeoutId);
-                clearTimeout(undoTimeout);
-            }
-
+            // Se for a seção de atividades, carrega as atividades
             if (sectionId === 'activities') {
                 await loadActivities();
             } else if (sectionId === 'overview') {
-                // Lógica para carregar a visão geral
+                // Lógica para carregar a visão geral, quando implementada
             }
+            // Outras seções...
         });
     });
 
     // Lógica do toggle "Ocultar Concluídas"
     toggleCompletedTasksBtn.addEventListener('click', () => {
-        showCompletedTasks = !showCompletedTasks;
-        if (showCompletedTasks) {
+        showCompletedTasks = !showCompletedTasks; // Inverte o estado
+        if (showCompletedTasks) { // Se o estado agora é 'true' (significa VER concluídas)
             toggleIconSpan.classList.remove('mdi-eye-off-outline');
             toggleIconSpan.classList.add('mdi-eye-outline');
-            toggleTextSpan.textContent = "Ocultar Concluídas";
-        } else {
+            toggleTextSpan.textContent = "Ocultar Concluídas"; // O texto mostra a AÇÃO que o botão fará
+        } else { // Se o estado agora é 'false' (significa OCULTAR concluídas)
             toggleIconSpan.classList.remove('mdi-eye-outline');
             toggleIconSpan.classList.add('mdi-eye-off-outline');
-            toggleTextSpan.textContent = "Ver Concluídas";
+            toggleTextSpan.textContent = "Ver Concluídas"; // O texto mostra a AÇÃO que o botão fará
         }
         filterAndSearchActivities();
     });
 
-    // Garante que a seção de visão geral seja a padrão ao carregar e as atividades carreguem ao clicar no botão
-    const overviewSection = document.getElementById('section-overview');
-    const activitiesSection = document.getElementById('section-activities');
-    
-    // Esconde todas as seções primeiro
-    sections.forEach(s => s.style.display = 'none');
-
-    // Se o botão de atividades for o ativo padrão ao carregar, mostra a seção de atividades e carrega.
-    if (initialBtn && initialBtn.dataset.section === 'activities') {
-        activitiesSection.style.display = 'block';
+    // Carrega as atividades se a seção de atividades for a inicial ou a primeira a ser mostrada
+    // Verifica se a seção de atividades é a ativa ao carregar a página
+    if (document.getElementById('section-activities') && document.getElementById('section-activities').classList.contains('form-step-active')) {
         loadActivities();
-    } else { // Caso contrário, mostra a visão geral por padrão (se não estiver ativa a seção de atividades)
-        overviewSection.style.display = 'block';
+    } else if (initialBtn.dataset.section === 'activities') { // Se o botão de atividades é o padrão ativo (pode ser ajustado)
+        loadActivities();
+    } else if (initialBtn.dataset.section === 'overview') { // Se a visão geral é o padrão ativo, mostra ela
+        document.getElementById('section-overview').style.display = 'block';
     }
+    // ... para outras seções padrão se houver
 });
