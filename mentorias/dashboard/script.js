@@ -101,13 +101,13 @@ function renderActivities(activitiesToRender) {
     // ...
     activitiesToRender.forEach(activity => {
         // ...
-        console.log("Atividade a ser renderizada (para descrição):", activity.descricaoObservacoes); // LOG DE DEBUG: Use a nova chave aqui
-        console.log("Valor a ser injetado na descrição:", String(activity.descricaoObservacoes || 'VAZIO_NO_OBJETO')); // LOG DE DEBUG: Use a nova chave aqui
+        console.log("Atividade a ser renderizada (para descrição):", activity.DescricaoObservacoes); // LOG DE DEBUG: Use a nova chave aqui
+        console.log("Valor a ser injetado na descrição:", String(activity.DescricaoObservacoes || 'VAZIO_NO_OBJETO')); // LOG DE DEBUG: Use a nova chave aqui
 
         row.innerHTML = `
             <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
             <td>${activity.Atividade || ''}</td>
-            <td>${activity.descricaoObservacoes || ''}</td>
+            <td>${activity.DescricaoObservacoes || ''}</td>
             <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
             <td>
                 <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
@@ -126,10 +126,10 @@ function renderActivities(activitiesToRender) {
     // ...
 }
 
-// ... (Também na função openEditModal, mude activityToEdit.DescricaoObservacoes para activityToEdit.descricaoObservacoes) ...
+// ... (Também na função openEditModal, mude activityToEdit.descricaoObservacoes para activityToEdit.DescricaoObservacoes) ...
 function openEditModal(event) {
     // ...
-    activityDescriptionInput.value = activityToEdit.descricaoObservacoes || ''; // MUDANÇA AQUI
+    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || ''; // MUDANÇA AQUI
     // ...
 }
 
