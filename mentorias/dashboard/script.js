@@ -181,7 +181,7 @@ async function loadActivities() {
     activitiesTableBody.innerHTML = ''; // Limpa a tabela antes de carregar
 
     const result = await callAppsScript('getActivitiesByCpf', { cpf: usuario.cpf.replace(/\D/g, '') });
-
+    console.log("Resposta bruta do Apps Script (loadActivities):", result);
     loadingActivitiesMessage.style.display = 'none';
 
     if (result.status === 'success' && result.activities) {
@@ -191,7 +191,7 @@ async function loadActivities() {
     } else {
         allActivities = [];
         filterAndSearchActivities(); // Renderiza vazio e exibe mensagem de 'Nenhuma atividade'
-        console.error("Falha ao carregar atividades:", result.message);
+        console.error("Falha ao carregar atividades (frontend interpretado):", result.message);
         showNotification("Erro ao carregar atividades: " + result.message, false);
     }
 }
