@@ -946,12 +946,12 @@ table input[type="checkbox"]:checked::before {
 /* ... (todo o seu CSS existente) ... */
 
 
-/* INÍCIO DO CÓDIGO DE DEBUG TEMPORÁRIO PARA DESCRIÇÃO - REMOVER APÓS O TESTE */
-table td:nth-child(3) { /* Seleciona a 3ª coluna da tabela (onde a Descrição/Observações deveria estar) */
-    color: red !important; /* Força a cor do texto para vermelho */
-    background-color: yellow !important; /* Força um fundo amarelo para contraste */
-    white-space: normal !important; /* Garante que o texto não está sendo cortado por nowrap */
-    overflow: visible !important; /* Garante que o texto não está sendo escondido por overflow: hidden */
-    max-width: 250px !important; /* Garante que a coluna tenha espaço para o texto */
+/* INÍCIO DO CÓDIGO DE DEBUG TEMPORÁRIO PARA DESCRIÇÃO - REMOVER APÓS O TESTE /
+table td:nth-child(3) { /* Seleciona a 3ª coluna da tabela (onde a Descrição/Observações deveria estar) /
+    color: red !important; /* Força a cor do texto para vermelho /
+    background-color: yellow !important; /* Força um fundo amarelo para contraste /
+    white-space: normal !important; /* Garante que o texto não está sendo cortado por nowrap /
+    overflow: visible !important; /* Garante que o texto não está sendo escondido por overflow: hidden /
+    max-width: 250px !important; /* Garante que a coluna tenha espaço para o texto /
 }
 /* FIM DO CÓDIGO DE DEBUG TEMPORÁRIO PARA DESCRIÇÃO - REMOVER APÓS O TESTE */
