@@ -79,7 +79,7 @@ async function callAppsScript(action, data = {}) {
     } catch (error) {
         console.error(`Erro ao chamar Apps Script para ação ${action}:`, error);
         showNotification(`Erro de comunicação: ${error.message}. Por favor, verifique sua conexão ou tente novamente.`, false);
-        return { success: false, message: error.message };
+        return { status: 'error', message: error.message };
     }
 }
 
@@ -101,13 +101,13 @@ function renderActivities(activitiesToRender) {
     // ...
     activitiesToRender.forEach(activity => {
         // ...
-        console.log("Atividade a ser renderizada (para descrição):", activity.DescricaoObservacoes); // LOG DE DEBUG: Use a nova chave aqui
-        console.log("Valor a ser injetado na descrição:", String(activity.DescricaoObservacoes || 'VAZIO_NO_OBJETO')); // LOG DE DEBUG: Use a nova chave aqui
+        console.log("Atividade a ser renderizada (para descrição):", activity.descricaoObservacoes); // LOG DE DEBUG: Use a nova chave aqui
+        console.log("Valor a ser injetado na descrição:", String(activity.descricaoObservacoes || 'VAZIO_NO_OBJETO')); // LOG DE DEBUG: Use a nova chave aqui
 
         row.innerHTML = `
             <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
             <td>${activity.Atividade || ''}</td>
-            <td>${activity.DescricaoObservacoes || ''}</td>
+            <td>${activity.descricaoObservacoes || ''}</td>
             <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
             <td>
                 <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
@@ -126,10 +126,10 @@ function renderActivities(activitiesToRender) {
     // ...
 }
 
-// ... (Também na função openEditModal, mude activityToEdit.descricaoObservacoes para activityToEdit.DescricaoObservacoes) ...
+// ... (Também na função openEditModal, mude activityToEdit.descricaoObservacoes para activityToEdit.descricaoObservacoes) ...
 function openEditModal(event) {
     // ...
-    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || ''; // MUDANÇA AQUI
+    activityDescriptionInput.value = activityToEdit.descricaoObservacoes || ''; // MUDANÇA AQUI
     // ...
 }
 
@@ -148,7 +148,7 @@ function filterAndSearchActivities() {
         const searchTermLower = currentSearchTerm.toLowerCase();
         return (
             String(activity.Atividade || '').toLowerCase().includes(searchTermLower) ||
-            String(activity.DescricaoObservacoes || '').toLowerCase().includes(searchTermLower)
+            String(activity.descricaoObservacoes || '').toLowerCase().includes(searchTermLower)
         );
     });
     console.log("Atividades filtradas e/ou buscadas:", filtered); // Log para depuração
@@ -184,7 +184,7 @@ async function loadActivities() {
 
     loadingActivitiesMessage.style.display = 'none';
 
-    if (result.success && result.activities) {
+    if (result.status === 'success' && result.activities) {
         console.log("Atividades recebidas do Apps Script:", result.activities); // Log para depuração
         allActivities = result.activities;
         filterAndSearchActivities(); // Renderiza com base nos filtros e busca atuais
@@ -270,7 +270,7 @@ async function handleCheckboxChange(event) {
         concluidaPorCheckbox: isChecked ? 'Sim' : 'Não'
     });
 
-    if (result.success) {
+    if (result.status === 'success') {
         const updatedActivity = allActivities.find(act => act.IDdaAtividade == activityId);
         if (updatedActivity) {
             updatedActivity.StatusAtual = newStatus;
@@ -341,7 +341,7 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
             concluidaPorCheckbox: 'Não'
         });
 
-        if (result.success) {
+        if (result.status === 'success') {
             const updatedActivity = allActivities.find(act => act.IDdaAtividade == activityId);
             if (updatedActivity) {
                 updatedActivity.StatusAtual = previousStatus;
@@ -432,7 +432,7 @@ activityForm.addEventListener('submit', async (event) => {
     submitButton.disabled = false;
     submitButton.textContent = "Salvar Atividade";
 
-    if (result.success) {
+    if (result.status === 'success') {
         activityModal.style.display = 'none';
         showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false);
         
@@ -474,7 +474,7 @@ function openEditModal(event) {
     modalTitle.textContent = "Editar Atividade";
     activityIdInput.value = activityToEdit.IDdaAtividade;
     activityNameInput.value = activityToEdit.Atividade;
-    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || '';
+    activityDescriptionInput.value = activityToEdit.descricaoObservacoes || '';
     activityDueDateInput.value = formatarDataParaInput(activityToEdit.DataLimite);
     activityStatusSelect.value = activityToEdit.StatusAtual;
     activityStatusSelect.className = `status-select ${getStatusClass(activityToEdit.StatusAtual)}`; // Aplica a classe do status
@@ -547,7 +547,7 @@ async function handleDeleteActivity(event) {
 
     if (confirmed) {
         const result = await callAppsScript('deleteActivity', { id: activityId });
-        if (result.success) {
+        if (result.status === 'success') {
             allActivities = allActivities.filter(act => act.IDdaAtividade != activityId);
             filterAndSearchActivities();
             showNotification("Atividade excluída com sucesso!", false);
