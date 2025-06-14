@@ -4,7 +4,6 @@
 let allActivities = []; // Armazenará todas as atividades carregadas do servidor
 let selectedStatusFilters = new Set(); // Armazenará os status selecionados para filtragem
 let currentSearchTerm = '';
-// MUDANÇA: showCompletedTasks = false por padrão (oculta as concluídas)
 let showCompletedTasks = false; 
 
 // ===============================================================
@@ -13,7 +12,7 @@ let showCompletedTasks = false;
 
 function formatarDataParaExibicao(dataString) {
     if (!dataString) return '';
-    const data = new Date(dataString);
+    const data = new Date(dataString + 'T00:00:00'); // Adiciona T00:00:00 para evitar problemas de fuso horário
     if (isNaN(data.getTime())) {
         return dataString;
     }
@@ -25,14 +24,8 @@ function formatarDataParaExibicao(dataString) {
 
 function formatarDataParaInput(dataString) {
     if (!dataString) return '';
-    const data = new Date(dataString);
-    if (isNaN(data.getTime())) {
-        return '';
-    }
-    const ano = data.getFullYear();
-    const mes = String(data.getMonth() + 1).padStart(2, '0');
-    const dia = String(data.getDate()).padStart(2, '0');
-    return `${ano}-${mes}-${dia}`;
+    // Assume que a dataString já vem no formato YYYY-MM-DD do Apps Script
+    return dataString; 
 }
 
 function getStatusClass(status) {
@@ -89,7 +82,7 @@ const toggleIconSpan = toggleCompletedTasksBtn.querySelector('.mdi');
 
 // Função para renderizar as atividades na tabela
 function renderActivities(activitiesToRender) {
-    activitiesTableBody.innerHTML = ''; // Limpa a tabela
+    activitiesTableBody.innerHTML = ''; 
 
     if (activitiesToRender.length === 0) {
         noActivitiesMessage.style.display = 'block';
@@ -101,7 +94,7 @@ function renderActivities(activitiesToRender) {
     activitiesToRender.forEach(activity => {
         const isCompleted = activity.StatusAtual === 'Concluída';
         const row = document.createElement('tr');
-        row.classList.toggle('completed-task', isCompleted); // Adiciona classe riscada
+        row.classList.toggle('completed-task', isCompleted); 
 
         row.innerHTML = `
             <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
@@ -122,32 +115,27 @@ function renderActivities(activitiesToRender) {
         activitiesTableBody.appendChild(row);
     });
 
-    // Adiciona event listeners aos novos elementos (checkboxes, badges, botões)
     addActivityEventListeners();
 }
 
 // Filtra e busca as atividades carregadas
 function filterAndSearchActivities() {
     let filtered = allActivities.filter(activity => {
-        // Lógica do toggle "Ver Concluídas" / "Ocultar Concluídas"
-        // Se showCompletedTasks for FALSE (significa que queremos ocultar as concluídas)
         if (!showCompletedTasks && activity.StatusAtual === 'Concluída') {
-            return false; // Não inclui atividades concluídas se o toggle estiver para "Ocultar Concluídas"
+            return false;
         }
 
-        // Lógica do filtro de status multi-seleção
         if (selectedStatusFilters.size > 0 && !selectedStatusFilters.has(activity.StatusAtual)) {
             return false;
         }
 
-        // Lógica da busca
         const searchTermLower = currentSearchTerm.toLowerCase();
         return (
             String(activity.Atividade || '').toLowerCase().includes(searchTermLower) ||
             String(activity.DescricaoObservacoes || '').toLowerCase().includes(searchTermLower)
         );
     });
-    console.log("Atividades filtradas e/ou buscadas:", filtered); // Log para depuração
+    console.log("Atividades filtradas e/ou buscadas:", filtered); 
     renderActivities(filtered);
 }
 
@@ -164,19 +152,19 @@ async function loadActivities() {
 
     loadingActivitiesMessage.style.display = 'block';
     noActivitiesMessage.style.display = 'none';
-    activitiesTableBody.innerHTML = ''; // Limpa a tabela antes de carregar
+    activitiesTableBody.innerHTML = ''; 
 
     const result = await callAppsScript('getActivitiesByCpf', { cpf: usuario.cpf.replace(/\D/g, '') });
 
     loadingActivitiesMessage.style.display = 'none';
 
     if (result.status === 'success' && result.activities) {
-        console.log("Atividades recebidas do Apps Script:", result.activities); // Log para depuração
+        console.log("Atividades recebidas do Apps Script:", result.activities); 
         allActivities = result.activities;
-        filterAndSearchActivities(); // Renderiza com base nos filtros e busca atuais
+        filterAndSearchActivities(); 
     } else {
         allActivities = [];
-        filterAndSearchActivities(); // Renderiza vazio e exibe mensagem de 'Nenhuma atividade'
+        filterAndSearchActivities(); 
         console.error("Falha ao carregar atividades:", result.message);
         showNotification("Erro ao carregar atividades: " + result.message, false);
     }
@@ -186,8 +174,8 @@ async function loadActivities() {
 // Interações da Tabela de Atividades
 // ===============================================================
 
-let undoTimeout; // Variável para controlar o timeout da notificação "Desfazer"
-let lastCompletedActivity = null; // Armazena a última atividade marcada como concluída para o "Desfazer"
+let undoTimeout; 
+let lastCompletedActivity = null; 
 
 function showNotification(message, showUndo = false) {
     const notificationBar = document.getElementById('taskCompletedNotification');
@@ -403,10 +391,21 @@ activityForm.addEventListener('submit', async (event) => {
     submitButton.disabled = false;
     submitButton.textContent = "Salvar Atividade";
 
-    if (result.status === 'success') {
+    if (result.status === 'success' && result.activity) { // MUDANÇA: Verifica se 'result.activity' está presente
         activityModal.style.display = 'none';
         showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false);
-        loadActivities(); 
+        
+        const returnedActivity = result.activity;
+        // MUDANÇA: Atualiza o array local 'allActivities' e re-renderiza
+        if (isEditing) {
+            const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
+            if (index !== -1) {
+                allActivities[index] = returnedActivity;
+            }
+        } else {
+            allActivities.push(returnedActivity); // Adiciona nova atividade
+        }
+        filterAndSearchActivities(); // Re-renderiza a tabela com a lista atualizada
     } else {
         showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false);
     }
@@ -651,16 +650,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // MUDANÇA: Event listener para o clique no botão de toggle
     toggleCompletedTasksBtn.addEventListener('click', () => {
-        showCompletedTasks = !showCompletedTasks; // Inverte o estado da variável
-        updateToggleCompletedTasksUI(); // Atualiza a UI do botão e filtra as atividades
+        showCompletedTasks = !showCompletedTasks; 
+        updateToggleCompletedTasksUI(); 
     });
 
-    // MUDANÇA: Configuração inicial do botão ao carregar a página
-    // Garante que o estado visual do botão reflita que as concluídas estão ocultas por padrão.
-    updateToggleCompletedTasksUI(); // Chama para configurar a UI do botão
-    filterAndSearchActivities(); // Garante que a tabela esteja filtrada desde o início
+    updateToggleCompletedTasksUI(); 
+    filterAndSearchActivities(); 
 
     if (document.getElementById('section-activities') && document.getElementById('section-activities').classList.contains('form-step-active')) {
         loadActivities();
@@ -673,16 +669,14 @@ document.addEventListener("DOMContentLoaded", () => {
     updateFilterCountBadge();
 });
 
-// MUDANÇA: Função auxiliar para atualizar APENAS a UI do botão "Ver/Ocultar Concluídas"
 function updateToggleCompletedTasksUI() {
-    if (showCompletedTasks) { // Se showCompletedTasks for TRUE (significa que ESTAMOS VENDO as concluídas)
+    if (showCompletedTasks) { 
         toggleIconSpan.classList.remove('mdi-eye-off-outline');
         toggleIconSpan.classList.add('mdi-eye-outline');
-        toggleTextSpan.textContent = "Ocultar Concluídas"; // O texto mostra a AÇÃO que o botão fará
-    } else { // Se showCompletedTasks for FALSE (significa que ESTAMOS OCULTANDO as concluídas)
+        toggleTextSpan.textContent = "Ocultar Concluídas"; 
+    } else { 
         toggleIconSpan.classList.remove('mdi-eye-outline');
         toggleIconSpan.classList.add('mdi-eye-off-outline');
-        toggleTextSpan.textContent = "Ver Concluídas"; // O texto mostra a AÇÃO que o botão fará
+        toggleTextSpan.textContent = "Ver Concluídas"; 
     }
-    // A chamada a filterAndSearchActivities() não é feita aqui, mas sim no event listener ou no DOMContentLoaded.
 }
