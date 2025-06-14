@@ -26,115 +26,109 @@ cpfInput.addEventListener('input', function () {
 
 // Funcionalidade de mostrar/ocultar senha
 togglePasswordButton.addEventListener('click', function() {
-  const type = senhaInput.getAttribute('type') === 'password' ? 'text' : 'password';
-  senhaInput.setAttribute('type', type);
+    const type = senhaInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    senhaInput.setAttribute('type', type);
 
-  const iconSpan = this.querySelector('.mdi');
-  if (type === 'password') {
-    iconSpan.classList.remove('mdi-eye-off-outline');
-    iconSpan.classList.add('mdi-eye-outline');
-    this.innerHTML = '<span class="mdi mdi-eye-outline"></span> Mostrar senha';
-  } else {
-    iconSpan.classList.remove('mdi-eye-outline');
-    iconSpan.classList.add('mdi-eye-off-outline');
-    this.innerHTML = '<span class="mdi mdi-eye-off-outline"></span> Ocultar senha';
-  }
+    const iconSpan = this.querySelector('.mdi');
+    if (type === 'password') {
+        iconSpan.classList.remove('mdi-eye-off-outline');
+        iconSpan.classList.add('mdi-eye-outline');
+        this.innerHTML = '<span class="mdi mdi-eye-outline"></span> Mostrar senha';
+    } else {
+        iconSpan.classList.remove('mdi-eye-outline');
+        iconSpan.classList.add('mdi-eye-off-outline');
+        this.innerHTML = '<span class="mdi mdi-eye-off-outline"></span> Ocultar senha';
+    }
 });
 
-// Arquivo: login-script.js
-
-// ... (todo o seu código existente, funções de máscara, event listeners de UI) ...
-
 // Seleção de elementos adicionais necessários para o botão de login
-const botaoLogin = document.getElementById('botaoLogin'); // Certifique-se de que seu HTML tem id="botaoLogin" para o botão de submit
+const botaoLogin = document.getElementById('botaoLogin'); 
 
 // ===============================================================
 // Gerenciamento da Submissão do Formulário com Fetch
 // ===============================================================
 
 loginForm.addEventListener('submit', async function(event) {
-  event.preventDefault(); // Impede o envio padrão do formulário
+    event.preventDefault(); 
 
-  // Limpa mensagens anteriores e esconde a div
-  mensagemDiv.textContent = '';
-  mensagemDiv.classList.remove('success-message', 'error-message', 'message-visible');
+    mensagemDiv.textContent = '';
+    mensagemDiv.classList.remove('success-message', 'error-message', 'message-visible');
 
-  // Desabilita o botão e muda o texto
-  if (botaoLogin) {
-    botaoLogin.disabled = true;
-    botaoLogin.textContent = "Validando dados...";
-    botaoLogin.style.opacity = "0.6";
-    botaoLogin.style.cursor = "not-allowed";
-  }
-
-  const cpfValue = cpfInput.value.trim();
-  const senhaValue = senhaInput.value.trim();
-
-  if (cpfValue === "" || senhaValue === "") {
-    mensagemDiv.textContent = "Por favor, preencha o CPF e a senha.";
-    mensagemDiv.classList.add('error-message', 'message-visible');
-    // Restaura o botão em caso de erro na validação do cliente
     if (botaoLogin) {
-      botaoLogin.disabled = false;
-      botaoLogin.textContent = "Entrar";
-      botaoLogin.style.opacity = "1";
-      botaoLogin.style.cursor = "pointer";
+        botaoLogin.disabled = true;
+        botaoLogin.textContent = "Validando dados...";
+        botaoLogin.style.opacity = "0.6";
+        botaoLogin.style.cursor = "not-allowed";
     }
-    return;
-  }
 
-  const formData = new FormData();
-  formData.append('action', 'login');
-  formData.append('cpf', cpfValue);
-  formData.append('senha', senhaValue);
+    const cpfValue = cpfInput.value.trim();
+    const senhaValue = senhaInput.value.trim();
 
-  const webAppUrl = "https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec"; // A URL do seu Web App
-
-  try {
-    const response = await fetch(webAppUrl, {
-      method: 'POST',
-      body: formData
-    });
-
-    const result = await response.json();
-
-    if (result.status === "success") {
-      // NÃO HÁ MENSAGEM DE SUCESSO AQUI, APENAS REDIRECIONA
-      console.log("Login successful, redirecting to dashboard:", result);
-
-      const userData = {
-        cpf: cpfValue.replace(/\D/g, ''),
-        nome: result.user
-      };
-      localStorage.setItem('usuarioLogado', JSON.stringify(userData));
-
-      // Redirecionar imediatamente sem setTimeout
-      window.location.href = "https://renatodouek.com.br/mentorias/dashboard/";
-      
-    } else {
-      mensagemDiv.textContent = "Erro: " + result.message;
-      mensagemDiv.classList.add('error-message', 'message-visible');
-      console.error("Login failed:", result.message);
-
-      // Restaura o botão em caso de erro do servidor
-      if (botaoLogin) {
-        botaoLogin.disabled = false;
-        botaoLogin.textContent = "Entrar";
-        botaoLogin.style.opacity = "1";
-        botaoLogin.style.cursor = "pointer";
-      }
+    if (cpfValue === "" || senhaValue === "") {
+        mensagemDiv.textContent = "Por favor, preencha o CPF e a senha.";
+        mensagemDiv.classList.add('error-message', 'message-visible');
+        if (botaoLogin) {
+            botaoLogin.disabled = false;
+            botaoLogin.textContent = "Entrar";
+            botaoLogin.style.opacity = "1";
+            botaoLogin.style.cursor = "pointer";
+        }
+        return;
     }
-  } catch (error) {
-    mensagemDiv.textContent = "Ocorreu um erro na comunicação com o servidor.";
-    mensagemDiv.classList.add('error-message', 'message-visible');
-    console.error("Erro ao enviar requisição de login:", error);
 
-    // Restaura o botão em caso de erro de rede/comunicação
-    if (botaoLogin) {
-      botaoLogin.disabled = false;
-      botaoLogin.textContent = "Entrar";
-      botaoLogin.style.opacity = "1";
-      botaoLogin.style.cursor = "pointer";
+    const formData = new FormData();
+    formData.append('action', 'login');
+    formData.append('cpf', cpfValue);
+    formData.append('senha', senhaValue);
+
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec"; // A URL do seu Web App
+
+    try {
+        const response = await fetch(webAppUrl, {
+            method: 'POST',
+            body: formData
+        });
+
+        // MUDANÇA: Capture a resposta como texto bruto primeiro para depuração
+        const responseText = await response.text();
+        console.log("Resposta bruta do servidor (Main.gs):", responseText);
+
+        const result = JSON.parse(responseText); // Tenta parsear o texto como JSON
+
+        if (result.status === "success") {
+            console.log("Login successful, redirecting to dashboard:", result);
+
+            const userData = {
+                cpf: cpfValue.replace(/\D/g, ''),
+                nome: result.user
+            };
+            localStorage.setItem('usuarioLogado', JSON.stringify(userData));
+
+            window.location.href = "https://renatodouek.com.br/mentorias/dashboard/";
+            
+        } else {
+            // MUDANÇA: Loga o objeto 'result' completo para ver todos os detalhes de erro do servidor
+            mensagemDiv.textContent = "Erro: " + result.message;
+            mensagemDiv.classList.add('error-message', 'message-visible');
+            console.error("Login failed (resultado completo do servidor):", result);
+
+            if (botaoLogin) {
+                botaoLogin.disabled = false;
+                botaoLogin.textContent = "Entrar";
+                botaoLogin.style.opacity = "1";
+                botaoLogin.style.cursor = "pointer";
+            }
+        }
+    } catch (error) {
+        mensagemDiv.textContent = "Ocorreu um erro na comunicação com o servidor ou na interpretação da resposta.";
+        mensagemDiv.classList.add('error-message', 'message-visible');
+        console.error("Erro ao enviar requisição de login ou parsear resposta:", error);
+
+        if (botaoLogin) {
+            botaoLogin.disabled = false;
+            botaoLogin.textContent = "Entrar";
+            botaoLogin.style.opacity = "1";
+            botaoLogin.style.cursor = "pointer";
+        }
     }
-  }
 });
