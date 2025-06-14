@@ -12,7 +12,9 @@ let showCompletedTasks = false;
 
 function formatarDataParaExibicao(dataString) {
     if (!dataString) return '';
-    const data = new Date(dataString + 'T00:00:00'); // Adiciona T00:00:00 para evitar problemas de fuso horário
+    // MUDANÇA: Verifica se a data já é um objeto Date (caso venha do Apps Script com 'new Date()')
+    // ou se é uma string YYYY-MM-DD
+    const data = (dataString instanceof Date) ? dataString : new Date(dataString + 'T00:00:00'); 
     if (isNaN(data.getTime())) {
         return dataString;
     }
@@ -25,6 +27,13 @@ function formatarDataParaExibicao(dataString) {
 function formatarDataParaInput(dataString) {
     if (!dataString) return '';
     // Assume que a dataString já vem no formato YYYY-MM-DD do Apps Script
+    // ou é um objeto Date que precisa ser formatado para o input
+    if (dataString instanceof Date) {
+        const ano = dataString.getFullYear();
+        const mes = String(dataString.getMonth() + 1).padStart(2, '0');
+        const dia = String(dataString.getDate()).padStart(2, '0');
+        return `${ano}-${mes}-${dia}`;
+    }
     return dataString; 
 }
 
@@ -223,14 +232,19 @@ async function handleCheckboxChange(event) {
     const activity = allActivities.find(act => act.IDdaAtividade == activityId);
     if (!activity) return;
 
-    let newStatus, oldStatusForUndo = activity.StatusAtual;
+    let newStatus;
+    let oldStatusForUndo = activity.StatusAtual; // Guarda o status atual ANTES da mudança
 
     if (isChecked) {
         newStatus = "Concluída";
-        lastCompletedActivity = { ...activity, StatusAnterior: activity.StatusAtual };
+        // MUDANÇA: Armazenar o estado COMPLETO da atividade antes de ser marcada como concluída
+        // Isso é crucial para o "Desfazer" poder restaurar o StatusAnterior correto.
+        lastCompletedActivity = { ...activity }; 
         showNotification("Tarefa concluída!", true);
     } else {
-        newStatus = activity.StatusAnterior || "Não iniciada";
+        // MUDANÇA: Ao desmarcar, o newStatus é o StatusAnterior que estava salvo
+        // (que Apps Script garante ser o status antes da última conclusão)
+        newStatus = activity.StatusAnterior || "Não iniciada"; 
         showNotification("Tarefa desmarcada.");
         lastCompletedActivity = null;
     }
@@ -238,26 +252,20 @@ async function handleCheckboxChange(event) {
     const result = await callAppsScript('updateActivityStatus', {
         id: activityId,
         newStatus: newStatus,
-        oldStatusForUndo: oldStatusForUndo,
+        oldStatusForUndo: oldStatusForUndo, // Envia o status que a atividade tinha ANTES dessa ação
         concluidaPorCheckbox: isChecked ? 'Sim' : 'Não'
     });
 
-    if (result.status === 'success') {
-        const updatedActivity = allActivities.find(act => act.IDdaAtividade == activityId);
-        if (updatedActivity) {
-            updatedActivity.StatusAtual = newStatus;
-            updatedActivity.StatusAnterior = oldStatusForUndo;
-            updatedActivity.ConcluidaPorCheckbox = isChecked ? 'Sim' : 'Não';
+    if (result.status === 'success' && result.activity) { 
+        const returnedActivity = result.activity; // Atividade completa do Apps Script
+        const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
+        if (index !== -1) {
+            allActivities[index] = returnedActivity; // Substitui o objeto local
         }
-        activityRow.classList.toggle('completed-task', newStatus === 'Concluída');
-        const statusBadge = activityRow.querySelector('.status-badge');
-        statusBadge.textContent = newStatus;
-        statusBadge.className = `status-badge ${getStatusClass(newStatus)}`;
-
-        filterAndSearchActivities(); 
+        filterAndSearchActivities(); // Re-renderiza
     } else {
-        checkbox.checked = !isChecked; 
-        activityRow.classList.toggle('completed-task', !isChecked);
+        checkbox.checked = !isChecked; // Reverte o checkbox no frontend
+        activityRow.classList.toggle('completed-task', !isChecked); // Reverte o riscado
         showNotification("Erro ao atualizar tarefa: " + result.message);
     }
 }
@@ -287,39 +295,31 @@ function addActivityEventListeners() {
 document.getElementById('undoTaskButton').addEventListener('click', async () => {
     if (lastCompletedActivity) {
         const activityId = lastCompletedActivity.IDdaAtividade;
-        const previousStatus = lastCompletedActivity.StatusAnterior;
-        const checkbox = document.querySelector(`#activitiesTableBody input[type="checkbox"][data-activity-id="${activityId}"]`);
-        const activityRow = checkbox.closest('tr');
-
-        if (checkbox) checkbox.checked = false;
-        const statusBadge = activityRow.querySelector('.status-badge');
-        if(statusBadge) {
-            statusBadge.textContent = previousStatus;
-            statusBadge.className = `status-badge ${getStatusClass(previousStatus)}`;
-        }
-        activityRow.classList.remove('completed-task');
-
+        const previousOriginalStatus = lastCompletedActivity.StatusAnterior || "Não iniciada"; // Status para o qual reverter
+        
+        // MUDANÇA: Não manipula o DOM diretamente aqui, vai depender da atualização vinda do Apps Script
         showNotification("Desfeito!");
         clearTimeout(undoTimeout); 
 
+        // Envia a reversão para o Apps Script
         const result = await callAppsScript('updateActivityStatus', {
             id: activityId,
-            newStatus: previousStatus,
-            oldStatusForUndo: previousStatus, 
+            newStatus: previousOriginalStatus, // Reverte para o status anterior real
+            oldStatusForUndo: "Concluída", // Indica que o status anterior *a esta operação* era "Concluída"
             concluidaPorCheckbox: 'Não'
         });
 
-        if (result.status === 'success') {
-            const updatedActivity = allActivities.find(act => act.IDdaAtividade == activityId);
-            if (updatedActivity) {
-                updatedActivity.StatusAtual = previousStatus;
-                updatedActivity.ConcluidaPorCheckbox = 'Não';
+        if (result.status === 'success' && result.activity) {
+            const returnedActivity = result.activity;
+            const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
+            if (index !== -1) {
+                allActivities[index] = returnedActivity; // Substitui o objeto local
             }
             filterAndSearchActivities();
         } else {
             showNotification("Erro ao desfazer: " + result.message);
         }
-        lastCompletedActivity = null;
+        lastCompletedActivity = null; // Limpa o estado de desfazer
     }
 });
 
@@ -379,7 +379,9 @@ activityForm.addEventListener('submit', async (event) => {
         descricao: activityDescriptionInput.value,
         dataLimite: activityDueDateInput.value,
         statusAtual: activityStatusSelect.value,
-        statusAnterior: activityStatusSelect.value 
+        // Ao salvar/atualizar via modal, StatusAnterior não é relevante no request,
+        // o Apps Script vai pegar o StatusAtual existente antes da mudança no modal.
+        statusAnterior: '' 
     };
 
     const submitButton = activityForm.querySelector('button[type="submit"]');
@@ -391,21 +393,20 @@ activityForm.addEventListener('submit', async (event) => {
     submitButton.disabled = false;
     submitButton.textContent = "Salvar Atividade";
 
-    if (result.status === 'success' && result.activity) { // MUDANÇA: Verifica se 'result.activity' está presente
+    if (result.status === 'success' && result.activity) { 
         activityModal.style.display = 'none';
         showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false);
         
         const returnedActivity = result.activity;
-        // MUDANÇA: Atualiza o array local 'allActivities' e re-renderiza
         if (isEditing) {
             const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
             if (index !== -1) {
                 allActivities[index] = returnedActivity;
             }
         } else {
-            allActivities.push(returnedActivity); // Adiciona nova atividade
+            allActivities.push(returnedActivity); 
         }
-        filterAndSearchActivities(); // Re-renderiza a tabela com a lista atualizada
+        filterAndSearchActivities(); 
     } else {
         showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false);
     }
