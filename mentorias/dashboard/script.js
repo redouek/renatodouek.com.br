@@ -467,7 +467,7 @@ function openEditModal(event) {
     modalTitle.textContent = "Editar Atividade";
     activityIdInput.value = activityToEdit.IDdaAtividade;
     activityNameInput.value = activityToEdit.Atividade;
-    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || ''; // MUDANÇA: Handle undefined/null
+    activityDescriptionInput.value = activityToEdit.descricaoObservacoes || ''; // MUDANÇA: Handle undefined/null
     activityDueDateInput.value = formatarDataParaInput(activityToEdit.DataLimite);
     activityStatusSelect.value = activityToEdit.StatusAtual;
 
@@ -639,15 +639,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         filterAndSearchActivities();
     });
+const initialActiveSectionId = initialBtn.dataset.section;
+// Já definimos no CSS que apenas a seção com display: block será visível.
+// O HTML inicial já define section-overview como display: block.
+// Se a seção inicial for 'activities', precisamos carregá-las.
+if (initialActiveSectionId === 'activities') {
+    await loadActivities();
+}
+// Se for outra seção, o display inicial do HTML já cuida disso.
 
-    // Carrega as atividades se a seção de atividades for a inicial ou a primeira a ser mostrada
-    // Verifica se a seção de atividades é a ativa ao carregar a página
-    if (document.getElementById('section-activities') && document.getElementById('section-activities').classList.contains('form-step-active')) {
-        loadActivities();
-    } else if (initialBtn.dataset.section === 'activities') { // Se o botão de atividades é o padrão ativo (pode ser ajustado)
-        loadActivities();
-    } else if (initialBtn.dataset.section === 'overview') { // Se a visão geral é o padrão ativo, mostra ela
-        document.getElementById('section-overview').style.display = 'block';
-    }
-    // ... para outras seções padrão se houver
 });
