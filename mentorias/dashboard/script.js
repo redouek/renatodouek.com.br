@@ -431,10 +431,20 @@ activityForm.addEventListener('submit', async (event) => {
 
 // Função para abrir o modal em modo edição
 function openEditModal(event) {
-    const activityId = event.target.dataset.activityId || event.target.closest('.status-badge')?.dataset.activityId;
+    // MUDANÇA: Corrige a obtenção do activityId para cliques em botões e ícones internos.
+    const clickedElement = event.target.closest('.edit-activity-btn, .status-badge');
+    
+    if (!clickedElement) {
+        showNotification("Erro: Elemento clicado inválido para edição.", false);
+        console.error("Erro: clickedElement é nulo, event.target:", event.target);
+        return;
+    }
+    const activityId = clickedElement.dataset.activityId;
+    console.log("Tentando editar atividade com ID:", activityId); // Adicionado log para depuração
     
     if (!activityId) {
         showNotification("Erro: ID da atividade não encontrado para edição.", false);
+        console.error("Erro: activityId é nulo/indefinido após closest, clickedElement:", clickedElement);
         return;
     }
 
@@ -442,6 +452,7 @@ function openEditModal(event) {
 
     if (!activityToEdit) {
         showNotification("Atividade não encontrada para edição.", false);
+        console.error("Atividade não encontrada no array local para ID:", activityId); // Adicionado log
         return;
     }
 
@@ -457,11 +468,15 @@ function openEditModal(event) {
 
 // Função para deletar atividade
 async function handleDeleteActivity(event) {
-    const activityId = event.target.dataset.activityId;
+    // MUDANÇA: Garante que o activityId seja pego corretamente mesmo se o clique for no ícone.
+    const clickedElement = event.target.closest('.delete-activity-btn');
+    if (!clickedElement) {
+        console.error("Erro: Elemento clicado não é um botão de exclusão válido.", event.target);
+        return;
+    }
+    const activityId = clickedElement.dataset.activityId;
     console.log("Tentando excluir atividade com ID:", activityId);
 
-    // MUDANÇA: Substituindo confirm() nativo por modal customizado (customConfirmModal)
-    // Usaremos uma função utilitária para chamar o modal
     const confirmed = await showCustomConfirm("Confirmação", "Você tem certeza que deseja excluir esta atividade?");
 
     if (confirmed) {
@@ -482,8 +497,6 @@ async function handleDeleteActivity(event) {
 // ===============================================================
 
 const activitySearchInput = document.getElementById('activitySearch');
-// REMOVIDA A REFERÊNCIA A activityFilterSelect - AGORA É MULTI-SELECT
-// const activityFilterSelect = document.getElementById('activityFilter'); 
 const clearSearchBtn = document.getElementById('clearSearchBtn');
 
 activitySearchInput.addEventListener('input', (event) => {
@@ -678,22 +691,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Lógica do toggle "Ocultar Concluídas"
-    toggleCompletedTasksBtn.addEventListener('click', () => {
-        showCompletedTasks = !showCompletedTasks; // Inverte o estado
-        if (showCompletedTasks) { // Se o estado agora é 'true' (significa VER concluídas)
-            toggleIconSpan.classList.remove('mdi-eye-off-outline');
-            toggleIconSpan.classList.add('mdi-eye-outline');
-            toggleTextSpan.textContent = "Ocultar Concluídas"; // O texto mostra a AÇÃO que o botão fará
-        } else { // Se o estado agora é 'false' (significa OCULTAR concluídas)
-            toggleIconSpan.classList.remove('mdi-eye-outline');
-            toggleIconSpan.classList.add('mdi-eye-off-outline');
-            toggleTextSpan.textContent = "Ver Concluídas"; // O texto mostra a AÇÃO que o botão fará
-        }
-        filterAndSearchActivities();
-    });
+    toggleCompletedTasksBtn.addEventListener('click', updateCompletedTasksToggleButton); // MUDANÇA: Chama nova função auxiliar
+
+    // MUDANÇA: Chama a função para configurar o estado inicial do botão ao carregar a página
+    updateCompletedTasksToggleButton(); 
 
     // Carrega as atividades se a seção de atividades for a inicial ou a primeira a ser mostrada
-    // Verifica se a seção de atividades é a ativa ao carregar a página
     if (document.getElementById('section-activities') && document.getElementById('section-activities').classList.contains('form-step-active')) {
         loadActivities();
     } else if (initialBtn.dataset.section === 'activities') { // Se o botão de atividades é o padrão ativo (pode ser ajustado)
@@ -706,3 +709,18 @@ document.addEventListener("DOMContentLoaded", () => {
     // Inicializa o badge do contador de filtros
     updateFilterCountBadge();
 });
+
+// MUDANÇA: Nova função auxiliar para atualizar o estado do botão "Ver/Ocultar Concluídas"
+function updateCompletedTasksToggleButton() {
+    showCompletedTasks = !showCompletedTasks; // Inverte o estado
+    if (showCompletedTasks) { // Se o estado agora é 'true' (significa VER concluídas)
+        toggleIconSpan.classList.remove('mdi-eye-off-outline');
+        toggleIconSpan.classList.add('mdi-eye-outline');
+        toggleTextSpan.textContent = "Ocultar Concluídas"; // O texto mostra a AÇÃO que o botão fará
+    } else { // Se o estado agora é 'false' (significa OCULTAR concluídas)
+        toggleIconSpan.classList.remove('mdi-eye-outline');
+        toggleIconSpan.classList.add('mdi-eye-off-outline');
+        toggleTextSpan.textContent = "Ver Concluídas"; // O texto mostra a AÇÃO que o botão fará
+    }
+    filterAndSearchActivities();
+}
