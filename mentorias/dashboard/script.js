@@ -12,8 +12,6 @@ let showCompletedTasks = false;
 
 function formatarDataParaExibicao(dataString) {
     if (!dataString) return '';
-    // MUDANÇA: Verifica se a data já é um objeto Date (caso venha do Apps Script com 'new Date()')
-    // ou se é uma string YYYY-MM-DD
     const data = (dataString instanceof Date) ? dataString : new Date(dataString + 'T00:00:00'); 
     if (isNaN(data.getTime())) {
         return dataString;
@@ -26,8 +24,6 @@ function formatarDataParaExibicao(dataString) {
 
 function formatarDataParaInput(dataString) {
     if (!dataString) return '';
-    // Assume que a dataString já vem no formato YYYY-MM-DD do Apps Script
-    // ou é um objeto Date que precisa ser formatado para o input
     if (dataString instanceof Date) {
         const ano = dataString.getFullYear();
         const mes = String(dataString.getMonth() + 1).padStart(2, '0');
@@ -67,14 +63,15 @@ async function callAppsScript(action, data = {}) {
             body: formData
         });
         if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Erro na comunicação com o servidor (${response.status}): ${errorText}`);
+            // MUDANÇA: Captura a mensagem de erro do corpo da resposta, se disponível
+            const errorResponse = await response.json().catch(() => ({ message: response.statusText || 'Erro desconhecido' }));
+            throw new Error(`Erro na comunicação com o servidor (${response.status}): ${errorResponse.message}`);
         }
         return await response.json();
     } catch (error) {
         console.error(`Erro ao chamar Apps Script para ação ${action}:`, error);
         showNotification(`Erro de comunicação: ${error.message}. Por favor, verifique sua conexão ou tente novamente.`, false);
-        return { status: 'error', message: error.message };
+        return { status: 'error', message: error.message }; // Garante que sempre retorne um objeto com status 'error'
     }
 }
 
@@ -95,9 +92,11 @@ function renderActivities(activitiesToRender) {
 
     if (activitiesToRender.length === 0) {
         noActivitiesMessage.style.display = 'block';
+        loadingActivitiesMessage.style.display = 'none'; // Garante que a mensagem de loading seja ocultada
         return;
     } else {
         noActivitiesMessage.style.display = 'none';
+        loadingActivitiesMessage.style.display = 'none'; // Garante que a mensagem de loading seja ocultada
     }
 
     activitiesToRender.forEach(activity => {
@@ -165,7 +164,8 @@ async function loadActivities() {
 
     const result = await callAppsScript('getActivitiesByCpf', { cpf: usuario.cpf.replace(/\D/g, '') });
 
-    loadingActivitiesMessage.style.display = 'none';
+    // MUDANÇA: loadingActivitiesMessage só é ocultado após a renderização ou se houver erro
+    // loadingActivitiesMessage.style.display = 'none'; 
 
     if (result.status === 'success' && result.activities) {
         console.log("Atividades recebidas do Apps Script:", result.activities); 
@@ -227,46 +227,63 @@ async function handleCheckboxChange(event) {
     const checkbox = event.target;
     const activityId = checkbox.dataset.activityId;
     const isChecked = checkbox.checked;
-    const activityRow = checkbox.closest('tr');
-
+    
+    // Encontra a atividade no array local
     const activity = allActivities.find(act => act.IDdaAtividade == activityId);
-    if (!activity) return;
+    if (!activity) {
+        console.error("Atividade não encontrada no array local para ID:", activityId);
+        checkbox.checked = !isChecked; // Reverte o checkbox
+        return;
+    }
 
     let newStatus;
-    let oldStatusForUndo = activity.StatusAtual; // Guarda o status atual ANTES da mudança
+    // Guarda o StatusAtual atual da atividade ANTES da mudança para enviar ao GAS
+    let originalStatusBeforeChange = activity.StatusAtual; 
 
     if (isChecked) {
         newStatus = "Concluída";
-        // MUDANÇA: Armazenar o estado COMPLETO da atividade antes de ser marcada como concluída
-        // Isso é crucial para o "Desfazer" poder restaurar o StatusAnterior correto.
+        // Armazenar o estado COMPLETO da atividade antes de ser marcada como concluída
         lastCompletedActivity = { ...activity }; 
         showNotification("Tarefa concluída!", true);
     } else {
-        // MUDANÇA: Ao desmarcar, o newStatus é o StatusAnterior que estava salvo
-        // (que Apps Script garante ser o status antes da última conclusão)
+        // Ao desmarcar, o newStatus é o StatusAnterior que estava salvo no objeto local
         newStatus = activity.StatusAnterior || "Não iniciada"; 
         showNotification("Tarefa desmarcada.");
         lastCompletedActivity = null;
     }
 
+    // Chama o Apps Script com os dados da mudança
     const result = await callAppsScript('updateActivityStatus', {
         id: activityId,
         newStatus: newStatus,
-        oldStatusForUndo: oldStatusForUndo, // Envia o status que a atividade tinha ANTES dessa ação
+        // oldStatusForUndo agora sempre envia o status atual do frontend ANTES da ação.
+        // O Apps Script vai usar o status da planilha para definir o StatusAnterior.
+        oldStatusForUndo: originalStatusBeforeChange, 
         concluidaPorCheckbox: isChecked ? 'Sim' : 'Não'
     });
 
     if (result.status === 'success' && result.activity) { 
-        const returnedActivity = result.activity; // Atividade completa do Apps Script
+        const returnedActivity = result.activity; // Atividade completa atualizada do Apps Script
         const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
         if (index !== -1) {
-            allActivities[index] = returnedActivity; // Substitui o objeto local
+            allActivities[index] = returnedActivity; // Substitui o objeto local com o retornado do backend
         }
-        filterAndSearchActivities(); // Re-renderiza
+        filterAndSearchActivities(); // Re-renderiza para refletir o estado exato do backend
     } else {
-        checkbox.checked = !isChecked; // Reverte o checkbox no frontend
-        activityRow.classList.toggle('completed-task', !isChecked); // Reverte o riscado
-        showNotification("Erro ao atualizar tarefa: " + result.message);
+        // MUDANÇA: A mensagem de erro agora usa result.message corretamente
+        showNotification(`Erro ao atualizar tarefa: ${result.message}`, false);
+        console.error("Erro ao atualizar tarefa:", result.message, "Resultado completo:", result);
+        // Reverte o estado do checkbox e a classe CSS em caso de falha
+        checkbox.checked = !isChecked; 
+        activity.StatusAtual = originalStatusBeforeChange; // Restaura o status local para o original
+        const activityRow = checkbox.closest('tr'); // Obtém a linha novamente
+        activityRow.classList.toggle('completed-task', originalStatusBeforeChange === 'Concluída');
+        // Atualiza o badge de status visualmente também
+        const statusBadge = activityRow.querySelector('.status-badge');
+        if (statusBadge) {
+            statusBadge.textContent = originalStatusBeforeChange;
+            statusBadge.className = `status-badge ${getStatusClass(originalStatusBeforeChange)}`;
+        }
     }
 }
 
@@ -295,17 +312,16 @@ function addActivityEventListeners() {
 document.getElementById('undoTaskButton').addEventListener('click', async () => {
     if (lastCompletedActivity) {
         const activityId = lastCompletedActivity.IDdaAtividade;
-        const previousOriginalStatus = lastCompletedActivity.StatusAnterior || "Não iniciada"; // Status para o qual reverter
+        // O status anterior real para reverter está em lastCompletedActivity.StatusAnterior
+        const previousOriginalStatus = lastCompletedActivity.StatusAnterior || "Não iniciada"; 
         
-        // MUDANÇA: Não manipula o DOM diretamente aqui, vai depender da atualização vinda do Apps Script
         showNotification("Desfeito!");
         clearTimeout(undoTimeout); 
 
-        // Envia a reversão para o Apps Script
         const result = await callAppsScript('updateActivityStatus', {
             id: activityId,
-            newStatus: previousOriginalStatus, // Reverte para o status anterior real
-            oldStatusForUndo: "Concluída", // Indica que o status anterior *a esta operação* era "Concluída"
+            newStatus: previousOriginalStatus, 
+            oldStatusForUndo: "Concluída", // Status que a tarefa tinha ANTES de ser desfeita
             concluidaPorCheckbox: 'Não'
         });
 
@@ -313,13 +329,16 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
             const returnedActivity = result.activity;
             const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
             if (index !== -1) {
-                allActivities[index] = returnedActivity; // Substitui o objeto local
+                allActivities[index] = returnedActivity; 
             }
             filterAndSearchActivities();
         } else {
             showNotification("Erro ao desfazer: " + result.message);
+            console.error("Erro ao desfazer tarefa:", result.message, "Resultado completo:", result);
+            // Se falha, o estado do checkbox e a classe CSS não são alterados automaticamente pelo backend.
+            // Poderia reverter a UI aqui, mas o ideal é que o backend garanta o estado final.
         }
-        lastCompletedActivity = null; // Limpa o estado de desfazer
+        lastCompletedActivity = null; 
     }
 });
 
@@ -379,8 +398,6 @@ activityForm.addEventListener('submit', async (event) => {
         descricao: activityDescriptionInput.value,
         dataLimite: activityDueDateInput.value,
         statusAtual: activityStatusSelect.value,
-        // Ao salvar/atualizar via modal, StatusAnterior não é relevante no request,
-        // o Apps Script vai pegar o StatusAtual existente antes da mudança no modal.
         statusAnterior: '' 
     };
 
@@ -409,6 +426,7 @@ activityForm.addEventListener('submit', async (event) => {
         filterAndSearchActivities(); 
     } else {
         showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false);
+        console.error(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade:`, result.message, "Resultado completo:", result);
     }
 });
 
@@ -567,7 +585,7 @@ closeCustomConfirmModal.addEventListener('click', () => {
 // Evento principal DOMContentLoaded
 // ===============================================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => { // MUDANÇA: Adicionado 'async'
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
 
     if (!usuario) {
@@ -644,7 +662,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (sectionId === 'activities') {
-                await loadActivities();
+                await loadActivities(); // MUDANÇA: Carrega atividades quando a seção é ativada
             } else if (sectionId === 'overview') {
                 // Lógica para carregar a visão geral, quando implementada
             }
@@ -654,20 +672,22 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleCompletedTasksBtn.addEventListener('click', () => {
         showCompletedTasks = !showCompletedTasks; 
         updateToggleCompletedTasksUI(); 
+        filterAndSearchActivities(); // MUDANÇA: Chama filterAndSearchActivities após toggle
     });
 
     updateToggleCompletedTasksUI(); 
-    filterAndSearchActivities(); 
-
-    if (document.getElementById('section-activities') && document.getElementById('section-activities').classList.contains('form-step-active')) {
-        loadActivities();
-    } else if (initialBtn.dataset.section === 'activities') { 
-        loadActivities();
-    } else if (initialBtn.dataset.section === 'overview') { 
-        document.getElementById('section-overview').style.display = 'block';
-    }
-    
     updateFilterCountBadge();
+
+    // MUDANÇA PRINCIPAL PARA O BUG DO TOGGLE:
+    // Carrega atividades apenas se a seção de atividades é a ativa ao iniciar
+    if (document.getElementById('section-activities').style.display === 'block' || initialBtn.dataset.section === 'activities') {
+        await loadActivities(); // Assegura que as atividades são carregadas se a seção é a padrão
+    } else {
+        // Se não está na seção de atividades, exibe mensagem inicial sem carregar dados
+        noActivitiesMessage.textContent = "Navegue para a seção de Atividades para ver suas tarefas.";
+        noActivitiesMessage.style.display = 'block';
+        loadingActivitiesMessage.style.display = 'none';
+    }
 });
 
 function updateToggleCompletedTasksUI() {
