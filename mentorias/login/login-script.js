@@ -1,4 +1,4 @@
-// Arquivo: login-script.js
+// Arquivo: login-script.js (Versão de Depuração Robusta)
 
 // Função de máscara de CPF (copiada do form-script.js, se você a tiver no login)
 function aplicarMascaraCPF(valor) {
@@ -104,6 +104,7 @@ loginForm.addEventListener('submit', async function(event) {
             };
             localStorage.setItem('usuarioLogado', JSON.stringify(userData));
 
+            // MUDANÇA: Redireciona imediatamente sem setTimeout
             window.location.href = "https://renatodouek.com.br/mentorias/dashboard/";
             
         } else {
