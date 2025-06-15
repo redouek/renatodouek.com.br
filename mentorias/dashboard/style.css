@@ -124,8 +124,7 @@ body {
     padding: 2rem;
     background-color: #2A2A2A;
     display: flex;
-    flex-direction: column; /* MUDANÇA: Para que as seções se empilhem e ocupe o espaço */
-    height: 100%; /* Garante que main-area tenha altura para flex-grow de content-section */
+    flex-direction: column;
 }
 
 /* Cabeçalho da Área Principal (Nome do Usuário + Avatar) */
@@ -136,7 +135,6 @@ body {
     border-bottom: 2px solid #FFCE00;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
-    flex-shrink: 0; /* MUDANÇA: Impede que o header encolha */
 }
 
 .user-info h1 {
@@ -167,10 +165,8 @@ body {
 
 /* Seções de Conteúdo (Visão Geral, Atividades, etc.) */
 .content-section {
-    flex: 1; /* MUDANÇA: Ocupa o espaço restante verticalmente */
-    display: flex; /* MUDANÇA: Adiciona display flex para organizar conteúdo interno */
-    flex-direction: column; /* MUDANÇA: Conteúdo interno em coluna */
-    /* overflow-y: auto; */ /* REMOVIDO: O overflow será no .table-container */
+    flex: 1;
+    overflow-y: auto; /* Permite rolagem interna */
     padding-right: 0.5rem; /* Espaço para barra de rolagem */
     font-size: 1rem;
     color: #FFFFFF;
@@ -198,7 +194,6 @@ body {
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
-    flex-shrink: 0; /* MUDANÇA: Garante que este cabeçalho não encolha e permaneça fixo */
 }
 
 .add-activity-btn {
@@ -226,6 +221,7 @@ body {
     flex-wrap: wrap;
 }
 
+/* Estilo para o Toggle de Concluídas (Botão com Ícone) - Item 4: OK */
 .toggle-completed-btn {
     background: none;
     border: none;
@@ -249,6 +245,7 @@ body {
     font-size: 1.25rem;
 }
 
+/* Campo de Busca com ícones (Lupa e X de Limpar) - OK */
 .search-input-wrapper {
     position: relative;
     display: flex;
@@ -275,11 +272,14 @@ body {
     color: #bbb;
 }
 
+/* ESTILO DO ÍCONE DE CALENDÁRIO (Item 8) - Apenas tenta evitar preto, sem alterar a cor do texto do input */
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(100%) grayscale(100%) brightness(100%) !important; 
+    filter: invert(100%) grayscale(100%) brightness(100%) !important; /* Tenta deixar o ícone branco em navegadores WebKit */
+    /* Para deixar amarelo: filter: invert(80%) sepia(100%) saturate(300%) hue-rotate(0deg) brightness(100%) contrast(100%); */
 }
 input[type="date"] {
-    color-scheme: dark; 
+    color-scheme: dark; /* Ajuda a estilizar o widget do calendário em alguns browsers (modo escuro) */
+    /* Não definimos a cor do texto do input aqui para não afetar a cor do ícone */
 }
 
 .search-input-wrapper .search-icon,
@@ -310,24 +310,16 @@ input[type="date"] {
 }
 
 /* Tabela de Atividades */
-/* MUDANÇA: table-container agora é a área de rolagem */
 .table-container {
-    overflow-x: auto; /* Permite rolagem horizontal para tabelas largas */
-    flex-grow: 1; /* Ocupa o espaço restante verticalmente */
-    overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical ocorrer APENAS aqui */
-    margin-top: -1rem; /* MUDANÇA: Ajusta para compensar o margin-bottom do activities-header se necessário */
-    padding-top: 1rem; /* MUDANÇA: Adiciona padding superior para dar espaço ao conteúdo ao rolar */
-    border-radius: 8px; /* MUDANÇA: Cantos arredondados para a área da tabela */
-    background-color: #2A2A2A; /* Fundo da área de rolagem */
+    overflow-x: auto;
+    flex-grow: 1;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    /* margin-top: 1rem; */ /* REMOVIDO: Margin agora está no table-container padding-top */
+    margin-top: 1rem;
     min-width: 700px;
-    border-radius: 8px; /* MUDANÇA: Cantos arredondados para a tabela inteira */
-    overflow: hidden; /* Garante que o border-radius funcione */
 }
 
 table th,
@@ -344,18 +336,7 @@ table th {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.85rem;
-    position: sticky; /* MUDANÇA: Fixa o cabeçalho ao rolar o table-container */
-    top: 0;
-    z-index: 2; /* Garante que fique acima do conteúdo da tabela */
 }
-/* MUDANÇA: Estilo de canto para o thead fixo */
-table th:first-child {
-    border-top-left-radius: 8px;
-}
-table th:last-child {
-    border-top-right-radius: 8px;
-}
-
 
 table td {
     background-color: #2A2A2A;
@@ -363,11 +344,7 @@ table td {
     font-size: 0.9rem;
 }
 
-/* MUDANÇA: Zebra-striping para melhor legibilidade */
-table tbody tr:nth-child(even) {
-    background-color: #333333; /* Uma cor ligeiramente diferente */
-}
-table tbody tr:hover td {
+table tr:hover td {
     background-color: #3A3A3A;
 }
 
@@ -409,11 +386,11 @@ table input[type="checkbox"]:checked::before {
 
 /* Estilo para tarefas concluídas (texto riscado) - Item 6 */
 .completed-task {
-    text-decoration: line-through; 
-    text-decoration-thickness: 3px; 
-    text-decoration-color: #555555; /* MUDANÇA: Cor mais escura para o riscado */
-    color: rgba(255, 255, 255, 0.4); /* MUDANÇA: Texto mais sutil/claro */
-    background-color: rgba(0, 0, 0, 0.1); /* MUDANÇA: Um fundo levemente mais escuro para a linha da tabela */
+    text-decoration: line-through; /* Garante que a linha esteja presente */
+    text-decoration-thickness: 3px; /* Tenta deixar a linha um pouco mais grossa (suporte pode variar) */
+    text-decoration-color: #2a2a2a; /* MUDANÇA: Cor amarela para o riscado */
+    color: rgba(255, 255, 255, 0.3); /* MUDANÇA: Texto mais sutil/claro (40% de opacidade) */
+    background-color: rgba(0, 0, 0, 0.2); /* MUDANÇA: Um fundo levemente mais escuro para a linha da tabela */
     transition: all 0.3s ease-in-out;
 }
 
@@ -449,7 +426,7 @@ table input[type="checkbox"]:checked::before {
     font-size: 0.8rem;
     font-weight: bold;
     text-align: center;
-    min-width: 120px; 
+    min-width: 120px; /* MUDANÇA: Aumenta a largura mínima para uniformidade */
     white-space: nowrap;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -496,7 +473,7 @@ table input[type="checkbox"]:checked::before {
     align-items: center;
     gap: 0.5rem;
     transition: background-color 0.3s, border-color 0.3s;
-    position: relative; 
+    position: relative; /* MUDANÇA: Necessário para posicionar o contador absolutamente */
 }
 
 .filter-dropdown-btn:hover {
@@ -517,15 +494,15 @@ table input[type="checkbox"]:checked::before {
     padding: 0.1rem 0.4rem;
     border-radius: 50%; /* Circular */
     margin-left: 0.5rem;
-    min-width: 1rem; 
+    min-width: 1rem; /* Garante que o círculo não fique muito pequeno */
     text-align: center;
-    display: inline-block; 
-    line-height: 1rem; 
+    display: inline-block; /* Para padding e width */
+    line-height: 1rem; /* Centraliza o texto verticalmente */
     position: absolute;
-    top: -5px; 
-    right: -5px; 
-    transform: translate(50%, -50%); 
-    z-index: 10; 
+    top: -5px; /* Ajuste a posição vertical */
+    right: -5px; /* Ajuste a posição horizontal para o canto superior direito do botão */
+    transform: translate(50%, -50%); /* Ajuste fino para centralizar o círculo na esquina */
+    z-index: 10; /* Garante que ele fique acima de outros elementos */
     margin-right: 30px;
     margin-top: 25px;
 }
@@ -617,7 +594,7 @@ table input[type="checkbox"]:checked::before {
     color: #fff;
 }
 
-.modal-content.small-modal { 
+.modal-content.small-modal { /* Para o modal de confirmação */
     max-width: 350px;
     text-align: center;
 }
@@ -629,12 +606,12 @@ table input[type="checkbox"]:checked::before {
     font-size: 1.5rem;
 }
 
-.modal-content.small-modal h2 { 
+.modal-content.small-modal h2 { /* Título do modal de confirmação */
     font-size: 1.4rem;
     margin-bottom: 1rem;
 }
 
-.modal-content.small-modal p { 
+.modal-content.small-modal p { /* Texto do modal de confirmação */
     font-size: 1rem;
     color: #ccc;
     margin-bottom: 2rem;
@@ -711,10 +688,10 @@ table input[type="checkbox"]:checked::before {
     gap: 1rem;
 }
 
-.modal-buttons .button-outline-yellow { 
-    background-color: transparent; 
-    color: #FFCE00; 
-    border: 2px solid #FFCE00; 
+.modal-buttons .button-outline-yellow { /* Botão Cancelar no customConfirm (Item 1) */
+    background-color: transparent; /* Sem fundo */
+    color: #FFCE00; /* Texto amarelo */
+    border: 2px solid #FFCE00; /* Borda amarela */
     padding: 0.75rem 1.5rem;
     border-radius: 32px;
     font-weight: bold;
@@ -726,16 +703,17 @@ table input[type="checkbox"]:checked::before {
 }
 
 .modal-buttons .button-outline-yellow:hover {
-    background-color: #FFCE00; 
-    color: #000; 
+    background-color: #FFCE00; /* Fundo amarelo no hover */
+    color: #000; /* Texto preto no hover */
 }
 
 /* Estilo para os SELECTs dentro do modal (com cores de status) - Item 4 */
 .modal-content select#activityStatus {
-    background-color: #2a2a2a; 
-    color: #eee; 
+    background-color: #2a2a2a; /* Fundo base */
+    color: #eee; /* Texto base */
     border: 1px solid #444;
     transition: background-color 0.3s, color 0.3s;
+    /* Para a seta customizada no select */
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -794,15 +772,15 @@ table input[type="checkbox"]:checked::before {
     z-index: 1000;
     overflow: hidden;
     min-width: 300px;
-    opacity: 0; 
-    visibility: hidden; 
-    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s; 
+    opacity: 0; /* Começa oculto */
+    visibility: hidden; /* Garante que não ocupa espaço nem interage */
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s; /* Transição para sumir totalmente */
 }
 
-.notification-bar.show { 
+.notification-bar.show { /* Classe para mostrar a notificação */
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.3s ease-in-out; 
+    transition: opacity 0.3s ease-in-out; /* Transição para aparecer */
 }
 
 .notification-bar span {
@@ -832,7 +810,7 @@ table input[type="checkbox"]:checked::before {
     width: 100%;
     height: 4px;
     background-color: #FFCE00;
-    animation: progressAnimation 3s linear forwards; 
+    animation: progressAnimation 3s linear forwards; /* MUDANÇA: 3 segundos */
 }
 
 @keyframes progressAnimation {
@@ -844,16 +822,17 @@ table input[type="checkbox"]:checked::before {
 /* Responsividade Geral */
 @media (max-width: 768px) {
     body {
+        /* Remove centralização absoluta para mobile para evitar scroll desnecessário */
         display: block; 
         height: auto;
         min-height: 100vh;
-        overflow-x: hidden; 
+        overflow-x: hidden; /* Evita scroll horizontal */
     }
     .app-background {
         height: auto;
-        min-height: 100vh; 
-        padding: 0; 
-        display: block; 
+        min-height: 100vh; /* Garante que o fundo ocupe a tela em mobile */
+        padding: 0; /* Remove padding extra */
+        display: block; /* Para que o card se adapte melhor */
     }
     .dashboard-card {
         flex-direction: column;
@@ -861,7 +840,7 @@ table input[type="checkbox"]:checked::before {
         min-height: 100vh;
         width: 100vw;
         border-radius: 0;
-        box-shadow: none; 
+        box-shadow: none; /* Remove sombra em mobile */
     }
 
     .sidebar {
@@ -875,7 +854,7 @@ table input[type="checkbox"]:checked::before {
     }
 
     .sidebar-top {
-        flex-direction: row; 
+        flex-direction: row; /* Para alinhar logo e menu horizontalmente */
         justify-content: center;
         width: 100%;
     }
@@ -921,7 +900,7 @@ table input[type="checkbox"]:checked::before {
     }
 
     .search-input-wrapper,
-    .filter-dropdown-btn { 
+    .filter-dropdown-btn { /* Também o botão do filtro */
         width: 100%;
         min-width: unset;
     }
@@ -960,26 +939,5 @@ table input[type="checkbox"]:checked::before {
 
     .modal-content.small-modal {
         width: 95%;
-    }
-    /* MUDANÇA: Estilo para barra de rolagem (compatibilidade WebKit) */
-    /* Isso precisa estar fora do @media query se for global */
-    ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #333333; /* Cor da trilha da barra de rolagem */
-        border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #FFCE00; /* Cor da alça da barra de rolagem (amarelo) */
-        border-radius: 10px;
-        border: 3px solid #333333; /* Padding ao redor da alça */
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #e6b800; /* Cor no hover */
     }
 }
