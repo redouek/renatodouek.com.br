@@ -1,4 +1,4 @@
-/* Arquivo: mentorias/dashboard/style.css (COMPLETO E REVISADO) */
+/* Arquivo: mentorias/dashboard/style.css */
 
 /* Reset Básico */
 * {
@@ -11,14 +11,12 @@ body {
     font-family: "Inter", sans-serif;
     background-color: #000000;
     color: #FFFFFF;
-    /* Certifique-se de que o body ocupa 100% da viewport para o layout flex */
     min-height: 100vh; 
     display: flex; 
     justify-content: center;
     align-items: center;
 }
 
-/* Fundo geral e card central do Dashboard */
 .app-background {
     display: flex;
     justify-content: center;
@@ -33,11 +31,10 @@ body {
     border-radius: 12px;
     height: 90vh; /* Altura do card principal */
     width: 95vw; 
-    overflow: hidden; /* Garante que o conteúdo interno não vaze */
+    overflow: hidden; /* Mantido para não ter scrollbars no próprio card, só dentro das seções */
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.8); 
 }
 
-/* Sidebar Lateral (Menu) */
 .sidebar {
     background-color: #1a1a1a;
     width: 64px; 
@@ -122,7 +119,7 @@ body {
     background-color: #2A2A2A;
     display: flex;
     flex-direction: column; 
-    /* REMOVIDO: height: 100%; para evitar sobreposição de rolagem */
+    height: 100%; /* Garante que main-area tenha altura para flex-grow de content-section */
 }
 
 /* Cabeçalho da Área Principal (Nome do Usuário + Avatar) */
@@ -133,7 +130,7 @@ body {
     border-bottom: 2px solid #FFCE00;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
-    flex-shrink: 0; 
+    flex-shrink: 0; /* Impede que o header encolha */
 }
 
 .user-info h1 {
@@ -164,10 +161,11 @@ body {
 
 /* Seções de Conteúdo (Visão Geral, Atividades, etc.) */
 .content-section {
-    flex: 1; /* MUDANÇA: Ocupa o espaço restante verticalmente */
-    display: block; /* MUDANÇA: Volta para block para ter overflow funcionando */
-    overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical aqui */
-    padding-right: 0.5rem; 
+    flex: 1; /* Ocupa o espaço restante verticalmente no main-area */
+    display: flex; /* MUDANÇA: Torna-o um contêiner flex para seus filhos (header de atividades, table-container) */
+    flex-direction: column; /* MUDANÇA: Organiza filhos em coluna */
+    overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical para o conteúdo desta seção */
+    padding-right: 0.5rem; /* Espaço para barra de rolagem */
     font-size: 1rem;
     color: #FFFFFF;
     margin-top: 10px;
@@ -194,7 +192,7 @@ body {
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
-    flex-shrink: 0; /* Garante que este cabeçalho não encolha e permaneça no topo da seção rolante */
+    flex-shrink: 0; /* Garante que este cabeçalho não encolha e permaneça fixo no topo da seção rolante */
 }
 
 .add-activity-btn {
@@ -308,10 +306,10 @@ input[type="date"] {
 /* Tabela de Atividades */
 .table-container {
     overflow-x: auto; 
-    flex-grow: 1; /* Ocupa o espaço restante dentro da seção rolante */
+    flex-grow: 1; /* Permite que o table-container ocupe o espaço restante na seção */
     /* REMOVIDO: overflow-y: auto; daqui, pois o content-section já tem */
-    margin-top: -1rem; 
-    padding-top: 1rem; 
+    margin-top: 0; /* Remove margem superior excessiva */
+    padding-top: 0; /* Remove padding superior se não necessário */
     border-radius: 8px; 
     background-color: #2A2A2A; 
 }
@@ -338,7 +336,7 @@ table th {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.85rem;
-    position: sticky; /* MUDANÇA: Fixa o cabeçalho ao rolar o table-container */
+    position: sticky; /* MUDANÇA CRÍTICA: Fixa o cabeçalho ao rolar o content-section */
     top: 0; /* Fixa no topo da área de rolagem */
     z-index: 2; /* Garante que fique acima do conteúdo da tabela */
 }
@@ -399,7 +397,7 @@ table input[type="checkbox"]:checked::before {
 }
 
 
-/* Estilo para tarefas concluídas (texto riscado) - Item 6 */
+/* Estilo para tarefas concluídas (texto riscado) */
 .completed-task {
     text-decoration: line-through; 
     text-decoration-thickness: 3px; 
@@ -410,7 +408,7 @@ table input[type="checkbox"]:checked::before {
 }
 
 
-/* Estilo para os botões de ação (Editar/Excluir) - Item 6: OK */
+/* Estilo para os botões de ação (Editar/Excluir) */
 .icon-action-btn {
     background: none;
     border: none;
@@ -433,7 +431,7 @@ table input[type="checkbox"]:checked::before {
     color: #dc3545;
 }
 
-/* Estilos para o Status como Badge na Tabela - Item 2 */
+/* Estilos para o Status como Badge na Tabela */
 .status-badge {
     display: inline-block;
     padding: 0.4rem 0.7rem;
@@ -469,7 +467,7 @@ table input[type="checkbox"]:checked::before {
     color: #FFE082;
 }
 
-/* Estilos para o Multi-select de filtro (checkboxes em dropdown) - Item 5 */
+/* Estilos para o Multi-select de filtro (checkboxes em dropdown) */
 .multi-select-filter-wrapper {
     position: relative;
     display: inline-block;
@@ -500,14 +498,14 @@ table input[type="checkbox"]:checked::before {
     font-size: 1.1rem;
 }
 
-/* Contador de filtros no botão (Item 5) */
+/* Contador de filtros no botão */
 .filter-count-badge {
     background-color: #FFCE00;
     color: #000;
     font-size: 0.7rem;
     font-weight: bold;
     padding: 0.1rem 0.4rem;
-    border-radius: 50%; /* Circular */
+    border-radius: 50%; 
     margin-left: 0.5rem;
     min-width: 1rem; 
     text-align: center;
@@ -722,7 +720,7 @@ table input[type="checkbox"]:checked::before {
     color: #000; 
 }
 
-/* Estilo para os SELECTs dentro do modal (com cores de status) - Item 4 */
+/* Estilo para os SELECTs dentro do modal (com cores de status) */
 .modal-content select#activityStatus {
     background-color: #2a2a2a; 
     color: #eee; 
@@ -955,7 +953,7 @@ table input[type="checkbox"]:checked::before {
     }
 }
 
-/* MUDANÇA: Estilo para barra de rolagem (compatibilidade WebKit) - Fora do media query para ser global */
+/* Estilo para barra de rolagem (compatibilidade WebKit) - Fora do media query para ser global */
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
