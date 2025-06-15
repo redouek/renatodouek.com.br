@@ -48,7 +48,6 @@ function getStatusClass(status) {
 // Comunicação com Google Apps Script (GAS)
 // ===============================================================
 
-// MUDANÇA: Atualize este URL para o do seu NOVO Web App
 const webAppUrl = "https://script.google.com/macros/s/AKfycbwxweNQUDALWE7Ai7-u73WbUFKsjtH-RlqQQJGGYcBo372PClCIN3MMrNzDcoogfCpq/exec"; 
 
 async function callAppsScript(action, data = {}) {
@@ -191,17 +190,24 @@ async function loadActivities() {
 let undoTimeout; 
 let lastCompletedActivity = null; 
 
+// MUDANÇA: showNotification aprimorada para controle de timeout e fechar modal
 function showNotification(message, showUndo = false) {
     const notificationBar = document.getElementById('taskCompletedNotification');
     const notificationText = notificationBar.querySelector('span');
     const undoButton = document.getElementById('undoTaskButton');
     const progressLine = notificationBar.querySelector('.progress-line');
 
+    // Sempre limpa o timeout anterior para evitar conflitos
+    clearTimeout(undoTimeout); 
+
     notificationText.textContent = message;
     undoButton.style.display = showUndo ? 'inline-block' : 'none';
     progressLine.style.display = showUndo ? 'block' : 'none';
 
-    notificationBar.classList.add('show'); 
+    // Garante que a notificação esteja visível para iniciar a transição
+    notificationBar.classList.remove('show'); // Remove para resetar a transição
+    void notificationBar.offsetWidth; // Força reflow
+    notificationBar.classList.add('show'); // Adiciona para iniciar a transição
     notificationBar.style.display = 'flex'; 
 
     if (showUndo) {
@@ -209,16 +215,14 @@ function showNotification(message, showUndo = false) {
         void progressLine.offsetWidth; 
         progressLine.style.animation = 'progressAnimation 5s linear forwards'; 
 
-        clearTimeout(undoTimeout);
         undoTimeout = setTimeout(() => {
             notificationBar.classList.remove('show'); 
             setTimeout(() => {
                 notificationBar.style.display = 'none';
-                lastCompletedActivity = null; 
+                lastCompletedActivity = null; // Só anula se a notificação de desfazer for exibida completamente
             }, 300); 
         }, 5000);
     } else {
-        clearTimeout(undoTimeout);
         undoTimeout = setTimeout(() => {
             notificationBar.classList.remove('show'); 
             setTimeout(() => {
@@ -241,16 +245,24 @@ async function handleCheckboxChange(event) {
     }
 
     let newStatus;
+    // Captura o status ATUAL da atividade no frontend antes da mudança.
+    // Este será o 'oldStatusForUndo' enviado ao Apps Script.
     let originalStatusBeforeChange = activity.StatusAtual; 
 
     if (isChecked) {
         newStatus = "Concluída";
+        // Armazena o estado COMPLETO da atividade antes de ser marcada como concluída.
+        // Isso é crucial para o "Desfazer" poder restaurar o StatusAnterior.
         lastCompletedActivity = { ...activity }; 
         showNotification("Tarefa concluída!", true);
     } else {
-        newStatus = activity.StatusAnterior || "Não iniciada"; 
+        // Ao desmarcar, o newStatus é o StatusAnterior guardado no 'lastCompletedActivity'
+        // que representa o status original antes da conclusão.
+        // Se lastCompletedActivity não estiver definido (caso de refresh ou erro),
+        // ele tenta o StatusAnterior do próprio objeto activity, ou "Não iniciada"
+        newStatus = lastCompletedActivity?.StatusAnterior || activity.StatusAnterior || "Não iniciada"; 
         showNotification("Tarefa desmarcada.");
-        lastCompletedActivity = null;
+        lastCompletedActivity = null; // Limpa lastCompletedActivity imediatamente ao desmarcar via checkbox
     }
 
     const result = await callAppsScript('updateActivityStatus', {
@@ -264,14 +276,15 @@ async function handleCheckboxChange(event) {
         const returnedActivity = result.activity; 
         const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
         if (index !== -1) {
-            allActivities[index] = returnedActivity; 
+            allActivities[index] = returnedActivity; // Substitui o objeto local
         }
         filterAndSearchActivities(); 
     } else {
         showNotification(`Erro ao atualizar tarefa: ${result.message}`, false);
         console.error("Erro ao atualizar tarefa:", result.message, "Resultado completo:", result);
         
-        checkbox.checked = !isChecked; 
+        checkbox.checked = !isChecked; // Reverte o checkbox
+        // Reverte o status local e visual do badge
         activity.StatusAtual = originalStatusBeforeChange; 
         const activityRow = checkbox.closest('tr'); 
         activityRow.classList.toggle('completed-task', originalStatusBeforeChange === 'Concluída');
@@ -305,17 +318,23 @@ function addActivityEventListeners() {
     });
 }
 
+// MUDANÇA: Lógica de desfazer aprimorada
 document.getElementById('undoTaskButton').addEventListener('click', async () => {
     if (lastCompletedActivity) {
         const activityId = lastCompletedActivity.IDdaAtividade;
-        const previousOriginalStatus = lastCompletedActivity.StatusAnterior || "Não iniciada"; 
+        // O status para o qual deve reverter, obtido do 'lastCompletedActivity' guardado.
+        const targetStatusForReversion = lastCompletedActivity.StatusAnterior || "Não iniciada"; 
         
-        showNotification("Desfeito!");
-        clearTimeout(undoTimeout); 
+        // Limpa lastCompletedActivity imediatamente para evitar re-execução indesejada
+        const activityToUndoCopy = { ...lastCompletedActivity }; // Copia para usar nos parâmetros
+        lastCompletedActivity = null; 
+
+        showNotification("Desfeito!", false); // Mostra "Desfeito!" sem botão de desfazer novamente
 
         const result = await callAppsScript('updateActivityStatus', {
             id: activityId,
-            newStatus: previousOriginalStatus, 
+            newStatus: targetStatusForReversion, // O status para o qual queremos reverter
+            // oldStatusForUndo aqui é o status que a tarefa tinha ANTES da operação de UNDO (ou seja, "Concluída")
             oldStatusForUndo: "Concluída", 
             concluidaPorCheckbox: 'Não'
         });
@@ -328,10 +347,10 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
             }
             filterAndSearchActivities();
         } else {
-            showNotification("Erro ao desfazer: " + result.message);
+            showNotification("Erro ao desfazer: " + result.message); 
             console.error("Erro ao desfazer tarefa:", result.message, "Resultado completo:", result);
+            // Se falha, o estado de lastCompletedActivity já foi limpo, o que ajuda a evitar loop.
         }
-        lastCompletedActivity = null; 
     }
 });
 
@@ -671,9 +690,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateToggleCompletedTasksUI(); 
     updateFilterCountBadge();
 
-    // MUDANÇA (REFERENTE AO ITEM 3, MAS MANTIDA PARA NÃO CAUSAR REGRESSÃO):
-    // Garante que a tabela de atividades seja carregada e filtrada apenas se a seção 'activities'
-    // estiver ativa no carregamento inicial. Caso contrário, exibe mensagem informativa.
     const sectionActivities = document.getElementById('section-activities');
     if (sectionActivities && (sectionActivities.style.display === 'block' || initialBtn.dataset.section === 'activities')) {
         await loadActivities(); 
