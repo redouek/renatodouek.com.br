@@ -307,12 +307,25 @@ input[type="date"] {
 /* Tabela de Atividades (área de rolagem principal da tabela) */
 .table-container {
     flex-grow: 1; /* Ocupa o espaço restante verticalmente */
+    max-height: 400px;
     overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical DA TABELA AQUI */
     overflow-x: auto; /* Permite rolagem horizontal se a tabela for muito larga */
     margin-top: 1rem; /* Espaçamento entre controls e tabela */
     border-radius: 8px;
     background-color: #2A2A2A; /* Fundo para a área da tabela */
     position: relative; /* Necessário para position: sticky no thead */
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container thead th {
+  position: sticky;
+  top: 0;
+  background-color: #1A1A1A; /* mesma cor do fundo da tabela ou cabeçalho */
+  z-index: 2;
 }
 
 table {
