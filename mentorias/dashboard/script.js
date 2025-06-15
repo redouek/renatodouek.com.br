@@ -1,978 +1,730 @@
-/* Arquivo: mentorias/dashboard/style.css */
-
-/* Reset Básico */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: "Inter", sans-serif;
-    background-color: #000000;
-    color: #FFFFFF;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.app-background {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-}
-
-.dashboard-card {
-    display: flex;
-    background-color: #1A1A1A;
-    border-radius: 12px;
-    height: 90vh;
-    width: 95vw;
-    overflow: hidden;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
-}
-
-.sidebar {
-    background-color: #1a1a1a;
-    width: 64px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem 0.5rem;
-}
-
-.sidebar-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.sidebar-logo {
-    width: 52px;
-    height: auto;
-    margin: 0 auto 2rem;
-    padding-bottom: 26px;
-    padding-top: 26px;
-    border-bottom: 2px solid #FFCE00;
-}
-
-.sidebar-menu {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-}
-
-.icon-btn {
-    background: none;
-    border: none;
-    color: #FFFFFF;
-    font-size: 1.25rem;
-    cursor: pointer;
-    width: 48px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    transition: background 0.3s, color 0.3s;
-    position: relative;
-    z-index: 2;
-}
-
-.icon-btn.active {
-    background-color: transparent;
-    color: #000;
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
-}
-
-.icon-btn:hover:not(.active) {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #FFFFFF;
-}
-
-.logout-btn {
-    background: none;
-    border: 1px solid #FFCE00;
-    color: #FFCE00;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    cursor: pointer;
-    align-self: center;
-    transition: all 0.3s ease;
-}
-
-.logout-btn:hover {
-    background-color: #FFCE00;
-    color: #000;
-}
-
-/* Área Principal do Conteúdo */
-.main-area {
-    flex: 1;
-    padding: 2rem;
-    background-color: #2A2A2A;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-/* Cabeçalho da Área Principal (Nome do Usuário + Avatar) */
-.main-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #FFCE00;
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
-    flex-shrink: 0;
-}
-
-.user-info h1 {
-    color: #FFCE00;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    font-size: 0.9rem;
-    color: #CCCCCC;
-}
-
-/* Avatar Circular */
-.profile-pic {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    border: 2px solid #FFCE00;
-    background-color: #333;
-    color: #FFCE00;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-}
-
-/* Seções de Conteúdo (Visão Geral, Atividades, etc.) */
-.content-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto; /* MUDANÇA: A rolagem vertical ocorre aqui para toda a seção */
-    padding-right: 0.5rem; /* Espaço para barra de rolagem */
-    font-size: 1rem;
-    color: #FFFFFF;
-    margin-top: 10px;
-}
-
-/* Caixa Amarela Deslizante (Menu Lateral) */
-.hover-box {
-    position: absolute;
-    left: 0;
-    width: 48px;
-    height: 40px;
-    background-color: #FFCE00;
-    border-radius: 8px;
-    z-index: 1;
-    transition: top 0.3s ease;
-    box-shadow: 3px 3px 6px rgba(255, 255, 255, 0.35);
-}
-
-/* Estilos Específicos para a Seção de Atividades */
-.activities-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-    flex-shrink: 0; /* Garante que este cabeçalho não encolha e permaneça fixo no topo da seção rolante */
-}
-
-.add-activity-btn {
-    background-color: #FFCE00;
-    color: #000;
-    padding: 0.75rem 1.25rem;
-    border: none;
-    border-radius: 32px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;
-}
-
-.add-activity-btn:hover {
-    background-color: #e6b800;
-}
-
-.search-filter-group {
-    display: flex;
-    gap: 0.75rem;
-    flex-grow: 1;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-}
-
-.toggle-completed-btn {
-    background: none;
-    border: none;
-    color: #FFCE00;
-    padding: 0;
-    font-size: 0.95rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: color 0.3s ease;
-    margin: 0;
-    white-space: nowrap;
-}
-
-.toggle-completed-btn:hover {
-    color: #e6b800;
-}
-
-.toggle-completed-btn .mdi {
-    font-size: 1.25rem;
-}
-
-.search-input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-    max-width: 300px;
-}
-
-.search-input-wrapper .search-input {
-    padding: 0.6rem 1rem;
-    border: 1px solid #444;
-    border-radius: 8px;
-    background-color: #333;
-    color: #eee;
-    font-size: 0.95rem;
-    box-sizing: border-box;
-    min-width: 150px;
-    width: 100%;
-    padding-right: 2.5rem;
-    padding-left: 2.5rem;
-}
-
-.search-input-wrapper .search-input::placeholder {
-    color: #bbb;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(100%) grayscale(100%) brightness(100%) !important;
-}
-input[type="date"] {
-    color-scheme: dark;
-}
-
-.search-input-wrapper .search-icon,
-.search-input-wrapper .clear-search-btn {
-    position: absolute;
-    color: #bbb;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-.search-input-wrapper .search-icon {
-    left: 0.8rem;
-}
-
-.search-input-wrapper .clear-search-btn {
-    right: 0.8rem;
-    background: none;
-    border: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.search-input-wrapper .clear-search-btn:hover {
-    color: #FFCE00;
-}
-
-/* Tabela de Atividades */
-.table-container {
-    overflow-x: auto;
-    flex-grow: 1; /* Permite que o table-container ocupe o espaço restante na seção */
-    margin-top: 0;
-    padding-top: 0;
-    border-radius: 8px;
-    background-color: #2A2A2A;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse; /* MUDANÇA CRÍTICA: Volta para collapse para evitar linhas verticais */
-    min-width: 700px;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-table th,
-table td {
-    padding: 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid #444; /* Borda horizontal */
-    white-space: normal;
-    box-sizing: border-box;
-}
-
-table th {
-    background-color: #FFCE00;
-    color: #000;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-    position: sticky; /* MUDANÇA CRÍTICA: Fixa o cabeçalho ao rolar o content-section */
-    top: 0; /* Fixa no topo da área de rolagem */
-    z-index: 2; /* Garante que fique acima do conteúdo da tabela */
-    /* REMOVIDAS bordas verticais explícitas para evitar duplicidade com border-collapse */
-}
-/* Estilos de canto para TH */
-table th:first-child {
-    border-top-left-radius: 8px;
-}
-table th:last-child {
-    border-top-right-radius: 8px;
-}
-
-
-table td {
-    background-color: #2A2A2A;
-    color: #FFFFFF;
-    font-size: 0.9rem;
-    /* REMOVIDAS bordas verticais explícitas para evitar duplicidade com border-collapse */
-}
-
-table tbody tr:nth-child(even) {
-    background-color: #333333;
-}
-table tbody tr:hover td {
-    background-color: #3A3A3A;
-}
-
-/* Estilo para o Checkbox da Tabela */
-table input[type="checkbox"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #FFCE00;
-    border-radius: 4px;
-    cursor: pointer;
-    outline: none;
-    position: relative;
-    transition: background-color 0.3s, border-color 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-}
-
-table input[type="checkbox"]::before {
-    content: '✔';
-    color: #000;
-    font-size: 14px;
-    display: none;
-}
-
-table input[type="checkbox"]:checked {
-    background-color: #FFCE00;
-    border-color: #FFCE00;
-}
-
-table input[type="checkbox"]:checked::before {
-    display: block;
-}
-
-
-/* Estilo para tarefas concluídas (texto riscado) */
-.completed-task {
-    text-decoration: line-through;
-    text-decoration-thickness: 3px;
-    text-decoration-color: #555555;
-    color: rgba(255, 255, 255, 0.4);
-    background-color: rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
-}
-
-
-/* Estilo para os botões de ação (Editar/Excluir) */
-.icon-action-btn {
-    background: none;
-    border: none;
-    color: #FFCE00;
-    cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0.3rem;
-    border-radius: 4px;
-    transition: color 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.icon-action-btn:hover {
-    color: #e6b800;
-}
-
-.delete-activity-btn:hover {
-    color: #dc3545;
-}
-
-/* Estilos para o Status como Badge na Tabela */
-.status-badge {
-    display: inline-block;
-    padding: 0.4rem 0.7rem;
-    border-radius: 32px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-align: center;
-    min-width: 120px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-/* Cores dos Badges de Status */
-.status-badge.status-nao-iniciada {
-    background-color: #4A4A4A;
-    color: #CCCCCC;
-}
-.status-badge.status-executando {
-    background-color: #004A7D;
-    color: #72C0FC;
-}
-.status-badge.status-concluida {
-    background-color: #1A6C2F;
-    color: #7BE093;
-}
-.status-badge.status-atrasada {
-    background-color: #8D2A31;
-    color: #FF8A90;
-}
-.status-badge.status-perto-expirar {
-    background-color: #9C6C00;
-    color: #FFE082;
-}
-
-/* Estilos para o Multi-select de filtro (checkboxes em dropdown) */
-.multi-select-filter-wrapper {
-    position: relative;
-    display: inline-block;
-    white-space: nowrap;
-}
-
-.filter-dropdown-btn {
-    background-color: #333;
-    color: #eee;
-    padding: 0.6rem 1rem;
-    border: 1px solid #444;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: background-color 0.3s, border-color 0.3s;
-    position: relative;
-}
-
-.filter-dropdown-btn:hover {
-    background-color: #444;
-    border-color: #FFCE00;
-}
-
-.filter-dropdown-btn .mdi {
-    font-size: 1.1rem;
-}
-
-/* Contador de filtros no botão */
-.filter-count-badge {
-    background-color: #FFCE00;
-    color: #000;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 0.1rem 0.4rem;
-    border-radius: 50%;
-    margin-left: 0.5rem;
-    min-width: 1rem;
-    text-align: center;
-    display: inline-block;
-    line-height: 1rem;
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    transform: translate(50%, -50%);
-    z-index: 10;
-    margin-right: 30px;
-    margin-top: 25px;
-}
-
-.filter-options-dropdown {
-    position: absolute;
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-    z-index: 1001;
-    padding: 0.5rem;
-    min-width: 180px;
-    top: 100%;
-    left: 0;
-    margin-top: 5px;
-    left: -32px;
-}
-
-.filter-options-dropdown label {
-    display: flex;
-    align-items: center;
-    padding: 0.4rem 0.6rem;
-    cursor: pointer;
-    color: #ccc;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-    border-radius: 4px;
-}
-
-.filter-options-dropdown label:hover {
-    background-color: #2a2a2a;
-    color: #fff;
-}
-
-.filter-options-dropdown input[type="checkbox"] {
-    margin-right: 0.5rem;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1px solid #FFCE00;
-    border-radius: 3px;
-    cursor: pointer;
-    position: relative;
-}
-
-.filter-options-dropdown input[type="checkbox"]:checked {
-    background-color: #FFCE00;
-    border-color: #FFCE00;
-}
-
-.filter-options-dropdown input[type="checkbox"]:checked::before {
-    content: '✔';
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 10px;
-    color: #000;
-}
-
-/* Estilos para o Modal Customizado e seus botões */
-.modal {
-    position: fixed;
-    z-index: 2000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background-color: #1a1a1a;
-    margin: auto;
-    padding: 2.5rem;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
-    color: #fff;
-}
-
-.modal-content.small-modal {
-    max-width: 350px;
-    text-align: center;
-}
-
-.modal-content h2 {
-    color: #FFCE00;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    font-size: 1.5rem;
-}
-
-.modal-content.small-modal h2 {
-    font-size: 1.4rem;
-    margin-bottom: 1rem;
-}
-
-.modal-content.small-modal p {
-    font-size: 1rem;
-    color: #ccc;
-    margin-bottom: 2rem;
-}
-
-.modal-content .close-button {
-    color: #aaa;
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.modal-content .close-button:hover,
-.modal-content .close-button:focus {
-    color: #FFCE00;
-    text-decoration: none;
-}
-
-.modal-content .form-group {
-    margin-bottom: 1.25rem;
-    text-align: left;
-}
-
-.modal-content label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    color: #FFCE00;
-}
-
-.modal-content input[type="text"],
-.modal-content input[type="date"],
-.modal-content textarea,
-.modal-content select {
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: 8px;
-    border: none;
-    background-color: #2a2a2a;
-    color: white;
-    font-size: 1rem;
-    box-sizing: border-box;
-}
-
-.modal-content textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-
-.modal-content .button {
-    width: 100%;
-    padding: 0.8rem;
-    background-color: #FFCE00;
-    color: black;
-    font-weight: bold;
-    border: none;
-    border-radius: 32px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    margin-top: 1.5rem;
-    transition: background-color 0.2s ease;
-}
-
-.modal-content .button:hover {
-    background-color: #e6b800;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.modal-buttons .button-outline-yellow {
-    background-color: transparent;
-    color: #FFCE00;
-    border: 2px solid #FFCE00;
-    padding: 0.75rem 1.5rem;
-    border-radius: 32px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    margin-top: 24px;
-    margin-botton:24px;
-}
-
-.modal-buttons .button-outline-yellow:hover {
-    background-color: #FFCE00;
-    color: #000;
-}
-
-/* Estilo para os SELECTs dentro do modal (com cores de status) */
-.modal-content select#activityStatus {
-    background-color: #2a2a2a;
-    color: #eee;
-    border: 1px solid #444;
-    transition: background-color 0.3s, color 0.3s;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23FFFFFF" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 16px;
-}
-
-.modal-content select#activityStatus.status-nao-iniciada {
-    background-color: #4A4A4A;
-    color: #CCCCCC;
-}
-.modal-content select#activityStatus.status-executando {
-    background-color: #004A7D;
-    color: #72C0FC;
-}
-.modal-content select#activityStatus.status-concluida {
-    background-color: #1A6C2F;
-    color: #7BE093;
-}
-.modal-content select#activityStatus.status-atrasada {
-    background-color: #8D2A31;
-    color: #FF8A90;
-}
-.modal-content select#activityStatus.status-perto-expirar {
-    background-color: #9C6C00;
-    color: #FFE082;
-}
-
-
-/* Mensagem de estado vazio para a tabela */
-.empty-state-message,
-.loading-message {
-    text-align: center;
-    color: #888;
-    padding: 2rem;
-    font-style: italic;
-}
-
-/* Notificação inferior (showNotification) */
-.notification-bar {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #2A2A2A;
-    color: #FFFFFF;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    font-size: 1rem;
-    z-index: 1000;
-    overflow: hidden;
-    min-width: 300px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
-}
-
-.notification-bar.show {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.notification-bar span {
-    flex-grow: 1;
-    white-space: nowrap;
-}
-
-.notification-bar .undo-button {
-    background-color: #FFCE00;
-    color: #000;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.notification-bar .undo-button:hover {
-    background-color: #e6b800;
-}
-
-.progress-line {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background-color: #FFCE00;
-    animation: progressAnimation 3s linear forwards;
-}
-
-@keyframes progressAnimation {
-    from { width: 100%; }
-    to { width: 0%; }
-}
-
-
-/* Responsividade Geral */
-@media (max-width: 768px) {
-    body {
-        display: block;
-        height: auto;
-        min-height: 100vh;
-        overflow-x: hidden;
+// Arquivo: mentorias/dashboard/script.js
+
+// Variáveis globais para armazenar as atividades e o estado do toggle de concluídas
+let allActivities = []; // Armazenará todas as atividades carregadas do servidor
+let selectedStatusFilters = new Set(); // Armazenará os status selecionados para filtragem
+let currentSearchTerm = '';
+let showCompletedTasks = false; 
+
+// ===============================================================
+// Funções Auxiliares
+// ===============================================================
+
+function formatarDataParaExibicao(dataString) {
+    if (!dataString) return '';
+    const data = (dataString instanceof Date) ? dataString : new Date(dataString + 'T00:00:00'); 
+    if (isNaN(data.getTime())) {
+        return dataString;
     }
-    .app-background {
-        height: auto;
-        min-height: 100vh;
-        padding: 0;
-        display: block;
-    }
-    .dashboard-card {
-        flex-direction: column;
-        height: auto;
-        min-height: 100vh;
-        width: 100vw;
-        border-radius: 0;
-        box-shadow: none;
-    }
+    const dia = String(data.getDate()).padStart(2, '0');
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    const ano = data.getFullYear();
+    return `${dia}/${mes}/${ano}`;
+}
 
-    .sidebar {
-        width: 100%;
-        height: auto;
-        flex-direction: row;
-        justify-content: center;
-        padding: 1rem 0;
-        border-bottom: 2px solid #FFCE00;
-        position: static;
+function formatarDataParaInput(dataString) {
+    if (!dataString) return '';
+    if (dataString instanceof Date) {
+        const ano = dataString.getFullYear();
+        const mes = String(dataString.getMonth() + 1).padStart(2, '0');
+        const dia = String(dataString.getDate()).padStart(2, '0');
+        return `${ano}-${mes}-${dia}`;
     }
+    return dataString; 
+}
 
-    .sidebar-top {
-        flex-direction: row;
-        justify-content: center;
-        width: 100%;
-    }
-
-    .sidebar-logo {
-        display: none;
-    }
-
-    .sidebar-menu {
-        flex-direction: row;
-        width: 100%;
-        justify-content: space-around;
-        gap: 0.5rem;
-    }
-
-    .icon-btn {
-        width: 40px;
-        height: 36px;
-        font-size: 1.1rem;
-    }
-
-    .hover-box {
-        display: none;
-    }
-
-    .logout-btn {
-        display: none;
-    }
-
-    .main-area {
-        padding: 1rem;
-    }
-
-    .activities-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .search-filter-group {
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-    }
-
-    .search-input-wrapper,
-    .filter-dropdown-btn {
-        width: 100%;
-        min-width: unset;
-    }
-
-    .search-input-wrapper .search-input {
-        width: 100%;
-    }
-
-    .multi-select-filter-wrapper {
-        width: 100%;
-    }
-    .filter-options-dropdown {
-        min-width: 100%;
-    }
-
-
-    table {
-        min-width: 100%;
-    }
-
-    .modal-content {
-        padding: 1.5rem;
-        width: 95%;
-    }
-    .notification-bar {
-        width: 90%;
-        left: 5%;
-        transform: translateX(0);
-        flex-direction: column;
-        gap: 0.75rem;
-        bottom: 10px;
-    }
-    .notification-bar .undo-button {
-        width: 100%;
-    }
-
-    .modal-content.small-modal {
-        width: 95%;
+function getStatusClass(status) {
+    switch (status) {
+        case "Não iniciada": return "status-nao-iniciada";
+        case "Executando": return "status-executando";
+        case "Concluída": return "status-concluida";
+        case "Atrasada": return "status-atrasada";
+        case "Perto de expirar": return "status-perto-expirar";
+        default: return "";
     }
 }
 
-/* Estilo para barra de rolagem (compatibilidade WebKit) - Fora do media query para ser global */
-::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+// ===============================================================
+// Comunicação com Google Apps Script (GAS)
+// ===============================================================
+
+const webAppUrl = "https://script.google.com/macros/s/AKfycbwxweNQUDALWE7Ai7-u73WbUFKsjtH-RlqQQJGGYcBo372PClCIN3MMrNzDcoogfCpq/exec"; 
+
+async function callAppsScript(action, data = {}) {
+    const formData = new FormData();
+    formData.append('action', action);
+    for (const key in data) {
+        formData.append(key, data[key]);
+    }
+
+    try {
+        const response = await fetch(webAppUrl, {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) {
+            let errorDetails = {};
+            let responseText = await response.text().catch(() => null); 
+            
+            if (responseText) {
+                try {
+                    errorDetails = JSON.parse(responseText); 
+                } catch (jsonError) {
+                    errorDetails.message = responseText; 
+                }
+            } else {
+                errorDetails.message = response.statusText || 'Erro desconhecido';
+            }
+            throw new Error(`Erro no servidor (${response.status}): ${errorDetails.message || 'Erro desconhecido'}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Erro ao chamar Apps Script para ação ${action}:`, error);
+        showNotification(`Erro de comunicação: ${error.message}. Por favor, verifique sua conexão ou tente novamente.`, false);
+        return { status: 'error', message: error.message }; 
+    }
 }
 
-::-webkit-scrollbar-track {
-    background: #333333;
-    border-radius: 10px;
+// ===============================================================
+// Gerenciamento de Atividades (Frontend)
+// ===============================================================
+
+const activitiesTableBody = document.getElementById('activitiesTableBody');
+const loadingActivitiesMessage = document.getElementById('loadingActivities');
+const noActivitiesMessage = document.getElementById('noActivitiesMessage');
+const toggleCompletedTasksBtn = document.getElementById('toggleCompletedTasksBtn');
+const toggleTextSpan = toggleCompletedTasksBtn.querySelector('.toggle-text');
+const toggleIconSpan = toggleCompletedTasksBtn.querySelector('.mdi');
+
+function renderActivities(activitiesToRender) {
+    activitiesTableBody.innerHTML = ''; 
+
+    if (activitiesToRender.length === 0) {
+        noActivitiesMessage.style.display = 'block';
+        loadingActivitiesMessage.style.display = 'none'; 
+        return;
+    } else {
+        noActivitiesMessage.style.display = 'none';
+        loadingActivitiesMessage.style.display = 'none'; 
+    }
+
+    activitiesToRender.forEach(activity => {
+        const isCompleted = activity.StatusAtual === 'Concluída';
+        const row = document.createElement('tr');
+        row.classList.toggle('completed-task', isCompleted); 
+
+        row.innerHTML = `
+            <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
+            <td>${activity.Atividade}</td>
+            <td>${activity.DescricaoObservacoes || ''}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
+            <td>
+                <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
+            </td>
+            <td>
+                <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
+                    <span class="mdi mdi-pencil"></span>
+                </button>
+                <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
+                    <span class="mdi mdi-delete"></span>
+                </button>
+            </td>
+        `;
+        activitiesTableBody.appendChild(row);
+    });
+
+    addActivityEventListeners();
 }
 
-::-webkit-scrollbar-thumb {
-    background: #FFCE00;
-    border-radius: 10px;
-    border: 3px solid #333333;
+function filterAndSearchActivities() {
+    let filtered = allActivities.filter(activity => {
+        if (!showCompletedTasks && activity.StatusAtual === 'Concluída') {
+            return false;
+        }
+
+        if (selectedStatusFilters.size > 0 && !selectedStatusFilters.has(activity.StatusAtual)) {
+            return false;
+        }
+
+        const searchTermLower = currentSearchTerm.toLowerCase();
+        return (
+            String(activity.Atividade || '').toLowerCase().includes(searchTermLower) ||
+            String(activity.DescricaoObservacoes || '').toLowerCase().includes(searchTermLower)
+        );
+    });
+    console.log("Atividades filtradas e/ou buscadas:", filtered); 
+    renderActivities(filtered);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #e6b800;
+async function loadActivities() {
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+    if (!usuario || !usuario.cpf) {
+        console.error("CPF do usuário não encontrado para carregar atividades.");
+        noActivitiesMessage.textContent = "Erro: Usuário não identificado para carregar atividades.";
+        noActivitiesMessage.style.display = 'block';
+        loadingActivitiesMessage.style.display = 'none';
+        return;
+    }
+
+    loadingActivitiesMessage.style.display = 'block';
+    noActivitiesMessage.style.display = 'none';
+    activitiesTableBody.innerHTML = ''; 
+
+    const result = await callAppsScript('getActivitiesByCpf', { cpf: usuario.cpf.replace(/\D/g, '') });
+
+    if (result.status === 'success' && result.activities) {
+        console.log("Atividades recebidas do Apps Script:", result.activities); 
+        allActivities = result.activities;
+        filterAndSearchActivities(); 
+    } else {
+        allActivities = [];
+        filterAndSearchActivities(); 
+        console.error("Falha ao carregar atividades:", result.message);
+        showNotification("Erro ao carregar atividades: " + result.message, false);
+    }
+}
+
+// ===============================================================
+// Interações da Tabela de Atividades
+// ===============================================================
+
+let undoTimeout; 
+let lastCompletedActivity = null; 
+
+function showNotification(message, showUndo = false) {
+    const notificationBar = document.getElementById('taskCompletedNotification');
+    const notificationText = notificationBar.querySelector('span');
+    const undoButton = document.getElementById('undoTaskButton');
+    const progressLine = notificationBar.querySelector('.progress-line');
+
+    clearTimeout(undoTimeout); 
+
+    notificationText.textContent = message;
+    undoButton.style.display = showUndo ? 'inline-block' : 'none';
+    progressLine.style.display = showUndo ? 'block' : 'none';
+
+    notificationBar.classList.remove('show'); 
+    void notificationBar.offsetWidth; 
+    notificationBar.classList.add('show'); 
+    notificationBar.style.display = 'flex'; 
+
+    if (showUndo) {
+        progressLine.style.animation = 'none';
+        void progressLine.offsetWidth; 
+        progressLine.style.animation = 'progressAnimation 5s linear forwards'; 
+
+        undoTimeout = setTimeout(() => {
+            notificationBar.classList.remove('show'); 
+            setTimeout(() => {
+                notificationBar.style.display = 'none';
+                lastCompletedActivity = null; 
+            }, 300); 
+        }, 5000);
+    } else {
+        undoTimeout = setTimeout(() => {
+            notificationBar.classList.remove('show'); 
+            setTimeout(() => {
+                notificationBar.style.display = 'none';
+            }, 300);
+        }, 3000); 
+    }
+}
+
+async function handleCheckboxChange(event) {
+    const checkbox = event.target;
+    const activityId = checkbox.dataset.activityId;
+    const isChecked = checkbox.checked;
+    
+    const activity = allActivities.find(act => act.IDdaAtividade == activityId);
+    if (!activity) {
+        console.error("Atividade não encontrada no array local para ID:", activityId);
+        checkbox.checked = !isChecked; 
+        return;
+    }
+
+    let newStatus;
+    let originalStatusBeforeChange = activity.StatusAtual; 
+
+    if (isChecked) {
+        newStatus = "Concluída";
+        lastCompletedActivity = { ...activity }; // Guarda o estado ANTES de marcar como Concluída
+        showNotification("Tarefa concluída!", true);
+    } else {
+        // MUDANÇA: newStatus será o StatusAnterior que estava salvo no lastCompletedActivity,
+        // garantindo o retorno ao estado correto antes da conclusão.
+        newStatus = lastCompletedActivity?.StatusAnterior || activity.StatusAnterior || "Não iniciada"; 
+        showNotification("Tarefa desmarcada.");
+        lastCompletedActivity = null; // Limpa lastCompletedActivity imediatamente ao desmarcar
+    }
+
+    const result = await callAppsScript('updateActivityStatus', {
+        id: activityId,
+        newStatus: newStatus,
+        oldStatusForUndo: originalStatusBeforeChange, 
+        concluidaPorCheckbox: isChecked ? 'Sim' : 'Não'
+    });
+
+    if (result.status === 'success' && result.activity) { 
+        const returnedActivity = result.activity; 
+        const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
+        if (index !== -1) {
+            allActivities[index] = returnedActivity; 
+        }
+        filterAndSearchActivities(); 
+    } else {
+        showNotification(`Erro ao atualizar tarefa: ${result.message}`, false);
+        console.error("Erro ao atualizar tarefa:", result.message, "Resultado completo:", result);
+        
+        checkbox.checked = !isChecked; 
+        activity.StatusAtual = originalStatusBeforeChange; 
+        const activityRow = checkbox.closest('tr'); 
+        activityRow.classList.toggle('completed-task', originalStatusBeforeChange === 'Concluída');
+        const statusBadge = activityRow.querySelector('.status-badge');
+        if (statusBadge) {
+            statusBadge.textContent = originalStatusBeforeChange;
+            statusBadge.className = `status-badge ${getStatusClass(originalStatusBeforeChange)}`;
+        }
+    }
+}
+
+function addActivityEventListeners() {
+    document.querySelectorAll('#activitiesTableBody input[type="checkbox"]').forEach(checkbox => {
+        checkbox.removeEventListener('change', handleCheckboxChange); 
+        checkbox.addEventListener('change', handleCheckboxChange);
+    });
+
+    document.querySelectorAll('#activitiesTableBody .status-badge').forEach(badge => {
+        badge.removeEventListener('click', openEditModal); 
+        badge.addEventListener('click', openEditModal);
+    });
+
+    document.querySelectorAll('.edit-activity-btn').forEach(button => {
+        button.removeEventListener('click', openEditModal);
+        button.addEventListener('click', openEditModal);
+    });
+
+    document.querySelectorAll('.delete-activity-btn').forEach(button => {
+        button.removeEventListener('click', handleDeleteActivity);
+        button.addEventListener('click', handleDeleteActivity);
+    });
+}
+
+document.getElementById('undoTaskButton').addEventListener('click', async () => {
+    if (lastCompletedActivity) {
+        const activityId = lastCompletedActivity.IDdaAtividade;
+        const targetStatusForReversion = lastCompletedActivity.StatusAnterior || "Não iniciada"; 
+        
+        const activityToUndoCopy = { ...lastCompletedActivity }; 
+        lastCompletedActivity = null; // MUDANÇA: Limpa lastCompletedActivity *antes* da chamada API
+
+        showNotification("Desfeito!", false); 
+
+        const result = await callAppsScript('updateActivityStatus', {
+            id: activityId,
+            newStatus: targetStatusForReversion, 
+            oldStatusForUndo: "Concluída", 
+            concluidaPorCheckbox: 'Não' 
+        });
+
+        if (result.status === 'success' && result.activity) {
+            const returnedActivity = result.activity;
+            const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
+            if (index !== -1) {
+                allActivities[index] = returnedActivity; 
+            }
+            filterAndSearchActivities();
+        } else {
+            showNotification("Erro ao desfazer: " + result.message); 
+            console.error("Erro ao desfazer tarefa:", result.message, "Resultado completo:", result);
+        }
+    }
+});
+
+
+// ===============================================================
+// Modal de Adição/Edição de Atividade
+// ===============================================================
+
+const activityModal = document.getElementById('activityModal');
+const addActivityBtn = document.getElementById('addActivityBtn');
+const closeActivityModalBtn = document.getElementById('closeActivityModal');
+const activityForm = document.getElementById('activityForm');
+const modalTitle = document.getElementById('modalTitle');
+const activityIdInput = document.getElementById('activityId');
+const activityNameInput = document.getElementById('activityName');
+const activityDescriptionInput = document.getElementById('activityDescription');
+const activityDueDateInput = document.getElementById('activityDueDate');
+const activityStatusSelect = document.getElementById('activityStatus');
+
+addActivityBtn.addEventListener('click', () => {
+    modalTitle.textContent = "Adicionar Nova Atividade";
+    activityForm.reset(); 
+    activityIdInput.value = ''; 
+    activityStatusSelect.value = 'Não iniciada'; 
+    activityModal.style.display = 'flex'; 
+});
+
+closeActivityModalBtn.addEventListener('click', () => {
+    activityModal.style.display = 'none'; 
+});
+
+window.addEventListener('click', (event) => {
+    if (event.target === activityModal) {
+        activityModal.style.display = 'none';
+    }
+    if (!statusFilterDropdownBtn.contains(event.target) && !statusFilterOptions.contains(event.target)) {
+        statusFilterOptions.style.display = 'none';
+    }
+});
+
+activityForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+    if (!usuario || !usuario.cpf) {
+        showNotification("Erro: Usuário não identificado para salvar atividade.", false);
+        return;
+    }
+
+    const isEditing = activityIdInput.value !== '';
+
+    const activityData = {
+        id: activityIdInput.value,
+        cpfMentorado: usuario.cpf.replace(/\D/g, ''),
+        nomeMentorado: usuario.nome || '',
+        atividade: activityNameInput.value,
+        descricao: activityDescriptionInput.value,
+        dataLimite: activityDueDateInput.value,
+        statusAtual: activityStatusSelect.value,
+        statusAnterior: '' 
+    };
+
+    const submitButton = activityForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    submitButton.textContent = isEditing ? "Salvando Edição..." : "Adicionando...";
+
+    const result = await callAppsScript('saveActivity', activityData);
+
+    submitButton.disabled = false;
+    submitButton.textContent = "Salvar Atividade";
+
+    if (result.status === 'success' && result.activity) { 
+        activityModal.style.display = 'none';
+        showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false);
+        
+        const returnedActivity = result.activity;
+        if (isEditing) {
+            const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
+            if (index !== -1) {
+                allActivities[index] = returnedActivity; 
+            }
+        } else {
+            allActivities.push(returnedActivity); 
+        }
+        filterAndSearchActivities(); 
+    } else {
+        showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false);
+        console.error(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade:`, result.message, "Resultado completo:", result);
+    }
+});
+
+function openEditModal(event) {
+    const clickedElement = event.target.closest('.edit-activity-btn, .status-badge');
+    
+    if (!clickedElement) {
+        showNotification("Erro: Elemento clicado inválido para edição.", false);
+        console.error("Erro: clickedElement é nulo, event.target:", event.target);
+        return;
+    }
+    const activityId = clickedElement.dataset.activityId;
+    console.log("Tentando editar atividade com ID:", activityId); 
+    
+    if (!activityId) {
+        showNotification("Erro: ID da atividade não encontrado para edição.", false);
+        console.error("Erro: activityId é nulo/indefinido após closest, clickedElement:", clickedElement);
+        return;
+    }
+
+    const activityToEdit = allActivities.find(act => act.IDdaAtividade == activityId);
+
+    if (!activityToEdit) {
+        showNotification("Atividade não encontrada para edição.", false);
+        console.error("Atividade não encontrada no array local para ID:", activityId); 
+        return;
+    }
+
+    modalTitle.textContent = "Editar Atividade";
+    activityIdInput.value = activityToEdit.IDdaAtividade;
+    activityNameInput.value = activityToEdit.Atividade;
+    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || '';
+    activityDueDateInput.value = formatarDataParaInput(activityToEdit.DataLimite);
+    activityStatusSelect.value = activityToEdit.StatusAtual;
+
+    activityModal.style.display = 'flex';
+}
+
+async function handleDeleteActivity(event) {
+    const clickedElement = event.target.closest('.delete-activity-btn');
+    if (!clickedElement) {
+        console.error("Erro: Elemento clicado não é um botão de exclusão válido.", event.target);
+        return;
+    }
+    const activityId = clickedElement.dataset.activityId;
+    console.log("Tentando excluir atividade com ID:", activityId);
+
+    const confirmed = await showCustomConfirm("Confirmação", "Você tem certeza que deseja excluir esta atividade?");
+
+    if (confirmed) {
+        const result = await callAppsScript('deleteActivity', { id: activityId });
+        if (result.status === 'success') {
+            allActivities = allActivities.filter(act => act.IDdaAtividade != activityId);
+            filterAndSearchActivities();
+            showNotification("Atividade excluída com sucesso!", false);
+        } else {
+            showNotification("Erro ao excluir atividade: " + result.message, false);
+            console.error("Erro detalhado ao excluir atividade:", result.message, "ID:", activityId);
+        }
+    }
+}
+
+// ===============================================================
+// Busca e Filtro
+// ===============================================================
+
+const activitySearchInput = document.getElementById('activitySearch');
+const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+activitySearchInput.addEventListener('input', (event) => {
+    currentSearchTerm = event.target.value;
+    if (currentSearchTerm.length > 0) {
+        clearSearchBtn.style.display = 'flex';
+    } else {
+        clearSearchBtn.style.display = 'none';
+    }
+    filterAndSearchActivities();
+});
+
+clearSearchBtn.addEventListener('click', () => {
+    activitySearchInput.value = '';
+    currentSearchTerm = '';
+    clearSearchBtn.style.display = 'none';
+    filterAndSearchActivities();
+});
+
+const statusFilterDropdownBtn = document.getElementById('statusFilterDropdownBtn');
+const statusFilterOptions = document.getElementById('statusFilterOptions');
+const statusFilterCheckboxes = statusFilterOptions.querySelectorAll('input[type="checkbox"]');
+const filterCountBadge = document.querySelector('.filter-count-badge');
+
+statusFilterDropdownBtn.addEventListener('click', (event) => {
+    event.stopPropagation(); 
+    statusFilterOptions.style.display = statusFilterOptions.style.display === 'block' ? 'none' : 'block';
+});
+
+statusFilterCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+            selectedStatusFilters.add(checkbox.value);
+        } else {
+            selectedStatusFilters.delete(checkbox.value);
+        }
+        updateFilterCountBadge();
+        filterAndSearchActivities();
+    });
+});
+
+function updateFilterCountBadge() {
+    if (selectedStatusFilters.size > 0) {
+        filterCountBadge.textContent = selectedStatusFilters.size;
+        filterCountBadge.style.display = 'inline-block';
+    } else {
+        filterCountBadge.style.display = 'none';
+    }
+}
+
+// ===============================================================
+// Custom Confirm Modal
+// ===============================================================
+const customConfirmModal = document.getElementById('customConfirmModal');
+const customConfirmTitle = document.getElementById('customConfirmTitle');
+const customConfirmMessage = document.getElementById('customConfirmMessage');
+const customConfirmCancelBtn = document.getElementById('customConfirmCancel');
+const customConfirmOKBtn = document.getElementById('customConfirmOK');
+const closeCustomConfirmModal = document.getElementById('closeCustomConfirmModal');
+
+let resolveCustomConfirm;
+
+function showCustomConfirm(title, message) {
+    customConfirmTitle.textContent = title;
+    customConfirmMessage.textContent = message;
+    customConfirmModal.style.display = 'flex';
+
+    return new Promise(resolve => {
+        resolveCustomConfirm = resolve;
+    });
+}
+
+customConfirmOKBtn.addEventListener('click', () => {
+    customConfirmModal.style.display = 'none';
+    resolveCustomConfirm(true);
+});
+
+customConfirmCancelBtn.addEventListener('click', () => {
+    customConfirmModal.style.display = 'none';
+    resolveCustomConfirm(false);
+});
+
+closeCustomConfirmModal.addEventListener('click', () => {
+    customConfirmModal.style.display = 'none';
+    resolveCustomConfirm(false); 
+});
+
+// ===============================================================
+// Evento principal DOMContentLoaded
+// ===============================================================
+
+document.addEventListener("DOMContentLoaded", async () => { 
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+    if (!usuario) {
+        document.body.innerHTML = `
+            <div style="min-height: 100vh; background-color: #333333; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif;">
+                <div style="background-color: #1a1a1a; padding: 3rem 2rem; border-radius: 12px; max-width: 600px; width: 90%; text-align: center; box-shadow: 0 0 16px rgba(0,0,0,0.6);">
+                    <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="Logo Renato Douek" style="width: 140px; margin-bottom: 2rem;" />
+                    <h1 style="color: #FFCE00; font-size: 1.8rem; margin-bottom: 1rem;">Acesso restrito!</h1>
+                    <h2 style="color: #FFFFFF; font-size: 1rem; line-height: 1.4; margin-bottom: 2.5rem;">
+                        Página de acesso exclusivo para mentorados do Renato Douek.
+                    </h2>
+                    <div style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                        <a href="https://renatodouek.com.br" style="flex: 1; text-align: center; padding: 0.75rem 1.5rem; border-radius: 32px; border: 2px solid #FFCE00; color: #FFCE00; text-decoration: none; font-weight: 500; transition: 0.3s;">
+                            Ainda não sou mentorado
+                        </a>
+                        <a href="/mentorias/login/" style="flex: 1; text-align: center; padding: 0.75rem 1.5rem; border-radius: 32px; background-color: #FFCE00; color: #000; text-decoration: none; font-weight: 500; transition: 0.3s;">
+                            Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    const nomeEl = document.getElementById("userName");
+    if (nomeEl) nomeEl.textContent = usuario.nome || "Mentorado";
+
+    const avatarEl = document.getElementById("profileAvatar");
+    if (avatarEl && usuario.nome) {
+        const partes = usuario.nome.trim().split(" ");
+        const iniciais = partes.length >= 2
+            ? partes[0][0] + partes[partes.length - 1][0]
+            : partes[0][0];
+        avatarEl.textContent = iniciais.toUpperCase();
+    }
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("usuarioLogado");
+            window.location.href = "/mentorias/login/";
+        });
+    }
+
+    // ======== MENU LATERAL COM HOVER DESLIZANTE =========
+    try {
+        console.log("Iniciando setup do menu lateral.");
+        const menu = document.querySelector(".sidebar-menu");
+        console.log("Menu element:", menu);
+
+        const buttons = document.querySelectorAll(".icon-btn");
+        console.log("Buttons elements (NodeList):", buttons);
+
+        const sections = document.querySelectorAll(".content-section");
+        console.log("Sections elements (NodeList):", sections);
+
+        if (!menu) {
+            console.error("Erro: Elemento .sidebar-menu não encontrado. O menu lateral não funcionará.");
+        } else {
+            const hoverBox = document.createElement("div");
+            hoverBox.classList.add("hover-box");
+            menu.appendChild(hoverBox);
+            console.log("HoverBox appended.");
+
+            const moveHoverBox = (button) => {
+                if (!button || !hoverBox || !menu) { 
+                    console.warn("moveHoverBox: button, hoverBox ou menu é nulo/indefinido. Não é possível mover.");
+                    return;
+                }
+                const topPos = button.offsetTop;
+                hoverBox.style.top = `${topPos}px`;
+            };
+
+            const initialBtn = document.querySelector(".icon-btn.active") || buttons[0];
+            console.log("Initial active button:", initialBtn);
+            if (initialBtn) {
+                moveHoverBox(initialBtn);
+                console.log("MoveHoverBox called for initial button.");
+            } else {
+                console.warn("Nenhum botão inicial ativo ou botões de menu não encontrados. HoverBox pode não ser posicionada.");
+            }
+
+            if (buttons.length > 0) {
+                buttons.forEach((btn) => {
+                    btn.addEventListener("click", async () => {
+                        console.log("Botão de menu clicado:", btn.dataset.section);
+                        buttons.forEach((b) => b.classList.remove("active"));
+                        btn.classList.add("active");
+
+                        moveHoverBox(btn);
+
+                        const sectionId = btn.dataset.section;
+                        sections.forEach((s) => {
+                            s.style.display = s.id === `section-${sectionId}` ? "block" : "none";
+                        });
+
+                        if (sectionId === 'activities') {
+                            console.log("Loading activities for section-activities.");
+                            await loadActivities();
+                        } else if (sectionId === 'overview') {
+                            console.log("Navigated to overview section.");
+                        }
+                    });
+                });
+                console.log("Event listeners attached to menu buttons.");
+            } else {
+                console.warn("Nenhum botão de menu encontrado. Listeners de clique não anexados.");
+            }
+        }
+    } catch (error) {
+        console.error("Erro fatal no setup do menu lateral:", error);
+    }
+
+    toggleCompletedTasksBtn.addEventListener('click', () => {
+        showCompletedTasks = !showCompletedTasks; 
+        updateToggleCompletedTasksUI(); 
+        filterAndSearchActivities(); 
+    });
+
+    updateToggleCompletedTasksUI(); 
+    updateFilterCountBadge();
+
+    const sectionActivities = document.getElementById('section-activities');
+    if (sectionActivities && (sectionActivities.style.display === 'block' || initialBtn.dataset.section === 'activities')) {
+        await loadActivities(); 
+    } else {
+        noActivitiesMessage.textContent = "Navegue para a seção de Atividades para ver suas tarefas.";
+        noActivitiesMessage.style.display = 'block';
+        loadingActivitiesMessage.style.display = 'none';
+        activitiesTableBody.innerHTML = ''; 
+    }
+});
+
+function updateToggleCompletedTasksUI() {
+    if (showCompletedTasks) { 
+        toggleIconSpan.classList.remove('mdi-eye-off-outline');
+        toggleIconSpan.classList.add('mdi-eye-outline');
+        toggleTextSpan.textContent = "Ocultar Concluídas"; 
+    } else { 
+        toggleIconSpan.classList.remove('mdi-eye-outline');
+        toggleIconSpan.classList.add('mdi-eye-off-outline');
+        toggleTextSpan.textContent = "Ver Concluídas"; 
+    }
 }
