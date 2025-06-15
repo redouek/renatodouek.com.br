@@ -6,7 +6,13 @@
     <title>Dashboard - Mentorado</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
-    <script src="script.js"></script>
+    <script defer src="script.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icones/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icones/favicon.svg" />
+    <link rel="shortcut icon" href="/assets/icones/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icones/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="RD Mentoria" />
+    <link rel="manifest" href="/assets/icones/site.webmanifest" />
 </head>
 <body>
     <div class="app-background">
@@ -69,9 +75,8 @@
                         </div>
                     </div>
 
-                    <!-- MUDANÇA CRÍTICA: Estrutura da tabela para cabeçalho fixo e corpo rolável -->
-                    <div class="table-outer-wrapper">
-                        <table class="activities-table-header">
+                    <div class="table-container">
+                        <table>
                             <thead>
                                 <tr>
                                     <th></th>
@@ -81,16 +86,11 @@
                                     <th>Status</th> <th>Ações</th>
                                 </tr>
                             </thead>
-                        </table>
-                        <div class="activities-table-body-scroll">
-                            <table class="activities-table-body">
-                                <tbody id="activitiesTableBody">
-                                    <!-- Conteúdo do corpo da tabela será inserido aqui pelo JavaScript -->
+                            <tbody id="activitiesTableBody">
                                 </tbody>
-                            </table>
-                            <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
-                            <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
-                        </div>
+                        </table>
+                        <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
+                        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
                     </div>
 
                     <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
