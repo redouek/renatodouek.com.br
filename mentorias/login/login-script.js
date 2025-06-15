@@ -1,6 +1,6 @@
-// Arquivo: login-script.js (Versão de Depuração Robusta)
+// Arquivo: login-script.js (Coleta de DebugInfo)
 
-// Função de máscara de CPF (copiada do form-script.js, se você a tiver no login)
+// Função de máscara de CPF
 function aplicarMascaraCPF(valor) {
     return valor
         .replace(/\D/g, '')
@@ -41,7 +41,6 @@ togglePasswordButton.addEventListener('click', function() {
     }
 });
 
-// Seleção de elementos adicionais necessários para o botão de login
 const botaoLogin = document.getElementById('botaoLogin'); 
 
 // ===============================================================
@@ -77,11 +76,12 @@ loginForm.addEventListener('submit', async function(event) {
     }
 
     const formData = new FormData();
-    formData.append('action', 'login');
+    formData.append('action', 'login'); // Ação que estamos enviando
     formData.append('cpf', cpfValue);
     formData.append('senha', senhaValue);
 
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec"; // A URL do seu Web App
+    // MUDANÇA: Atualize este URL para o do seu NOVO Web App
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbwxweNQUDALWE7Ai7-u73WbUFKsjtH-RlqQQJGGYcBo372PClCIN3MMrNzDcoogfCpq/exec"; 
 
     try {
         const response = await fetch(webAppUrl, {
@@ -89,7 +89,6 @@ loginForm.addEventListener('submit', async function(event) {
             body: formData
         });
 
-        // MUDANÇA: Capture a resposta como texto bruto primeiro para depuração
         const responseText = await response.text();
         console.log("Resposta bruta do servidor (Main.gs):", responseText);
 
@@ -104,14 +103,16 @@ loginForm.addEventListener('submit', async function(event) {
             };
             localStorage.setItem('usuarioLogado', JSON.stringify(userData));
 
-            // MUDANÇA: Redireciona imediatamente sem setTimeout
             window.location.href = "https://renatodouek.com.br/mentorias/dashboard/";
             
         } else {
-            // MUDANÇA: Loga o objeto 'result' completo para ver todos os detalhes de erro do servidor
             mensagemDiv.textContent = "Erro: " + result.message;
             mensagemDiv.classList.add('error-message', 'message-visible');
             console.error("Login failed (resultado completo do servidor):", result);
+            // MUDANÇA: Se a resposta de erro incluir debugInfo, logue-o separadamente
+            if (result.debugInfo) {
+                console.warn("Informações de depuração do servidor:", result.debugInfo);
+            }
 
             if (botaoLogin) {
                 botaoLogin.disabled = false;
