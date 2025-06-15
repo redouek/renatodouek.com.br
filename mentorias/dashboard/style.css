@@ -304,7 +304,7 @@ input[type="date"] {
     color: #FFCE00;
 }
 
-/* MUDANÇA CRÍTICA: Estilo para o contêiner da tabela principal */
+/* Tabela de Atividades (área de rolagem principal da tabela) */
 .table-container {
     flex-grow: 1; /* Ocupa o espaço restante verticalmente */
     overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical DA TABELA AQUI */
