@@ -6,13 +6,7 @@
     <title>Dashboard - Mentorado</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
-    <script defer src="script.js"></script>
-    <link rel="icon" type="image/png" href="/assets/icones/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/assets/icones/favicon.svg" />
-    <link rel="shortcut icon" href="/assets/icones/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icones/apple-touch-icon.png" />
-    <meta name="apple-mobile-web-app-title" content="RD Mentoria" />
-    <link rel="manifest" href="/assets/icones/site.webmanifest" />
+    <script src="script.js"></script>
 </head>
 <body>
     <div class="app-background">
@@ -75,24 +69,31 @@
                         </div>
                     </div>
 
-                    <div class="table-container">
-                        <table>
+                    <!-- MUDANÇA CRÍTICA: DUAS TABELAS SEPARADAS para cabeçalho fixo e corpo rolável -->
+                    <div class="table-wrapper">
+                        <table class="fixed-header-table">
                             <thead>
                                 <tr>
-                                    <th></th>
-                                    <th>Atividade</th>
-                                    <th>Descrição/Observações</th>
-                                    <th>Data limite</th>
-                                    <th>Status</th> <th>Ações</th>
+                                    <th style="width: 5%;"></th> <!-- Ajuste de width para JS sync -->
+                                    <th style="width: 15%;">Atividade</th>
+                                    <th style="width: 35%;">Descrição/Observações</th>
+                                    <th style="width: 15%;">Data limite</th>
+                                    <th style="width: 15%;">Status</th> 
+                                    <th style="width: 15%;">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="activitiesTableBody">
-                                </tbody>
                         </table>
-                        <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
-                        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
+                        <div class="scrollable-body-wrapper">
+                            <table class="scrollable-body-table">
+                                <tbody id="activitiesTableBody">
+                                    <!-- Conteúdo do corpo da tabela será inserido aqui pelo JavaScript -->
+                                </tbody>
+                            </table>
+                            <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
+                            <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
+                        </div>
                     </div>
-
+                    
                     <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
                         <span>Tarefa concluída!</span>
                         <button id="undoTaskButton" class="undo-button">Desfazer</button>
