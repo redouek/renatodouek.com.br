@@ -29,10 +29,9 @@ body {
     display: flex;
     background-color: #1A1A1A;
     border-radius: 12px;
-    height: 90vh; /* Altura do card principal */
+    height: 90vh;
     width: 95vw;
-    max-width: 1400px;
-    overflow: hidden; /* Mantido para não ter scrollbars no próprio card, só dentro das seções */
+    overflow: hidden;
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
 }
 
@@ -120,7 +119,7 @@ body {
     background-color: #2A2A2A;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Garante que main-area tenha altura para flex-grow de content-section */
+    height: 100%;
 }
 
 /* Cabeçalho da Área Principal (Nome do Usuário + Avatar) */
@@ -131,7 +130,7 @@ body {
     border-bottom: 2px solid #FFCE00;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
-    flex-shrink: 0; /* Impede que o header encolha */
+    flex-shrink: 0;
 }
 
 .user-info h1 {
@@ -165,7 +164,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* overflow-y: auto; */ /* REMOVIDO: A rolagem principal será no .table-body-scroll-container */
+    overflow-y: auto; /* MUDANÇA: A rolagem vertical ocorre aqui para toda a seção */
     padding-right: 0.5rem; /* Espaço para barra de rolagem */
     font-size: 1rem;
     color: #FFFFFF;
@@ -304,67 +303,66 @@ input[type="date"] {
     color: #FFCE00;
 }
 
-/* MUDANÇA CRÍTICA: Novos estilos para a estrutura de tabela separada */
-.table-wrapper {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Permite que o wrapper ocupe o espaço restante */
-    background-color: #2A2A2A; /* Fundo para ambas as tabelas */
+/* Tabela de Atividades */
+.table-container {
+    overflow-x: auto;
+    flex-grow: 1; /* Permite que o table-container ocupe o espaço restante na seção */
+    margin-top: 0;
+    padding-top: 0;
     border-radius: 8px;
-    overflow: hidden; /* Esconde qualquer overflow no nível do wrapper, mas a rolagem será no body-scroll-container */
-    margin-top: 1rem; /* Espaço entre activities-header e a tabela */
+    background-color: #2A2A2A;
 }
 
-.fixed-header-table, .scrollable-body-table {
+table {
     width: 100%;
-    border-collapse: collapse; /* MANTIDO: Para evitar linhas verticais extras */
-    min-width: 700px; /* Garante largura mínima para rolagem horizontal */
+    border-collapse: collapse; /* MUDANÇA CRÍTICA: Volta para collapse para evitar linhas verticais */
+    min-width: 700px;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-.fixed-header-table thead th {
+table th,
+table td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #444; /* Borda horizontal */
+    white-space: normal;
+    box-sizing: border-box;
+}
+
+table th {
     background-color: #FFCE00;
     color: #000;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.85rem;
-    padding: 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid #444; /* Borda inferior do cabeçalho fixo */
-    /* REMOVIDO: position: sticky e top: 0, pois agora é uma tabela separada e fixa */
-    /* REMOVIDO: z-index, pois não precisa de sticky aqui */
+    position: sticky; /* MUDANÇA CRÍTICA: Fixa o cabeçalho ao rolar o content-section */
+    top: 0; /* Fixa no topo da área de rolagem */
+    z-index: 2; /* Garante que fique acima do conteúdo da tabela */
+    /* REMOVIDAS bordas verticais explícitas para evitar duplicidade com border-collapse */
 }
-
-.fixed-header-table thead th:first-child {
+/* Estilos de canto para TH */
+table th:first-child {
     border-top-left-radius: 8px;
 }
-.fixed-header-table thead th:last-child {
+table th:last-child {
     border-top-right-radius: 8px;
 }
 
-.scrollable-body-wrapper {
-    flex-grow: 1; /* Ocupa o espaço restante verticalmente dentro de .table-wrapper */
-    overflow-y: auto; /* MUDANÇA CRÍTICA: APENAS O CORPO DA TABELA ROLA AQUI */
-    overflow-x: auto; /* Permite rolagem horizontal para o corpo */
-    position: relative; /* Necessário para alinhar o corpo da tabela dentro do wrapper */
-}
 
-.scrollable-body-table tbody td {
+table td {
     background-color: #2A2A2A;
     color: #FFFFFF;
     font-size: 0.9rem;
-    padding: 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid #444; /* Borda horizontal */
-    white-space: normal;
+    /* REMOVIDAS bordas verticais explícitas para evitar duplicidade com border-collapse */
 }
 
-.scrollable-body-table tbody tr:nth-child(even) td { /* Aplicar TD para especificidade */
+table tbody tr:nth-child(even) {
     background-color: #333333;
 }
-.scrollable-body-table tbody tr:hover td { /* Aplicar TD para especificidade */
+table tbody tr:hover td {
     background-color: #3A3A3A;
 }
-
 
 /* Estilo para o Checkbox da Tabela */
 table input[type="checkbox"] {
@@ -958,7 +956,7 @@ table input[type="checkbox"]:checked::before {
     }
 }
 
-/* Estilo para barra de rolagem (compatibilidade WebKit) */
+/* Estilo para barra de rolagem (compatibilidade WebKit) - Fora do media query para ser global */
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
