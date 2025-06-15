@@ -29,9 +29,10 @@ body {
     display: flex;
     background-color: #1A1A1A;
     border-radius: 12px;
-    height: 90vh;
+    height: 90vh; /* Altura do card principal */
     width: 95vw;
-    overflow: hidden;
+    max-width: 1400px;
+    overflow: hidden; /* Mantido para não ter scrollbars no próprio card, só dentro das seções */
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.8);
 }
 
@@ -119,7 +120,7 @@ body {
     background-color: #2A2A2A;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 100%; /* Garante que main-area tenha altura para flex-grow de content-section */
 }
 
 /* Cabeçalho da Área Principal (Nome do Usuário + Avatar) */
@@ -130,7 +131,7 @@ body {
     border-bottom: 2px solid #FFCE00;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Impede que o header encolha */
 }
 
 .user-info h1 {
@@ -164,8 +165,8 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* MUDANÇA: A rolagem vertical ocorre aqui para toda a seção */
-    padding-right: 0.5rem; /* Espaço para barra de rolagem */
+    /* overflow-y: auto; */ /* REMOVIDO: Rolagem principal será no table-container */
+    padding-right: 0.5rem; /* Espaço para barra de rolagem (se necessário no final) */
     font-size: 1rem;
     color: #FFFFFF;
     margin-top: 10px;
@@ -303,49 +304,55 @@ input[type="date"] {
     color: #FFCE00;
 }
 
-/* Tabela de Atividades */
+/* Tabela de Atividades (área de rolagem principal da tabela) */
 .table-container {
-    overflow-x: auto;
-    flex-grow: 1; /* Permite que o table-container ocupe o espaço restante na seção */
-    margin-top: 0;
-    padding-top: 0;
+    overflow-x: auto; /* Permite rolagem horizontal para tabelas largas */
+    flex-grow: 1; /* Ocupa o espaço restante verticalmente dentro da seção */
+    overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical DA TABELA AQUI */
+    margin-top: 1rem; /* Espaçamento entre controls e tabela */
     border-radius: 8px;
-    background-color: #2A2A2A;
+    background-color: #2A2A2A; /* Fundo para a área da tabela */
+    position: relative; /* Necessário para position: sticky no thead */
 }
 
 table {
     width: 100%;
-    border-collapse: collapse; /* MUDANÇA CRÍTICA: Volta para collapse para evitar linhas verticais */
-    min-width: 700px;
-    border-radius: 8px;
-    overflow: hidden;
+    border-collapse: collapse; /* MANTIDO: Para evitar linhas verticais extras */
+    min-width: 700px; /* Garante largura mínima para rolagem horizontal */
+    /* border-radius: 8px; REMOVIDO: O table-container já tem, evita bordas internas duplas */
+    /* overflow: hidden; REMOVIDO: O table-container já tem */
+}
+
+table thead {
+    /* MUDANÇA CRÍTICA: Fixa o cabeçalho ao rolar o table-container */
+    position: sticky; 
+    top: 0; /* Gruda no topo do contêiner de rolagem */
+    z-index: 2; /* Garante que fique acima do conteúdo da tabela */
+    background-color: #FFCE00; /* Garante que o fundo do cabeçalho seja visível ao rolar */
 }
 
 table th,
 table td {
     padding: 0.8rem;
     text-align: left;
-    border-bottom: 1px solid #444; /* Borda horizontal */
+    border-bottom: 1px solid #444; /* Borda horizontal entre as linhas */
     white-space: normal;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Garante que padding e border não afetem width */
 }
 
 table th {
-    background-color: #FFCE00;
     color: #000;
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.85rem;
-    position: sticky; /* MUDANÇA CRÍTICA: Fixa o cabeçalho ao rolar o content-section */
-    top: 0; /* Fixa no topo da área de rolagem */
-    z-index: 2; /* Garante que fique acima do conteúdo da tabela */
-    /* REMOVIDAS bordas verticais explícitas para evitar duplicidade com border-collapse */
+    /* Remover bordas individuais aqui para que o border-collapse funcione */
+    /* background-color: #FFCE00; já está no thead parent */
 }
-/* Estilos de canto para TH */
-table th:first-child {
+/* Estilos de canto para TH no thead fixo */
+table thead th:first-child {
     border-top-left-radius: 8px;
 }
-table th:last-child {
+table thead th:last-child {
     border-top-right-radius: 8px;
 }
 
@@ -354,7 +361,6 @@ table td {
     background-color: #2A2A2A;
     color: #FFFFFF;
     font-size: 0.9rem;
-    /* REMOVIDAS bordas verticais explícitas para evitar duplicidade com border-collapse */
 }
 
 table tbody tr:nth-child(even) {
@@ -956,7 +962,7 @@ table input[type="checkbox"]:checked::before {
     }
 }
 
-/* Estilo para barra de rolagem (compatibilidade WebKit) - Fora do media query para ser global */
+/* Estilo para barra de rolagem (compatibilidade WebKit) */
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
