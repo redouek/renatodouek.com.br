@@ -12,8 +12,8 @@ body {
     background-color: #000000;
     color: #FFFFFF;
     /* Certifique-se de que o body ocupa 100% da viewport para o layout flex */
-    min-height: 100vh; /* Garante que o body tenha altura mínima */
-    display: flex; /* Para centralizar o app-background */
+    min-height: 100vh; 
+    display: flex; 
     justify-content: center;
     align-items: center;
 }
@@ -23,8 +23,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Ocupa a altura total da viewport */
-    width: 100vw; /* Ocupa a largura total da viewport */
+    height: 100vh; 
+    width: 100vw; 
 }
 
 .dashboard-card {
@@ -32,26 +32,25 @@ body {
     background-color: #1A1A1A;
     border-radius: 12px;
     height: 90vh; /* Altura do card principal */
-    width: 95vw; /* Largura do card principal */
-    max-width: 1400px; /* Limite de largura para o card */
+    width: 95vw; 
     overflow: hidden; /* Garante que o conteúdo interno não vaze */
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8); /* Sombra para o card */
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.8); 
 }
 
 /* Sidebar Lateral (Menu) */
 .sidebar {
     background-color: #1a1a1a;
-    width: 64px; /* Largura fixa da sidebar */
+    width: 64px; 
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Espaço entre logo/menu e botão sair */
+    justify-content: space-between; 
     padding: 1rem 0.5rem;
 }
 
 .sidebar-top {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centraliza logo e menu verticalmente */
+    align-items: center; 
 }
 
 .sidebar-logo {
@@ -64,10 +63,10 @@ body {
 }
 
 .sidebar-menu {
-    position: relative; /* Para o active-indicator */
+    position: relative; 
     display: flex;
     flex-direction: column;
-    gap: 1rem; /* Espaçamento entre os botões */
+    gap: 1rem; 
     align-items: center;
 }
 
@@ -85,22 +84,20 @@ body {
     border-radius: 8px;
     transition: background 0.3s, color 0.3s;
     position: relative;
-    z-index: 2; /* Acima do hover-box */
+    z-index: 2; 
 }
 
-/* Estilo para botão de menu ativo e no hover */
 .icon-btn.active {
-    background-color: transparent; /* Será coberto pelo hover-box */
-    color: #000; /* Cor preta quando ativo, para contraste com o amarelo */
-    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8); /* Sombra sutil */
+    background-color: transparent; 
+    color: #000; 
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8); 
 }
 
-.icon-btn:hover:not(.active) { /* Hover para botões NÃO ativos */
-    background-color: rgba(255, 255, 255, 0.1); /* Leve fundo branco no hover */
-    color: #FFFFFF; /* Mantém branco */
+.icon-btn:hover:not(.active) { 
+    background-color: rgba(255, 255, 255, 0.1); 
+    color: #FFFFFF; 
 }
 
-/* Botão Sair */
 .logout-btn {
     background: none;
     border: 1px solid #FFCE00;
@@ -109,7 +106,7 @@ body {
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
     cursor: pointer;
-    align-self: center; /* Centraliza na sidebar */
+    align-self: center; 
     transition: all 0.3s ease;
 }
 
@@ -120,12 +117,12 @@ body {
 
 /* Área Principal do Conteúdo */
 .main-area {
-    flex: 1; /* Ocupa o espaço restante */
+    flex: 1; 
     padding: 2rem;
     background-color: #2A2A2A;
     display: flex;
-    flex-direction: column; /* MUDANÇA: Para que as seções se empilhem e ocupe o espaço */
-    height: 100%; /* Garante que main-area tenha altura para flex-grow de content-section */
+    flex-direction: column; 
+    /* REMOVIDO: height: 100%; para evitar sobreposição de rolagem */
 }
 
 /* Cabeçalho da Área Principal (Nome do Usuário + Avatar) */
@@ -136,7 +133,7 @@ body {
     border-bottom: 2px solid #FFCE00;
     padding-bottom: 1rem;
     margin-bottom: 2rem;
-    flex-shrink: 0; /* MUDANÇA: Impede que o header encolha */
+    flex-shrink: 0; 
 }
 
 .user-info h1 {
@@ -168,10 +165,9 @@ body {
 /* Seções de Conteúdo (Visão Geral, Atividades, etc.) */
 .content-section {
     flex: 1; /* MUDANÇA: Ocupa o espaço restante verticalmente */
-    display: flex; /* MUDANÇA: Adiciona display flex para organizar conteúdo interno */
-    flex-direction: column; /* MUDANÇA: Conteúdo interno em coluna */
-    /* overflow-y: auto; */ /* REMOVIDO: O overflow será no .table-container */
-    padding-right: 0.5rem; /* Espaço para barra de rolagem */
+    display: block; /* MUDANÇA: Volta para block para ter overflow funcionando */
+    overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical aqui */
+    padding-right: 0.5rem; 
     font-size: 1rem;
     color: #FFFFFF;
     margin-top: 10px;
@@ -198,7 +194,7 @@ body {
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
     gap: 1rem;
-    flex-shrink: 0; /* MUDANÇA: Garante que este cabeçalho não encolha e permaneça fixo */
+    flex-shrink: 0; /* Garante que este cabeçalho não encolha e permaneça no topo da seção rolante */
 }
 
 .add-activity-btn {
@@ -310,24 +306,22 @@ input[type="date"] {
 }
 
 /* Tabela de Atividades */
-/* MUDANÇA: table-container agora é a área de rolagem */
 .table-container {
-    overflow-x: auto; /* Permite rolagem horizontal para tabelas largas */
-    flex-grow: 1; /* Ocupa o espaço restante verticalmente */
-    overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical ocorrer APENAS aqui */
-    margin-top: -1rem; /* MUDANÇA: Ajusta para compensar o margin-bottom do activities-header se necessário */
-    padding-top: 1rem; /* MUDANÇA: Adiciona padding superior para dar espaço ao conteúdo ao rolar */
-    border-radius: 8px; /* MUDANÇA: Cantos arredondados para a área da tabela */
-    background-color: #2A2A2A; /* Fundo da área de rolagem */
+    overflow-x: auto; 
+    flex-grow: 1; /* Ocupa o espaço restante dentro da seção rolante */
+    /* REMOVIDO: overflow-y: auto; daqui, pois o content-section já tem */
+    margin-top: -1rem; 
+    padding-top: 1rem; 
+    border-radius: 8px; 
+    background-color: #2A2A2A; 
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    /* margin-top: 1rem; */ /* REMOVIDO: Margin agora está no table-container padding-top */
     min-width: 700px;
-    border-radius: 8px; /* MUDANÇA: Cantos arredondados para a tabela inteira */
-    overflow: hidden; /* Garante que o border-radius funcione */
+    border-radius: 8px; 
+    overflow: hidden; 
 }
 
 table th,
@@ -345,10 +339,9 @@ table th {
     text-transform: uppercase;
     font-size: 0.85rem;
     position: sticky; /* MUDANÇA: Fixa o cabeçalho ao rolar o table-container */
-    top: 0;
+    top: 0; /* Fixa no topo da área de rolagem */
     z-index: 2; /* Garante que fique acima do conteúdo da tabela */
 }
-/* MUDANÇA: Estilo de canto para o thead fixo */
 table th:first-child {
     border-top-left-radius: 8px;
 }
@@ -363,9 +356,8 @@ table td {
     font-size: 0.9rem;
 }
 
-/* MUDANÇA: Zebra-striping para melhor legibilidade */
 table tbody tr:nth-child(even) {
-    background-color: #333333; /* Uma cor ligeiramente diferente */
+    background-color: #333333; 
 }
 table tbody tr:hover td {
     background-color: #3A3A3A;
@@ -411,9 +403,9 @@ table input[type="checkbox"]:checked::before {
 .completed-task {
     text-decoration: line-through; 
     text-decoration-thickness: 3px; 
-    text-decoration-color: #555555; /* MUDANÇA: Cor mais escura para o riscado */
-    color: rgba(255, 255, 255, 0.4); /* MUDANÇA: Texto mais sutil/claro */
-    background-color: rgba(0, 0, 0, 0.1); /* MUDANÇA: Um fundo levemente mais escuro para a linha da tabela */
+    text-decoration-color: #555555; 
+    color: rgba(255, 255, 255, 0.4); 
+    background-color: rgba(0, 0, 0, 0.1); 
     transition: all 0.3s ease-in-out;
 }
 
@@ -445,7 +437,7 @@ table input[type="checkbox"]:checked::before {
 .status-badge {
     display: inline-block;
     padding: 0.4rem 0.7rem;
-    border-radius: 32px; /* Cantos arredondados */
+    border-radius: 32px; 
     font-size: 0.8rem;
     font-weight: bold;
     text-align: center;
@@ -970,16 +962,16 @@ table input[type="checkbox"]:checked::before {
 }
 
 ::-webkit-scrollbar-track {
-    background: #333333; /* Cor da trilha da barra de rolagem */
+    background: #333333; 
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #FFCE00; /* Cor da alça da barra de rolagem (amarelo) */
+    background: #FFCE00; 
     border-radius: 10px;
-    border: 3px solid #333333; /* Padding ao redor da alça */
+    border: 3px solid #333333; 
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #e6b800; /* Cor no hover */
+    background: #e6b800; 
 }
