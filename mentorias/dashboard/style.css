@@ -165,8 +165,8 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* overflow-y: auto; */ /* REMOVIDO: Rolagem principal será no table-container */
-    padding-right: 0.5rem; /* Espaço para barra de rolagem (se necessário no final) */
+    /* REMOVIDO: overflow-y: auto; deste nível. Será no table-container */
+    padding-right: 0.5rem; /* Espaço para barra de rolagem (se necessário) */
     font-size: 1rem;
     color: #FFFFFF;
     margin-top: 10px;
@@ -304,11 +304,11 @@ input[type="date"] {
     color: #FFCE00;
 }
 
-/* Tabela de Atividades (área de rolagem principal da tabela) */
+/* MUDANÇA CRÍTICA: Estilo para o contêiner da tabela principal */
 .table-container {
-    overflow-x: auto; /* Permite rolagem horizontal para tabelas largas */
-    flex-grow: 1; /* Ocupa o espaço restante verticalmente dentro da seção */
+    flex-grow: 1; /* Ocupa o espaço restante verticalmente */
     overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical DA TABELA AQUI */
+    overflow-x: auto; /* Permite rolagem horizontal se a tabela for muito larga */
     margin-top: 1rem; /* Espaçamento entre controls e tabela */
     border-radius: 8px;
     background-color: #2A2A2A; /* Fundo para a área da tabela */
@@ -319,16 +319,16 @@ table {
     width: 100%;
     border-collapse: collapse; /* MANTIDO: Para evitar linhas verticais extras */
     min-width: 700px; /* Garante largura mínima para rolagem horizontal */
-    /* border-radius: 8px; REMOVIDO: O table-container já tem, evita bordas internas duplas */
-    /* overflow: hidden; REMOVIDO: O table-container já tem */
+    /* REMOVIDO: border-radius e overflow: hidden daqui, pois o table-container já lida */
 }
 
 table thead {
     /* MUDANÇA CRÍTICA: Fixa o cabeçalho ao rolar o table-container */
-    position: sticky; 
+    position: sticky;
     top: 0; /* Gruda no topo do contêiner de rolagem */
     z-index: 2; /* Garante que fique acima do conteúdo da tabela */
     background-color: #FFCE00; /* Garante que o fundo do cabeçalho seja visível ao rolar */
+    /* REMOVIDO: background-color dos th, pois já está no thead */
 }
 
 table th,
@@ -345,8 +345,7 @@ table th {
     font-weight: bold;
     text-transform: uppercase;
     font-size: 0.85rem;
-    /* Remover bordas individuais aqui para que o border-collapse funcione */
-    /* background-color: #FFCE00; já está no thead parent */
+    /* Remover bordas individuais aqui para que o border-collapse funcione e não crie linhas extras */
 }
 /* Estilos de canto para TH no thead fixo */
 table thead th:first-child {
@@ -361,6 +360,7 @@ table td {
     background-color: #2A2A2A;
     color: #FFFFFF;
     font-size: 0.9rem;
+    /* Remover bordas individuais aqui para que o border-collapse funcione */
 }
 
 table tbody tr:nth-child(even) {
