@@ -81,31 +81,24 @@
         </div>
     </div>
 
-    <!-- MUDANÇA CRÍTICA: NOVA ESTRUTURA PARA CABEÇALHO FIXO -->
-    <div class="table-wrapper">
-        <table class="activities-table-fixed-header">
-            <thead>
+    <div class="table-container">
+        <table id="activitiesTable"> <!-- MUDANÇA: Adicionado ID para referência no JS -->
+            <thead id="activitiesTableHeader"> <!-- MUDANÇA: Adicionado ID para referência no JS -->
                 <tr>
-                    <th style="width: 5%;"></th> <!-- Defina widths em % ou px para JS sincronizar -->
-                    <th style="width: 15%;">Atividade</th>
-                    <th style="width: 35%;">Descrição/Observações</th>
-                    <th style="width: 15%;">Data limite</th>
-                    <th style="width: 15%;">Status</th> 
-                    <th style="width: 15%;">Ações</th>
+                    <th></th>
+                    <th>Atividade</th>
+                    <th>Descrição/Observações</th>
+                    <th>Data limite</th>
+                    <th>Status</th> <th>Ações</th>
                 </tr>
             </thead>
-        </table>
-        <div class="table-body-scroll-container">
-            <table class="activities-table-scroll-body">
-                <tbody id="activitiesTableBody">
-                    <!-- Conteúdo do corpo da tabela será inserido aqui pelo JavaScript -->
+            <tbody id="activitiesTableBody">
                 </tbody>
-            </table>
-            <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
-            <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
-        </div>
+        </table>
+        <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
+        <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
     </div>
-    
+
     <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
         <span>Tarefa concluída!</span>
         <button id="undoTaskButton" class="undo-button">Desfazer</button>
@@ -145,6 +138,7 @@
         </div>
     </div>
 </section>
+
                 
 <!-- =================================================================
 =======================Inicio da sessão Sessões=======================
