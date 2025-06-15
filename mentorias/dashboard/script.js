@@ -1,714 +1,484 @@
-// Arquivo: mentorias/dashboard/script.js
-
-// Variáveis globais para armazenar as atividades e o estado do toggle de concluídas
-let allActivities = []; // Armazenará todas as atividades carregadas do servidor
-let selectedStatusFilters = new Set(); // Armazenará os status selecionados para filtragem
-let currentSearchTerm = '';
-let showCompletedTasks = false; 
+// Arquivo: AppsScriptActivities.gs 
 
 // ===============================================================
-// Funções Auxiliares
+// Função de normalização padronizada para usar em todo o GAS
+// Definida globalmente para ser acessível por ActivitiesHandler
 // ===============================================================
-
-function formatarDataParaExibicao(dataString) {
-    if (!dataString) return '';
-    const data = (dataString instanceof Date) ? dataString : new Date(dataString + 'T00:00:00'); 
-    if (isNaN(data.getTime())) {
-        return dataString;
+function normalizeHeader(header) {
+    var normalized = header;
+    
+    // Remove caracteres especiais comuns
+    normalized = normalized.replace(/\//g, "");
+    normalized = normalized.replace(/\-/g, "");
+    normalized = normalized.replace(/\./g, "");
+    normalized = normalized.replace(/\,/g, "");
+    normalized = normalized.replace(/\(/g, "");
+    normalized = normalized.replace(/\)/g, "");
+    normalized = normalized.replace(/\[/g, "");
+    normalized = normalized.replace(/\]/g, "");
+    normalized = normalized.replace(/\{/g, "");
+    normalized = normalized.replace(/\}/g, "");
+    normalized = normalized = normalized.replace(/\!/g, "");
+    normalized = normalized.replace(/\@/g, "");
+    normalized = normalized.replace(/\#/g, "");
+    normalized = normalized.replace(/\$/g, "");
+    normalized = normalized.replace(/\%/g, "");
+    normalized = normalized.replace(/\^/g, "");
+    normalized = normalized.replace(/\&/g, "");
+    normalized = normalized.replace(/\*/g, "");
+    normalized = normalized.replace(/\+/g, "");
+    normalized = normalized.replace(/\=/g, "");
+    normalized = normalized.replace(/\|/g, "");
+    normalized = normalized.replace(/\\/g, "");
+    normalized = normalized.replace(/\:/g, "");
+    normalized = normalized.replace(/\;/g, "");
+    normalized = normalized.replace(/\"/g, "");
+    normalized = normalized.replace(/\'/g, "");
+    normalized = normalized.replace(/\</g, "");
+    normalized = normalized.replace(/\>/g, "");
+    normalized = normalized.replace(/\?/g, "");
+    
+    // Remove acentos
+    normalized = normalized.replace(/[áàâãä]/g, "a");
+    normalized = normalized.replace(/[éèêë]/g, "e");
+    normalized = normalized.replace(/[íìîï]/g, "i");
+    normalized = normalized.replace(/[óòôõö]/g, "o");
+    normalized = normalized.replace(/[úùûü]/g, "u");
+    normalized = normalized.replace(/[ç]/g, "c");
+    normalized = normalized.replace(/[ÁÀÂÃÄ]/g, "A");
+    normalized = normalized.replace(/[ÉÈÊË]/g, "E");
+    normalized = normalized.replace(/[ÍÌÎÏ]/g, "I");
+    normalized = normalized.replace(/[ÓÒÔÕÖ]/g, "O");
+    normalized = normalized.replace(/[ÚÙÛÜ]/g, "U");
+    normalized = normalized.replace(/[Ç]/g, "C");
+    
+    // Remove espaços
+    normalized = normalized.replace(/\s+/g, "");
+    
+    // Primeira letra maiúscula
+    if (normalized.length > 0) {
+        normalized = normalized.charAt(0).toUpperCase() + normalized.slice(1);
     }
-    const dia = String(data.getDate()).padStart(2, '0');
-    const mes = String(data.getMonth() + 1).padStart(2, '0');
-    const ano = data.getFullYear();
-    return `${dia}/${mes}/${ano}`;
+
+    Logger.log("Original Header: '" + header + "' -> Normalized: '" + normalized + "'");
+
+    return normalized;
 }
 
-function formatarDataParaInput(dataString) {
-    if (!dataString) return '';
-    if (dataString instanceof Date) {
-        const ano = dataString.getFullYear();
-        const mes = String(dataString.getMonth() + 1).padStart(2, '0');
-        const dia = String(dataString.getDate()).padStart(2, '0');
-        return `${ano}-${mes}-${dia}`;
-    }
-    return dataString; 
-}
+var ActivitiesHandler = {
+    SPREADSHEET_ID: "1XuhhSSwhamHl_zM1rG9Xpp9y5bQ2PqFlYOXkqqTRpMs", 
+    SHEET_NAME_ACTIVITIES: "Atividades",
+    SHEET_NAME_MENTORADOS: "Mentorados",
 
-function getStatusClass(status) {
-    switch (status) {
-        case "Não iniciada": return "status-nao-iniciada";
-        case "Executando": return "status-executando";
-        case "Concluída": return "status-concluida";
-        case "Atrasada": return "status-atrasada";
-        case "Perto de expirar": return "status-perto-expirar";
-        default: return "";
-    }
-}
+    // Colunas da aba "Atividades" (indices baseados em 0)
+    COL_ID: 0,
+    COL_CPF_MENTORADO: 1,
+    COL_NOME_MENTORADO: 2,
+    COL_ATIVIDADE: 3,
+    COL_DESCRICAO: 4, 
+    COL_DATA_LIMITE: 5,
+    COL_STATUS_ATUAL: 6,
+    COL_STATUS_ANTERIOR: 7,
+    COL_CONCLUIDA_CHECKBOX: 8,
+    COL_CRIADO_EM: 9,
+    COL_ULTIMA_ATUALIZACAO: 10,
 
-// ===============================================================
-// Comunicação com Google Apps Script (GAS)
-// ===============================================================
+    COL_MENTORADOS_NOME: 0, 
+    COL_MENTORADOS_CPF: 1, 
 
-const webAppUrl = "https://script.google.com/macros/s/AKfycbwxweNQUDALWE7Ai7-u73WbUFKsjtH-RlqQQJGGYcBo372PClCIN3MMrNzDcoogfCpq/exec"; 
+    getActivitiesSheet: function() {
+        const ss = SpreadsheetApp.openById(this.SPREADSHEET_ID);
+        return ss.getSheetByName(this.SHEET_NAME_ACTIVITIES);
+    },
 
-async function callAppsScript(action, data = {}) {
-    const formData = new FormData();
-    formData.append('action', action);
-    for (const key in data) {
-        formData.append(key, data[key]);
-    }
+    getMentoradosSheet: function() {
+        const ss = SpreadsheetApp.openById(this.SPREADSHEET_ID);
+        return ss.getSheetByName(this.SHEET_NAME_MENTORADOS);
+    },
 
-    try {
-        const response = await fetch(webAppUrl, {
-            method: 'POST',
-            body: formData
-        });
-        if (!response.ok) {
-            let errorDetails = {};
-            let responseText = await response.text().catch(() => null); 
-            
-            if (responseText) {
-                try {
-                    errorDetails = JSON.parse(responseText); 
-                } catch (jsonError) {
-                    errorDetails.message = responseText; 
+    getAllActivitiesData: function() {
+        const sheet = this.getActivitiesSheet();
+        if (!sheet) throw new Error("Aba \'" + this.SHEET_NAME_ACTIVITIES + "\' não encontrada.");
+        const data = sheet.getDataRange().getValues();
+        if (data.length <= 1) return []; 
+        
+        const headers = data[0];
+        const activities = [];
+        for (let i = 1; i < data.length; i++) {
+            const row = data[i];
+            const activity = {};
+            headers.forEach((header, index) => {
+                const normalizedHeader = normalizeHeader(header);
+                if (normalizedHeader === 'DataLimite' && row[index] instanceof Date) {
+                    const date = row[index];
+                    activity[normalizedHeader] = Utilities.formatDate(date, SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd');
+                } else if (row[index] !== null && row[index] !== undefined) {
+                    activity[normalizedHeader] = String(row[index]).trim();
+                } else {
+                    activity[normalizedHeader] = "";
                 }
-            } else {
-                errorDetails.message = response.statusText || 'Erro desconhecido';
-            }
-            throw new Error(`Erro no servidor (${response.status}): ${errorDetails.message || 'Erro desconhecido'}`);
+            });
+            activities.push(activity);
         }
-        return await response.json();
-    } catch (error) {
-        console.error(`Erro ao chamar Apps Script para ação ${action}:`, error);
-        showNotification(`Erro de comunicação: ${error.message}. Por favor, verifique sua conexão ou tente novamente.`, false);
-        return { status: 'error', message: error.message }; 
-    }
-}
+        Logger.log("Dados de todas as atividades lidos (primeira atividade para exemplo): " + JSON.stringify(activities[0])); 
+        return activities;
+    },
 
-// ===============================================================
-// Gerenciamento de Atividades (Frontend)
-// ===============================================================
-
-const activitiesTableBody = document.getElementById('activitiesTableBody');
-const loadingActivitiesMessage = document.getElementById('loadingActivities');
-const noActivitiesMessage = document.getElementById('noActivitiesMessage');
-const toggleCompletedTasksBtn = document.getElementById('toggleCompletedTasksBtn');
-const toggleTextSpan = toggleCompletedTasksBtn.querySelector('.toggle-text');
-const toggleIconSpan = toggleCompletedTasksBtn.querySelector('.mdi');
-
-function renderActivities(activitiesToRender) {
-    activitiesTableBody.innerHTML = ''; 
-
-    if (activitiesToRender.length === 0) {
-        noActivitiesMessage.style.display = 'block';
-        loadingActivitiesMessage.style.display = 'none'; 
-        return;
-    } else {
-        noActivitiesMessage.style.display = 'none';
-        loadingActivitiesMessage.style.display = 'none'; 
-    }
-
-    activitiesToRender.forEach(activity => {
-        const isCompleted = activity.StatusAtual === 'Concluída';
-        const row = document.createElement('tr');
-        row.classList.toggle('completed-task', isCompleted); 
-
-        row.innerHTML = `
-            <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
-            <td>${activity.Atividade}</td>
-            <td>${activity.DescricaoObservacoes || ''}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
-            <td>
-                <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
-            </td>
-            <td>
-                <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
-                    <span class="mdi mdi-pencil"></span>
-                </button>
-                <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
-                    <span class="mdi mdi-delete"></span>
-                </button>
-            </td>
-        `;
-        activitiesTableBody.appendChild(row);
-    });
-
-    addActivityEventListeners();
-}
-
-function filterAndSearchActivities() {
-    let filtered = allActivities.filter(activity => {
-        if (!showCompletedTasks && activity.StatusAtual === 'Concluída') {
-            return false;
+    getActivitiesByCpf: function(e) {
+        Logger.log("getActivitiesByCpf acionada para CPF: " + e.parameter.cpf);
+        const cpf = e.parameter.cpf ? e.parameter.cpf.replace(/[^\d]+/g, "").trim() : "";
+        if (!cpf) {
+            return this.createJsonResponse(false, "CPF não fornecido.");
         }
 
-        if (selectedStatusFilters.size > 0 && !selectedStatusFilters.has(activity.StatusAtual)) {
-            return false;
-        }
-
-        const searchTermLower = currentSearchTerm.toLowerCase();
-        return (
-            String(activity.Atividade || '').toLowerCase().includes(searchTermLower) ||
-            String(activity.DescricaoObservacoes || '').toLowerCase().includes(searchTermLower)
-        );
-    });
-    console.log("Atividades filtradas e/ou buscadas:", filtered); 
-    renderActivities(filtered);
-}
-
-async function loadActivities() {
-    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
-    if (!usuario || !usuario.cpf) {
-        console.error("CPF do usuário não encontrado para carregar atividades.");
-        noActivitiesMessage.textContent = "Erro: Usuário não identificado para carregar atividades.";
-        noActivitiesMessage.style.display = 'block';
-        loadingActivitiesMessage.style.display = 'none';
-        return;
-    }
-
-    loadingActivitiesMessage.style.display = 'block';
-    noActivitiesMessage.style.display = 'none';
-    activitiesTableBody.innerHTML = ''; 
-
-    const result = await callAppsScript('getActivitiesByCpf', { cpf: usuario.cpf.replace(/\D/g, '') });
-
-    if (result.status === 'success' && result.activities) {
-        console.log("Atividades recebidas do Apps Script:", result.activities); 
-        allActivities = result.activities;
-        filterAndSearchActivities(); 
-    } else {
-        allActivities = [];
-        filterAndSearchActivities(); 
-        console.error("Falha ao carregar atividades:", result.message);
-        showNotification("Erro ao carregar atividades: " + result.message, false);
-    }
-}
-
-// ===============================================================
-// Interações da Tabela de Atividades
-// ===============================================================
-
-let undoTimeout; 
-let lastCompletedActivity = null; 
-
-// MUDANÇA: showNotification aprimorada para controle de timeout e fechar modal
-function showNotification(message, showUndo = false) {
-    const notificationBar = document.getElementById('taskCompletedNotification');
-    const notificationText = notificationBar.querySelector('span');
-    const undoButton = document.getElementById('undoTaskButton');
-    const progressLine = notificationBar.querySelector('.progress-line');
-
-    // Sempre limpa o timeout anterior para evitar conflitos
-    clearTimeout(undoTimeout); 
-
-    notificationText.textContent = message;
-    undoButton.style.display = showUndo ? 'inline-block' : 'none';
-    progressLine.style.display = showUndo ? 'block' : 'none';
-
-    // Garante que a notificação esteja visível para iniciar a transição
-    notificationBar.classList.remove('show'); // Remove para resetar a transição
-    void notificationBar.offsetWidth; // Força reflow
-    notificationBar.classList.add('show'); // Adiciona para iniciar a transição
-    notificationBar.style.display = 'flex'; 
-
-    if (showUndo) {
-        progressLine.style.animation = 'none';
-        void progressLine.offsetWidth; 
-        progressLine.style.animation = 'progressAnimation 5s linear forwards'; 
-
-        undoTimeout = setTimeout(() => {
-            notificationBar.classList.remove('show'); 
-            setTimeout(() => {
-                notificationBar.style.display = 'none';
-                lastCompletedActivity = null; // Só anula se a notificação de desfazer for exibida completamente
-            }, 300); 
-        }, 5000);
-    } else {
-        undoTimeout = setTimeout(() => {
-            notificationBar.classList.remove('show'); 
-            setTimeout(() => {
-                notificationBar.style.display = 'none';
-            }, 300);
-        }, 3000); 
-    }
-}
-
-async function handleCheckboxChange(event) {
-    const checkbox = event.target;
-    const activityId = checkbox.dataset.activityId;
-    const isChecked = checkbox.checked;
-    
-    const activity = allActivities.find(act => act.IDdaAtividade == activityId);
-    if (!activity) {
-        console.error("Atividade não encontrada no array local para ID:", activityId);
-        checkbox.checked = !isChecked; 
-        return;
-    }
-
-    let newStatus;
-    // Captura o status ATUAL da atividade no frontend antes da mudança.
-    // Este será o 'oldStatusForUndo' enviado ao Apps Script.
-    let originalStatusBeforeChange = activity.StatusAtual; 
-
-    if (isChecked) {
-        newStatus = "Concluída";
-        // Armazena o estado COMPLETO da atividade antes de ser marcada como concluída.
-        // Isso é crucial para o "Desfazer" poder restaurar o StatusAnterior.
-        lastCompletedActivity = { ...activity }; 
-        showNotification("Tarefa concluída!", true);
-    } else {
-        // Ao desmarcar, o newStatus é o StatusAnterior guardado no 'lastCompletedActivity'
-        // que representa o status original antes da conclusão.
-        // Se lastCompletedActivity não estiver definido (caso de refresh ou erro),
-        // ele tenta o StatusAnterior do próprio objeto activity, ou "Não iniciada"
-        newStatus = lastCompletedActivity?.StatusAnterior || activity.StatusAnterior || "Não iniciada"; 
-        showNotification("Tarefa desmarcada.");
-        lastCompletedActivity = null; // Limpa lastCompletedActivity imediatamente ao desmarcar via checkbox
-    }
-
-    const result = await callAppsScript('updateActivityStatus', {
-        id: activityId,
-        newStatus: newStatus,
-        oldStatusForUndo: originalStatusBeforeChange, 
-        concluidaPorCheckbox: isChecked ? 'Sim' : 'Não'
-    });
-
-    if (result.status === 'success' && result.activity) { 
-        const returnedActivity = result.activity; 
-        const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
-        if (index !== -1) {
-            allActivities[index] = returnedActivity; // Substitui o objeto local
-        }
-        filterAndSearchActivities(); 
-    } else {
-        showNotification(`Erro ao atualizar tarefa: ${result.message}`, false);
-        console.error("Erro ao atualizar tarefa:", result.message, "Resultado completo:", result);
-        
-        checkbox.checked = !isChecked; // Reverte o checkbox
-        // Reverte o status local e visual do badge
-        activity.StatusAtual = originalStatusBeforeChange; 
-        const activityRow = checkbox.closest('tr'); 
-        activityRow.classList.toggle('completed-task', originalStatusBeforeChange === 'Concluída');
-        const statusBadge = activityRow.querySelector('.status-badge');
-        if (statusBadge) {
-            statusBadge.textContent = originalStatusBeforeChange;
-            statusBadge.className = `status-badge ${getStatusClass(originalStatusBeforeChange)}`;
-        }
-    }
-}
-
-function addActivityEventListeners() {
-    document.querySelectorAll('#activitiesTableBody input[type="checkbox"]').forEach(checkbox => {
-        checkbox.removeEventListener('change', handleCheckboxChange); 
-        checkbox.addEventListener('change', handleCheckboxChange);
-    });
-
-    document.querySelectorAll('#activitiesTableBody .status-badge').forEach(badge => {
-        badge.removeEventListener('click', openEditModal); 
-        badge.addEventListener('click', openEditModal);
-    });
-
-    document.querySelectorAll('.edit-activity-btn').forEach(button => {
-        button.removeEventListener('click', openEditModal);
-        button.addEventListener('click', openEditModal);
-    });
-
-    document.querySelectorAll('.delete-activity-btn').forEach(button => {
-        button.removeEventListener('click', handleDeleteActivity);
-        button.addEventListener('click', handleDeleteActivity);
-    });
-}
-
-// MUDANÇA: Lógica de desfazer aprimorada
-document.getElementById('undoTaskButton').addEventListener('click', async () => {
-    if (lastCompletedActivity) {
-        const activityId = lastCompletedActivity.IDdaAtividade;
-        // O status para o qual deve reverter, obtido do 'lastCompletedActivity' guardado.
-        const targetStatusForReversion = lastCompletedActivity.StatusAnterior || "Não iniciada"; 
-        
-        // Limpa lastCompletedActivity imediatamente para evitar re-execução indesejada
-        const activityToUndoCopy = { ...lastCompletedActivity }; // Copia para usar nos parâmetros
-        lastCompletedActivity = null; 
-
-        showNotification("Desfeito!", false); // Mostra "Desfeito!" sem botão de desfazer novamente
-
-        const result = await callAppsScript('updateActivityStatus', {
-            id: activityId,
-            newStatus: targetStatusForReversion, // O status para o qual queremos reverter
-            // oldStatusForUndo aqui é o status que a tarefa tinha ANTES da operação de UNDO (ou seja, "Concluída")
-            oldStatusForUndo: "Concluída", 
-            concluidaPorCheckbox: 'Não'
-        });
-
-        if (result.status === 'success' && result.activity) {
-            const returnedActivity = result.activity;
-            const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
-            if (index !== -1) {
-                allActivities[index] = returnedActivity; 
-            }
-            filterAndSearchActivities();
-        } else {
-            showNotification("Erro ao desfazer: " + result.message); 
-            console.error("Erro ao desfazer tarefa:", result.message, "Resultado completo:", result);
-            // Se falha, o estado de lastCompletedActivity já foi limpo, o que ajuda a evitar loop.
-        }
-    }
-});
-
-
-// ===============================================================
-// Modal de Adição/Edição de Atividade
-// ===============================================================
-
-const activityModal = document.getElementById('activityModal');
-const addActivityBtn = document.getElementById('addActivityBtn');
-const closeActivityModalBtn = document.getElementById('closeActivityModal');
-const activityForm = document.getElementById('activityForm');
-const modalTitle = document.getElementById('modalTitle');
-const activityIdInput = document.getElementById('activityId');
-const activityNameInput = document.getElementById('activityName');
-const activityDescriptionInput = document.getElementById('activityDescription');
-const activityDueDateInput = document.getElementById('activityDueDate');
-const activityStatusSelect = document.getElementById('activityStatus');
-
-addActivityBtn.addEventListener('click', () => {
-    modalTitle.textContent = "Adicionar Nova Atividade";
-    activityForm.reset(); 
-    activityIdInput.value = ''; 
-    activityStatusSelect.value = 'Não iniciada'; 
-    activityModal.style.display = 'flex'; 
-});
-
-closeActivityModalBtn.addEventListener('click', () => {
-    activityModal.style.display = 'none'; 
-});
-
-window.addEventListener('click', (event) => {
-    if (event.target === activityModal) {
-        activityModal.style.display = 'none';
-    }
-    if (!statusFilterDropdownBtn.contains(event.target) && !statusFilterOptions.contains(event.target)) {
-        statusFilterOptions.style.display = 'none';
-    }
-});
-
-activityForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
-    if (!usuario || !usuario.cpf) {
-        showNotification("Erro: Usuário não identificado para salvar atividade.", false);
-        return;
-    }
-
-    const isEditing = activityIdInput.value !== '';
-
-    const activityData = {
-        id: activityIdInput.value,
-        cpfMentorado: usuario.cpf.replace(/\D/g, ''),
-        nomeMentorado: usuario.nome || '',
-        atividade: activityNameInput.value,
-        descricao: activityDescriptionInput.value,
-        dataLimite: activityDueDateInput.value,
-        statusAtual: activityStatusSelect.value,
-        statusAnterior: '' 
-    };
-
-    const submitButton = activityForm.querySelector('button[type="submit"]');
-    submitButton.disabled = true;
-    submitButton.textContent = isEditing ? "Salvando Edição..." : "Adicionando...";
-
-    const result = await callAppsScript('saveActivity', activityData);
-
-    submitButton.disabled = false;
-    submitButton.textContent = "Salvar Atividade";
-
-    if (result.status === 'success' && result.activity) { 
-        activityModal.style.display = 'none';
-        showNotification(isEditing ? "Atividade atualizada com sucesso!" : "Atividade adicionada com sucesso!", false);
-        
-        const returnedActivity = result.activity;
-        if (isEditing) {
-            const index = allActivities.findIndex(act => act.IDdaAtividade == returnedActivity.IDdaAtividade);
-            if (index !== -1) {
-                allActivities[index] = returnedActivity;
-            }
-        } else {
-            allActivities.push(returnedActivity); 
-        }
-        filterAndSearchActivities(); 
-    } else {
-        showNotification(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade: ${result.message}`, false);
-        console.error(`Erro ao ${isEditing ? 'atualizar' : 'adicionar'} atividade:`, result.message, "Resultado completo:", result);
-    }
-});
-
-function openEditModal(event) {
-    const clickedElement = event.target.closest('.edit-activity-btn, .status-badge');
-    
-    if (!clickedElement) {
-        showNotification("Erro: Elemento clicado inválido para edição.", false);
-        console.error("Erro: clickedElement é nulo, event.target:", event.target);
-        return;
-    }
-    const activityId = clickedElement.dataset.activityId;
-    console.log("Tentando editar atividade com ID:", activityId); 
-    
-    if (!activityId) {
-        showNotification("Erro: ID da atividade não encontrado para edição.", false);
-        console.error("Erro: activityId é nulo/indefinido após closest, clickedElement:", clickedElement);
-        return;
-    }
-
-    const activityToEdit = allActivities.find(act => act.IDdaAtividade == activityId);
-
-    if (!activityToEdit) {
-        showNotification("Atividade não encontrada para edição.", false);
-        console.error("Atividade não encontrada no array local para ID:", activityId); 
-        return;
-    }
-
-    modalTitle.textContent = "Editar Atividade";
-    activityIdInput.value = activityToEdit.IDdaAtividade;
-    activityNameInput.value = activityToEdit.Atividade;
-    activityDescriptionInput.value = activityToEdit.DescricaoObservacoes || '';
-    activityDueDateInput.value = formatarDataParaInput(activityToEdit.DataLimite);
-    activityStatusSelect.value = activityToEdit.StatusAtual;
-
-    activityModal.style.display = 'flex';
-}
-
-async function handleDeleteActivity(event) {
-    const clickedElement = event.target.closest('.delete-activity-btn');
-    if (!clickedElement) {
-        console.error("Erro: Elemento clicado não é um botão de exclusão válido.", event.target);
-        return;
-    }
-    const activityId = clickedElement.dataset.activityId;
-    console.log("Tentando excluir atividade com ID:", activityId);
-
-    const confirmed = await showCustomConfirm("Confirmação", "Você tem certeza que deseja excluir esta atividade?");
-
-    if (confirmed) {
-        const result = await callAppsScript('deleteActivity', { id: activityId });
-        if (result.status === 'success') {
-            allActivities = allActivities.filter(act => act.IDdaAtividade != activityId);
-            filterAndSearchActivities();
-            showNotification("Atividade excluída com sucesso!", false);
-        } else {
-            showNotification("Erro ao excluir atividade: " + result.message, false);
-            console.error("Erro detalhado ao excluir atividade:", result.message, "ID:", activityId);
-        }
-    }
-}
-
-// ===============================================================
-// Busca e Filtro
-// ===============================================================
-
-const activitySearchInput = document.getElementById('activitySearch');
-const clearSearchBtn = document.getElementById('clearSearchBtn');
-
-activitySearchInput.addEventListener('input', (event) => {
-    currentSearchTerm = event.target.value;
-    if (currentSearchTerm.length > 0) {
-        clearSearchBtn.style.display = 'flex';
-    } else {
-        clearSearchBtn.style.display = 'none';
-    }
-    filterAndSearchActivities();
-});
-
-clearSearchBtn.addEventListener('click', () => {
-    activitySearchInput.value = '';
-    currentSearchTerm = '';
-    clearSearchBtn.style.display = 'none';
-    filterAndSearchActivities();
-});
-
-const statusFilterDropdownBtn = document.getElementById('statusFilterDropdownBtn');
-const statusFilterOptions = document.getElementById('statusFilterOptions');
-const statusFilterCheckboxes = statusFilterOptions.querySelectorAll('input[type="checkbox"]');
-const filterCountBadge = document.querySelector('.filter-count-badge');
-
-statusFilterDropdownBtn.addEventListener('click', (event) => {
-    event.stopPropagation(); 
-    statusFilterOptions.style.display = statusFilterOptions.style.display === 'block' ? 'none' : 'block';
-});
-
-statusFilterCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', () => {
-        if (checkbox.checked) {
-            selectedStatusFilters.add(checkbox.value);
-        } else {
-            selectedStatusFilters.delete(checkbox.value);
-        }
-        updateFilterCountBadge();
-        filterAndSearchActivities();
-    });
-});
-
-function updateFilterCountBadge() {
-    if (selectedStatusFilters.size > 0) {
-        filterCountBadge.textContent = selectedStatusFilters.size;
-        filterCountBadge.style.display = 'inline-block';
-    } else {
-        filterCountBadge.style.display = 'none';
-    }
-}
-
-// ===============================================================
-// Custom Confirm Modal
-// ===============================================================
-const customConfirmModal = document.getElementById('customConfirmModal');
-const customConfirmTitle = document.getElementById('customConfirmTitle');
-const customConfirmMessage = document.getElementById('customConfirmMessage');
-const customConfirmCancelBtn = document.getElementById('customConfirmCancel');
-const customConfirmOKBtn = document.getElementById('customConfirmOK');
-const closeCustomConfirmModal = document.getElementById('closeCustomConfirmModal');
-
-let resolveCustomConfirm;
-
-function showCustomConfirm(title, message) {
-    customConfirmTitle.textContent = title;
-    customConfirmMessage.textContent = message;
-    customConfirmModal.style.display = 'flex';
-
-    return new Promise(resolve => {
-        resolveCustomConfirm = resolve;
-    });
-}
-
-customConfirmOKBtn.addEventListener('click', () => {
-    customConfirmModal.style.display = 'none';
-    resolveCustomConfirm(true);
-});
-
-customConfirmCancelBtn.addEventListener('click', () => {
-    customConfirmModal.style.display = 'none';
-    resolveCustomConfirm(false);
-});
-
-closeCustomConfirmModal.addEventListener('click', () => {
-    customConfirmModal.style.display = 'none';
-    resolveCustomConfirm(false); 
-});
-
-// ===============================================================
-// Evento principal DOMContentLoaded
-// ===============================================================
-
-document.addEventListener("DOMContentLoaded", async () => { 
-    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
-
-    if (!usuario) {
-        document.body.innerHTML = `
-            <div style="min-height: 100vh; background-color: #333333; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif;">
-                <div style="background-color: #1a1a1a; padding: 3rem 2rem; border-radius: 12px; max-width: 600px; width: 90%; text-align: center; box-shadow: 0 0 16px rgba(0,0,0,0.6);">
-                    <img src="https://renatodouek.com.br/assets/imagens/rd_pb_logo.png" alt="Logo Renato Douek" style="width: 140px; margin-bottom: 2rem;" />
-                    <h1 style="color: #FFCE00; font-size: 1.8rem; margin-bottom: 1rem;">Acesso restrito!</h1>
-                    <h2 style="color: #FFFFFF; font-size: 1rem; line-height: 1.4; margin-bottom: 2.5rem;">
-                        Página de acesso exclusivo para mentorados do Renato Douek.
-                    </h2>
-                    <div style="display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
-                        <a href="https://renatodouek.com.br" style="flex: 1; text-align: center; padding: 0.75rem 1.5rem; border-radius: 32px; border: 2px solid #FFCE00; color: #FFCE00; text-decoration: none; font-weight: 500; transition: 0.3s;">
-                            Ainda não sou mentorado
-                        </a>
-                        <a href="/mentorias/login/" style="flex: 1; text-align: center; padding: 0.75rem 1.5rem; border-radius: 32px; background-color: #FFCE00; color: #000; text-decoration: none; font-weight: 500; transition: 0.3s;">
-                            Login
-                        </a>
-                    </div>
-                </div>
-            </div>
-        `;
-        return;
-    }
-
-    const nomeEl = document.getElementById("userName");
-    if (nomeEl) nomeEl.textContent = usuario.nome || "Mentorado";
-
-    const avatarEl = document.getElementById("profileAvatar");
-    if (avatarEl && usuario.nome) {
-        const partes = usuario.nome.trim().split(" ");
-        const iniciais = partes.length >= 2
-            ? partes[0][0] + partes[partes.length - 1][0]
-            : partes[0][0];
-        avatarEl.textContent = iniciais.toUpperCase();
-    }
-
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("usuarioLogado");
-            window.location.href = "/mentorias/login/";
-        });
-    }
-
-    // ======== MENU LATERAL COM HOVER DESLIZANTE =========
-
-    const menu = document.querySelector(".sidebar-menu");
-    const buttons = document.querySelectorAll(".icon-btn");
-    const sections = document.querySelectorAll(".content-section");
-
-    const hoverBox = document.createElement("div");
-    hoverBox.classList.add("hover-box");
-    menu.appendChild(hoverBox);
-
-    const moveHoverBox = (button) => {
-        const topPos = button.offsetTop;
-        hoverBox.style.top = `${topPos}px`;
-    };
-
-    const initialBtn = document.querySelector(".icon-btn.active") || buttons[0];
-    moveHoverBox(initialBtn);
-
-    buttons.forEach((btn) => {
-        btn.addEventListener("click", async () => {
-            buttons.forEach((b) => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            moveHoverBox(btn);
-
-            const sectionId = btn.dataset.section;
-            sections.forEach((s) => {
-                s.style.display = s.id === `section-${sectionId}` ? "block" : "none";
+        try {
+            const allActivities = this.getAllActivitiesData();
+            const userActivities = allActivities.filter(activity => 
+                String(activity.CPFdoMentorado || "").replace(/\D/g, "") === cpf
+            );
+            
+            const activitiesWithCalculatedStatus = userActivities.map(activity => {
+                const updatedActivity = { ...activity };
+                updatedActivity.StatusAtual = this.getCalculatedStatusBasedOnDate(activity); 
+                return updatedActivity;
             });
 
-            if (sectionId === 'activities') {
-                await loadActivities(); 
-            } else if (sectionId === 'overview') {
-                // Lógica para carregar a visão geral, quando implementada
+            Logger.log("Atividades filtradas e processadas para o frontend (CPF: " + cpf + ", Count: " + activitiesWithCalculatedStatus.length + "): " + JSON.stringify(activitiesWithCalculatedStatus));
+
+            return this.createJsonResponse(true, "Atividades carregadas com sucesso.", { activities: activitiesWithCalculatedStatus });
+        } catch (error) {
+            return this.createJsonResponse(false, "Erro ao carregar atividades: " + error.message + " | Detalhes: " + error.stack);
+        }
+    },
+
+    saveActivity: function(e) {
+        Logger.log("saveActivity acionada para ID: " + e.parameter.id);
+        const sheet = this.getActivitiesSheet();
+        if (!sheet) return this.createJsonResponse(false, "Aba \'Atividades\' não encontrada.");
+
+        try {
+            const id = e.parameter.id || Utilities.getUuid();
+            const cpfMentorado = e.parameter.cpfMentorado ? e.parameter.cpfMentorado.replace(/[^\d]+/g, "").trim() : "";
+            const nomeMentorado = e.parameter.nomeMentorado || "";
+            const atividade = e.parameter.atividade || "";
+            const descricao = e.parameter.descricao || ""; 
+            Logger.log("Descrição recebida em saveActivity: \'" + descricao + "\'"); 
+            const dataLimite = e.parameter.dataLimite ? new Date(e.parameter.dataLimite + "T00:00:00") : null; 
+            const statusAtual = e.parameter.statusAtual || "Não iniciada";
+            const statusAnteriorParam = e.parameter.statusAnterior || ""; 
+
+            const now = new Date();
+
+            let rowData = [
+                id,                                  // COL_ID
+                cpfMentorado,                        // COL_CPF_MENTORADO
+                nomeMentorado,                       // COL_NOME_MENTORADO
+                atividade,                           // COL_ATIVIDADE
+                descricao,                           // COL_DESCRICAO
+                dataLimite,                          // COL_DATA_LIMITE
+                statusAtual,                         // COL_STATUS_ATUAL
+                "",                                 // COL_STATUS_ANTERIOR (será preenchido pela lógica)
+                "Não",                               // COL_CONCLUIDA_CHECKBOX (sempre Não para adição/edição via modal)
+                now,                                 // COL_CRIADO_EM
+                now                                  // COL_ULTIMA_ATUALIZACAO
+            ];
+
+            const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+            const idColIndex = headers.indexOf("ID da Atividade");
+            Logger.log("Cabeçalhos da planilha: " + JSON.stringify(headers));
+            Logger.log("ID da Atividade (index 0): " + idColIndex);
+
+            if (idColIndex === -1) {
+                throw new Error("Coluna \'ID da Atividade\' não encontrada na planilha.");
             }
+
+            let rowToUpdate = -1;
+            const data = sheet.getDataRange().getValues();
+            if (data.length > 1) { 
+                Logger.log("IDs na planilha para busca (primeiras 5 linhas): " + data.slice(1, Math.min(6, data.length)).map(row => String(row[idColIndex] || "") + (row[idColIndex] ? " (Tipo: " + typeof row[idColIndex] + ")" : "")).join(", "));
+            } else {
+                Logger.log("Planilha de atividades está vazia ou contém apenas cabeçalho.");
+            }
+
+            for (let i = 1; i < data.length; i++) {
+                if (String(data[i][idColIndex] || "").trim() === String(id).trim()) {
+                    rowToUpdate = i + 1;
+                    Logger.log("ID \'" + id + "\' encontrado para edição na linha: " + rowToUpdate);
+                    break;
+                }
+            }
+
+            let savedActivityData; 
+            if (rowToUpdate !== -1) {
+                const existingRowValues = sheet.getRange(rowToUpdate, 1, 1, sheet.getLastColumn()).getValues()[0];
+                
+                const statusAtualAnterior = existingRowValues[this.COL_STATUS_ATUAL]; 
+                if (statusAtual === "Concluída") { 
+                    existingRowValues[this.COL_STATUS_ANTERIOR] = statusAtualAnterior;
+                } else {
+                    existingRowValues[this.COL_STATUS_ANTERIOR] = "";
+                }
+
+                existingRowValues[this.COL_ID] = rowData[this.COL_ID];
+                existingRowValues[this.COL_CPF_MENTORADO] = rowData[this.COL_CPF_MENTORADO];
+                existingRowValues[this.COL_NOME_MENTORADO] = rowData[this.COL_NOME_MENTORADO];
+                existingRowValues[this.COL_ATIVIDADE] = rowData[this.COL_ATIVIDADE];
+                existingRowValues[this.COL_DESCRICAO] = rowData[this.COL_DESCRICAO];
+                existingRowValues[this.COL_DATA_LIMITE] = rowData[this.COL_DATA_LIMITE];
+                existingRowValues[this.COL_STATUS_ATUAL] = rowData[this.COL_STATUS_ATUAL];
+                existingRowValues[this.COL_CONCLUIDA_CHECKBOX] = "Não"; 
+                existingRowValues[this.COL_ULTIMA_ATUALIZACAO] = rowData[this.COL_ULTIMA_ATUALIZACAO];
+
+                sheet.getRange(rowToUpdate, 1, 1, existingRowValues.length).setValues([existingRowValues]);
+                Logger.log("Atividade atualizada: " + id + " na linha: " + rowToUpdate);
+                savedActivityData = existingRowValues; 
+            } else {
+                rowData[this.COL_STATUS_ANTERIOR] = ""; 
+                sheet.appendRow(rowData);
+                rowToUpdate = sheet.getLastRow();
+                Logger.log("Nova atividade adicionada: " + id + " na linha: " + rowToUpdate);
+                savedActivityData = sheet.getRange(rowToUpdate, 1, 1, sheet.getLastColumn()).getValues()[0]; 
+            }
+            
+            sheet.getRange(rowToUpdate, this.COL_DATA_LIMITE + 1).setNumberFormat("DD/MM/YYYY");
+            sheet.getRange(rowToUpdate, this.COL_CRIADO_EM + 1).setNumberFormat("DD/MM/YYYY HH:mm:ss");
+            sheet.getRange(rowToUpdate, this.COL_ULTIMA_ATUALIZACAO + 1).setNumberFormat("DD/MM/YYYY HH:mm:ss");
+
+            const activityToReturn = this.mapRowToActivityObject(headers, savedActivityData);
+            return this.createJsonResponse(true, "Atividade salva com sucesso!", { id: id, activity: activityToReturn });
+
+        } catch (error) {
+            return this.createJsonResponse(false, "Erro ao salvar atividade: " + error.message + " | Detalhes: " + error.stack);
+        }
+    },
+
+    mapRowToActivityObject: function(headers, rowValues) {
+        const activity = {};
+        headers.forEach((header, index) => {
+            const normalizedHeader = normalizeHeader(header);
+            let value = (rowValues[index] !== null && rowValues[index] !== undefined) ? rowValues[index] : "";
+
+            if (normalizedHeader === 'DataLimite' && value instanceof Date) {
+                value = Utilities.formatDate(value, SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd');
+            } else if (['CriadoEm', 'UltimaAtualizacao'].includes(normalizedHeader) && value instanceof Date) {
+                 value = Utilities.formatDate(value, SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm:ss');
+            } else {
+                value = String(value).trim();
+            }
+            activity[normalizedHeader] = value;
         });
-    });
+        
+        return activity;
+    },
 
-    toggleCompletedTasksBtn.addEventListener('click', () => {
-        showCompletedTasks = !showCompletedTasks; 
-        updateToggleCompletedTasksUI(); 
-        filterAndSearchActivities(); 
-    });
+    updateActivityStatus: function(e) {
+        Logger.log("updateActivityStatus acionada para ID: " + e.parameter.id);
+        const sheet = this.getActivitiesSheet();
+        if (!sheet) return this.createJsonResponse(false, "Aba \'Atividades\' não encontrada.");
 
-    updateToggleCompletedTasksUI(); 
-    updateFilterCountBadge();
+        try {
+            const id = e.parameter.id;
+            const newStatus = e.parameter.newStatus;
+            // oldStatusForUndo que vem do frontend é o StatusAtual que a tarefa tinha ANTES da ação (marcar/desmarcar).
+            const oldStatusForUndo = e.parameter.oldStatusForUndo || ""; 
+            const concluidaPorCheckbox = e.parameter.concluidaPorCheckbox || "Não";
 
-    const sectionActivities = document.getElementById('section-activities');
-    if (sectionActivities && (sectionActivities.style.display === 'block' || initialBtn.dataset.section === 'activities')) {
-        await loadActivities(); 
-    } else {
-        noActivitiesMessage.textContent = "Navegue para a seção de Atividades para ver suas tarefas.";
-        noActivitiesMessage.style.display = 'block';
-        loadingActivitiesMessage.style.display = 'none';
-        activitiesTableBody.innerHTML = ''; 
+            const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+            const idColIndex = headers.indexOf("ID da Atividade");
+            const statusColIndex = headers.indexOf("Status Atual");
+            const statusAnteriorColIndex = headers.indexOf("Status Anterior");
+            const concluidaCheckboxColIndex = headers.indexOf("Concluída por Checkbox"); 
+            const ultimaAtualizacaoColIndex = headers.indexOf("Última Atualização");
+
+            if (idColIndex === -1 || statusColIndex === -1 || statusAnteriorColIndex === -1 || concluidaCheckboxColIndex === -1 || ultimaAtualizacaoColIndex === -1) {
+                throw new Error("Uma ou mais colunas essenciais não encontradas para atualização de status. Verifique: ID da Atividade, Status Atual, Status Anterior, Concluída por Checkbox, Última Atualização.");
+            }
+
+            const data = sheet.getDataRange().getValues();
+            let rowToUpdate = -1;
+
+            for (let i = 1; i < data.length; i++) {
+                if (String(data[i][idColIndex] || "").trim() === String(id).trim()) {
+                    rowToUpdate = i + 1; 
+                    break;
+                }
+            }
+
+            if (rowToUpdate !== -1) {
+                const row = sheet.getRange(rowToUpdate, 1, 1, sheet.getLastColumn());
+                const rowValues = row.getValues()[0];
+
+                const statusAtualNaPlanilhaAntesDaMudanca = rowValues[statusColIndex];
+                const statusAnteriorGuardadoNaPlanilha = rowValues[statusAnteriorColIndex]; // Valor do StatusAnterior na planilha
+
+                let finalNewStatusForSheet = newStatus; // O status que o frontend *quer* setar
+                let finalNewStatusAnteriorForSheet = statusAnteriorGuardadoNaPlanilha; // Padrão é o que já está lá
+
+                if (newStatus === "Concluída") { // Usuário marcou como "Concluída"
+                    finalNewStatusForSheet = "Concluída";
+                    finalNewStatusAnteriorForSheet = statusAtualNaPlanilhaAntesDaMudanca; // Armazena o status que tinha antes de concluir
+                } else { // Usuário desmarcou (newStatus NÃO é "Concluída")
+                    // A nova lógica para determinar o status ao desfazer/desmarcar
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    let dataLimite;
+                    if (rowValues[this.COL_DATA_LIMITE] instanceof Date) { 
+                        dataLimite = rowValues[this.COL_DATA_LIMITE];
+                    } else if (typeof rowValues[this.COL_DATA_LIMITE] === 'string' && rowValues[this.COL_DATA_LIMITE]) { 
+                        dataLimite = new Date(rowValues[this.COL_DATA_LIMITE] + 'T00:00:00');
+                    } else { 
+                        dataLimite = null;
+                    }
+
+                    // Regra: Se o status anterior era "Atrasada" E a data ainda é passada --> mantém Atrasada
+                    if (statusAnteriorGuardadoNaPlanilha === "Atrasada" && dataLimite && dataLimite < today) {
+                        finalNewStatusForSheet = "Atrasada";
+                    } 
+                    // Regra: Se o status anterior era "Perto de expirar" OU "Não iniciada" OU "Executando"
+                    // Reavalia com getCalculatedStatusBasedOnDate no contexto do status anterior guardado
+                    else if (["Não iniciada", "Executando", "Perto de expirar"].includes(statusAnteriorGuardadoNaPlanilha)) {
+                        const activityContextForReversion = {
+                            StatusAtual: statusAnteriorGuardadoNaPlanilha, 
+                            DataLimite: rowValues[this.COL_DATA_LIMITE] 
+                        };
+                        finalNewStatusForSheet = this.getCalculatedStatusBasedOnDate(activityContextForReversion);
+                    } else {
+                        // Se StatusAnterior era algo inesperado ou vazio, volta para Não iniciada como fallback.
+                        finalNewStatusForSheet = "Não iniciada";
+                    }
+                    finalNewStatusAnteriorForSheet = ""; // Limpa StatusAnterior depois de desfazer/desmarcar
+                }
+                
+                rowValues[statusColIndex] = finalNewStatusForSheet;
+                rowValues[statusAnteriorColIndex] = finalNewStatusAnteriorForSheet;
+                rowValues[concluidaCheckboxColIndex] = concluidaPorCheckbox; 
+                rowValues[ultimaAtualizacaoColIndex] = new Date();
+
+                try {
+                    row.setValues([rowValues]);
+                    Logger.log(`Status da atividade ${id} atualizado para: ${finalNewStatusForSheet}. Status Anterior (no sheet) agora é: ${finalNewStatusAnteriorForSheet}`);
+                
+                    const updatedActivityData = sheet.getRange(rowToUpdate, 1, 1, sheet.getLastColumn()).getValues()[0];
+                    const activityToReturn = this.mapRowToActivityObject(headers, updatedActivityData);
+                    return this.createJsonResponse(true, "Status atualizado com sucesso!", { activity: activityToReturn });
+                } catch (innerError) {
+                    Logger.log(`ERRO CRÍTICO ao setValues para atividade ${id}: ${innerError.message} | Stack: ${innerError.stack}`);
+                    return this.createJsonResponse(false, `Erro interno ao persistir atualização: ${innerError.message}`);
+                }
+            } else {
+                return this.createJsonResponse(false, "Atividade não encontrada para atualização de status.");
+            }
+
+        } catch (error) {
+            Logger.log("Erro em updateActivityStatus (geral): " + error.message + " | Stack: " + error.stack);
+            return this.createJsonResponse(false, "Erro ao atualizar status: " + error.message);
+        }
+    },
+
+    deleteActivity: function(e) {
+        Logger.log("deleteActivity acionada para ID: " + e.parameter.id);
+        const sheet = this.getActivitiesSheet();
+        if (!sheet) return this.createJsonResponse(false, "Aba \'Atividades\' não encontrada.");
+
+        try {
+            const id = e.parameter.id;
+            const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+            const idColIndex = headers.indexOf("ID da Atividade");
+
+            if (idColIndex === -1) {
+                throw new Error("Coluna \'ID da Atividade\' não encontrada na planilha.");
+            }
+
+            const data = sheet.getDataRange().getValues();
+            let rowToDelete = -1;
+
+            Logger.log("ID recebido para exclusão (frontend): \'" + id + "\' (Tipo: " + typeof id + ")");
+            if (data.length > 1) {
+                Logger.log("Primeiros 5 IDs na planilha para busca: " + data.slice(1, Math.min(6, data.length)).map(row => String(row[idColIndex] || "") + (row[idColIndex] ? " (Tipo: " + typeof row[idColIndex] + ")" : "")).join(", "));
+            } else {
+                Logger.log("Planilha de atividades está vazia ou contém apenas cabeçalho.");
+            }
+            Logger.log("Procurando ID \'" + id + "\' na coluna de ID (índice 0, coluna A).");
+
+
+            for (let i = 1; i < data.length; i++) {
+                if (String(data[i][idColIndex] || "").trim() === String(id).trim()) {
+                    rowToDelete = i + 1; 
+                    Logger.log("ID \'" + id + "\' encontrado na linha da planilha: " + rowToDelete);
+                    break;
+                }
+            }
+
+            if (rowToDelete !== -1) {
+                sheet.deleteRow(rowToDelete);
+                Logger.log("Atividade " + id + " excluída com sucesso da linha " + rowToDelete + ".");
+                return this.createJsonResponse(true, "Atividade excluída com sucesso!");
+            } else {
+                Logger.log("Atividade com ID \'" + id + "\' NÃO encontrada na planilha para exclusão.");
+                return this.createJsonResponse(false, "Atividade não encontrada para exclusão.");
+            }
+
+        } catch (error) {
+            return this.createJsonResponse(false, "Erro ao excluir atividade: " + error.message + " | Detalhes: " + error.stack);
+        }
+    },
+
+    // MUDANÇA: Lógica aprimorada para getCalculatedStatusBasedOnDate
+    getCalculatedStatusBasedOnDate: function(activity) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const currentStatus = activity.StatusAtual; // O status que está sendo avaliado (pode ser o original ou um temporário)
+
+        // Regra 1: Concluída é um estado final para esta função.
+        if (currentStatus === "Concluída") {
+            return "Concluída"; 
+        }
+
+        let dataLimite;
+        if (activity.DataLimite instanceof Date) { 
+            dataLimite = activity.DataLimite;
+        } else if (typeof activity.DataLimite === 'string' && activity.DataLimite) { 
+            dataLimite = new Date(activity.DataLimite + 'T00:00:00');
+        } else { 
+            dataLimite = null;
+        }
+
+        // Se não há data limite válida, mantém o status atual (ação do usuário)
+        if (!dataLimite || isNaN(dataLimite.getTime())) {
+            return currentStatus; 
+        }
+
+        // Regra Automática 2: Se data limite passou -> Atrasada (alta prioridade)
+        if (dataLimite < today) {
+            return "Atrasada"; 
+        }
+
+        // Calcular diferença em dias para "Perto de expirar"
+        const diffTime = Math.abs(dataLimite.getTime() - today.getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+        
+        // Regra Automática 1: Se é "Não iniciada" OU "Executando" E data limite <= 3 dias -> "Perto de expirar"
+        if ((currentStatus === "Não iniciada" || currentStatus === "Executando") && diffDays <= 3) { 
+            return "Perto de expirar";
+        }
+
+        // Se nenhuma regra automática se aplicou, retorna o status que estava em contexto.
+        return currentStatus;
+    },
+
+    applyDueDateStatusLogic: function(activities) {
+        return activities.map(activity => {
+            const newActivity = { ...activity };
+            newActivity.StatusAtual = this.getCalculatedStatusBasedOnDate(activity);
+            return newActivity;
+        });
+    },
+
+    createJsonResponse: function(success, message, data = {}) {
+        const response = { status: success ? "success" : "error", message: message, ...data };
+        return ContentService.createTextOutput(JSON.stringify(response))
+            .setMimeType(ContentService.MimeType.JSON);
     }
-});
-
-function updateToggleCompletedTasksUI() {
-    if (showCompletedTasks) { 
-        toggleIconSpan.classList.remove('mdi-eye-off-outline');
-        toggleIconSpan.classList.add('mdi-eye-outline');
-        toggleTextSpan.textContent = "Ocultar Concluídas"; 
-    } else { 
-        toggleIconSpan.classList.remove('mdi-eye-outline');
-        toggleIconSpan.classList.add('mdi-eye-off-outline');
-        toggleTextSpan.textContent = "Ver Concluídas"; 
-    }
-}
+};
