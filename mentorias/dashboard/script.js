@@ -48,6 +48,7 @@ function getStatusClass(status) {
 // Comunicação com Google Apps Script (GAS)
 // ===============================================================
 
+// MUDANÇA: Atualize este URL para o do seu NOVO Web App
 const webAppUrl = "https://script.google.com/macros/s/AKfycbwxweNQUDALWE7Ai7-u73WbUFKsjtH-RlqQQJGGYcBo372PClCIN3MMrNzDcoogfCpq/exec"; 
 
 async function callAppsScript(action, data = {}) {
@@ -196,14 +197,10 @@ function showNotification(message, showUndo = false) {
     const undoButton = document.getElementById('undoTaskButton');
     const progressLine = notificationBar.querySelector('.progress-line');
 
-    clearTimeout(undoTimeout); 
-
     notificationText.textContent = message;
     undoButton.style.display = showUndo ? 'inline-block' : 'none';
     progressLine.style.display = showUndo ? 'block' : 'none';
 
-    notificationBar.classList.remove('show'); 
-    void notificationBar.offsetWidth; 
     notificationBar.classList.add('show'); 
     notificationBar.style.display = 'flex'; 
 
@@ -212,6 +209,7 @@ function showNotification(message, showUndo = false) {
         void progressLine.offsetWidth; 
         progressLine.style.animation = 'progressAnimation 5s linear forwards'; 
 
+        clearTimeout(undoTimeout);
         undoTimeout = setTimeout(() => {
             notificationBar.classList.remove('show'); 
             setTimeout(() => {
@@ -220,6 +218,7 @@ function showNotification(message, showUndo = false) {
             }, 300); 
         }, 5000);
     } else {
+        clearTimeout(undoTimeout);
         undoTimeout = setTimeout(() => {
             notificationBar.classList.remove('show'); 
             setTimeout(() => {
@@ -249,9 +248,9 @@ async function handleCheckboxChange(event) {
         lastCompletedActivity = { ...activity }; 
         showNotification("Tarefa concluída!", true);
     } else {
-        newStatus = lastCompletedActivity?.StatusAnterior || activity.StatusAnterior || "Não iniciada"; 
+        newStatus = activity.StatusAnterior || "Não iniciada"; 
         showNotification("Tarefa desmarcada.");
-        lastCompletedActivity = null; 
+        lastCompletedActivity = null;
     }
 
     const result = await callAppsScript('updateActivityStatus', {
@@ -309,18 +308,16 @@ function addActivityEventListeners() {
 document.getElementById('undoTaskButton').addEventListener('click', async () => {
     if (lastCompletedActivity) {
         const activityId = lastCompletedActivity.IDdaAtividade;
-        const targetStatusForReversion = lastCompletedActivity.StatusAnterior || "Não iniciada"; 
+        const previousOriginalStatus = lastCompletedActivity.StatusAnterior || "Não iniciada"; 
         
-        const activityToUndoCopy = { ...lastCompletedActivity }; 
-        lastCompletedActivity = null; // MUDANÇA: Limpa lastCompletedActivity *antes* da chamada API
-
-        showNotification("Desfeito!", false); 
+        showNotification("Desfeito!");
+        clearTimeout(undoTimeout); 
 
         const result = await callAppsScript('updateActivityStatus', {
             id: activityId,
-            newStatus: targetStatusForReversion, 
+            newStatus: previousOriginalStatus, 
             oldStatusForUndo: "Concluída", 
-            concluidaPorCheckbox: 'Não' 
+            concluidaPorCheckbox: 'Não'
         });
 
         if (result.status === 'success' && result.activity) {
@@ -331,10 +328,10 @@ document.getElementById('undoTaskButton').addEventListener('click', async () => 
             }
             filterAndSearchActivities();
         } else {
-            showNotification("Erro ao desfazer: " + result.message); 
+            showNotification("Erro ao desfazer: " + result.message);
             console.error("Erro ao desfazer tarefa:", result.message, "Resultado completo:", result);
-            // lastCompletedActivity já foi limpo, o que ajuda a evitar múltiplos cliques no mesmo "desfazer" falho.
         }
+        lastCompletedActivity = null; 
     }
 });
 
@@ -628,75 +625,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ======== MENU LATERAL COM HOVER DESLIZANTE =========
-    try {
-        console.log("Iniciando setup do menu lateral.");
-        const menu = document.querySelector(".sidebar-menu");
-        console.log("Menu element:", menu);
 
-        const buttons = document.querySelectorAll(".icon-btn");
-        console.log("Buttons elements (NodeList):", buttons);
+    const menu = document.querySelector(".sidebar-menu");
+    const buttons = document.querySelectorAll(".icon-btn");
+    const sections = document.querySelectorAll(".content-section");
 
-        const sections = document.querySelectorAll(".content-section");
-        console.log("Sections elements (NodeList):", sections);
+    const hoverBox = document.createElement("div");
+    hoverBox.classList.add("hover-box");
+    menu.appendChild(hoverBox);
 
-        if (!menu) {
-            console.error("Erro: Elemento .sidebar-menu não encontrado. O menu lateral não funcionará.");
-            // Não retorna aqui para permitir que o restante do script seja executado se possível.
-        } else {
-            const hoverBox = document.createElement("div");
-            hoverBox.classList.add("hover-box");
-            menu.appendChild(hoverBox);
-            console.log("HoverBox appended.");
+    const moveHoverBox = (button) => {
+        const topPos = button.offsetTop;
+        hoverBox.style.top = `${topPos}px`;
+    };
 
-            const moveHoverBox = (button) => {
-                if (!button || !hoverBox || !menu) { // Adiciona null checks
-                    console.warn("moveHoverBox: button, hoverBox ou menu é nulo/indefinido. Não é possível mover.");
-                    return;
-                }
-                const topPos = button.offsetTop;
-                hoverBox.style.top = `${topPos}px`;
-            };
+    const initialBtn = document.querySelector(".icon-btn.active") || buttons[0];
+    moveHoverBox(initialBtn);
 
-            const initialBtn = document.querySelector(".icon-btn.active") || buttons[0];
-            console.log("Initial active button:", initialBtn);
-            if (initialBtn) {
-                moveHoverBox(initialBtn);
-                console.log("MoveHoverBox called for initial button.");
-            } else {
-                console.warn("Nenhum botão inicial ativo ou botões de menu não encontrados. HoverBox pode não ser posicionada.");
+    buttons.forEach((btn) => {
+        btn.addEventListener("click", async () => {
+            buttons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            moveHoverBox(btn);
+
+            const sectionId = btn.dataset.section;
+            sections.forEach((s) => {
+                s.style.display = s.id === `section-${sectionId}` ? "block" : "none";
+            });
+
+            if (sectionId === 'activities') {
+                await loadActivities(); 
+            } else if (sectionId === 'overview') {
+                // Lógica para carregar a visão geral, quando implementada
             }
-
-            if (buttons.length > 0) {
-                buttons.forEach((btn) => {
-                    btn.addEventListener("click", async () => {
-                        console.log("Botão de menu clicado:", btn.dataset.section);
-                        buttons.forEach((b) => b.classList.remove("active"));
-                        btn.classList.add("active");
-
-                        moveHoverBox(btn);
-
-                        const sectionId = btn.dataset.section;
-                        sections.forEach((s) => {
-                            s.style.display = s.id === `section-${sectionId}` ? "block" : "none";
-                        });
-
-                        if (sectionId === 'activities') {
-                            console.log("Loading activities for section-activities.");
-                            await loadActivities();
-                        } else if (sectionId === 'overview') {
-                            console.log("Navigated to overview section.");
-                        }
-                    });
-                });
-                console.log("Event listeners attached to menu buttons.");
-            } else {
-                console.warn("Nenhum botão de menu encontrado. Listeners de clique não anexados.");
-            }
-        }
-    } catch (error) {
-        console.error("Erro fatal no setup do menu lateral:", error);
-    }
-    // ... (rest of DOMContentLoaded) ...
+        });
+    });
 
     toggleCompletedTasksBtn.addEventListener('click', () => {
         showCompletedTasks = !showCompletedTasks; 
@@ -707,6 +671,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateToggleCompletedTasksUI(); 
     updateFilterCountBadge();
 
+    // MUDANÇA (REFERENTE AO ITEM 3, MAS MANTIDA PARA NÃO CAUSAR REGRESSÃO):
+    // Garante que a tabela de atividades seja carregada e filtrada apenas se a seção 'activities'
+    // estiver ativa no carregamento inicial. Caso contrário, exibe mensagem informativa.
     const sectionActivities = document.getElementById('section-activities');
     if (sectionActivities && (sectionActivities.style.display === 'block' || initialBtn.dataset.section === 'activities')) {
         await loadActivities(); 
