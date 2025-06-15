@@ -307,7 +307,7 @@ input[type="date"] {
 /* Tabela de Atividades (área de rolagem principal da tabela) */
 .table-container {
     flex-grow: 1; /* Ocupa o espaço restante verticalmente */
-    max-height: 400px;
+    max-height: 560px;
     overflow-y: auto; /* MUDANÇA CRÍTICA: Faz a rolagem vertical DA TABELA AQUI */
     overflow-x: auto; /* Permite rolagem horizontal se a tabela for muito larga */
     margin-top: 1rem; /* Espaçamento entre controls e tabela */
