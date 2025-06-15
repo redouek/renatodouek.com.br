@@ -6,7 +6,13 @@
     <title>Dashboard - Mentorado</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://cdn.materialdesignicons.com/7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
-    <script src="script.js"></script>
+    <script defer src="script.js"></script>
+    <link rel="icon" type="image/png" href="/assets/icones/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icones/favicon.svg" />
+    <link rel="shortcut icon" href="/assets/icones/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icones/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="RD Mentoria" />
+    <link rel="manifest" href="/assets/icones/site.webmanifest" />
 </head>
 <body>
     <div class="app-background">
@@ -35,110 +41,130 @@
                     </div>
                     <div class="profile-pic" id="profileAvatar">RC</div>
                 </header>
-
+<!-- =================================================================
+=======================Inicio da sessão Visão Geral =======================
+=======================================================================-->
                 <section class="content-section" id="section-overview" style="display: block;">
                     <p>Conteúdo da visão geral aqui.</p>
                 </section>
+                
+<!-- =================================================================
+=======================Inicio da sessão Atividades =======================
+=======================================================================-->
+                
+<section class="content-section" id="section-activities" style="display: none;">
+    <div class="activities-header">
+        <button class="add-activity-btn" id="addActivityBtn">+ Nova atividade</button>
+        <div class="search-filter-group">
+            <button id="toggleCompletedTasksBtn" class="toggle-completed-btn">
+                <span class="mdi mdi-eye-outline"></span> <span class="toggle-text">Ocultar Concluídas</span>
+            </button>
+            <div class="search-input-wrapper">
+                <input type="text" id="activitySearch" placeholder="Buscar atividade..." class="search-input">
+                <span class="mdi mdi-magnify search-icon"></span>
+                <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
+                    <span class="mdi mdi-close-circle"></span>
+                </button>
+            </div>
+            <div class="multi-select-filter-wrapper">
+                <button class="filter-dropdown-btn" id="statusFilterDropdownBtn">
+                    Filtrar Status <span class="mdi mdi-filter-variant"></span> <span class="filter-count-badge" style="display: none;">0</span>
+                </button>
+                <div class="filter-options-dropdown" id="statusFilterOptions" style="display: none;">
+                    <label><input type="checkbox" value="Não iniciada"> Não iniciada</label>
+                    <label><input type="checkbox" value="Executando"> Executando</label>
+                    <label><input type="checkbox" value="Concluída"> Concluída</label>
+                    <label><input type="checkbox" value="Atrasada"> Atrasada</label>
+                    <label><input type="checkbox" value="Perto de expirar"> Perto de expirar</label>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <section class="content-section" id="section-activities" style="display: none;">
-                    <div class="activities-header">
-                        <button class="add-activity-btn" id="addActivityBtn">+ Nova atividade</button>
-                        <div class="search-filter-group">
-                            <button id="toggleCompletedTasksBtn" class="toggle-completed-btn">
-                                <span class="mdi mdi-eye-outline"></span> <span class="toggle-text">Ocultar Concluídas</span>
-                            </button>
-                            <div class="search-input-wrapper">
-                                <input type="text" id="activitySearch" placeholder="Buscar atividade..." class="search-input">
-                                <span class="mdi mdi-magnify search-icon"></span>
-                                <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;">
-                                    <span class="mdi mdi-close-circle"></span>
-                                </button>
-                            </div>
-                            <div class="multi-select-filter-wrapper">
-                                <button class="filter-dropdown-btn" id="statusFilterDropdownBtn">
-                                    Filtrar Status <span class="mdi mdi-filter-variant"></span> <span class="filter-count-badge" style="display: none;">0</span>
-                                </button>
-                                <div class="filter-options-dropdown" id="statusFilterOptions" style="display: none;">
-                                    <label><input type="checkbox" value="Não iniciada"> Não iniciada</label>
-                                    <label><input type="checkbox" value="Executando"> Executando</label>
-                                    <label><input type="checkbox" value="Concluída"> Concluída</label>
-                                    <label><input type="checkbox" value="Atrasada"> Atrasada</label>
-                                    <label><input type="checkbox" value="Perto de expirar"> Perto de expirar</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <!-- MUDANÇA CRÍTICA: NOVA ESTRUTURA PARA CABEÇALHO FIXO -->
+    <div class="table-wrapper">
+        <table class="activities-table-fixed-header">
+            <thead>
+                <tr>
+                    <th style="width: 5%;"></th> <!-- Defina widths em % ou px para JS sincronizar -->
+                    <th style="width: 15%;">Atividade</th>
+                    <th style="width: 35%;">Descrição/Observações</th>
+                    <th style="width: 15%;">Data limite</th>
+                    <th style="width: 15%;">Status</th> 
+                    <th style="width: 15%;">Ações</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="table-body-scroll-container">
+            <table class="activities-table-scroll-body">
+                <tbody id="activitiesTableBody">
+                    <!-- Conteúdo do corpo da tabela será inserido aqui pelo JavaScript -->
+                </tbody>
+            </table>
+            <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
+            <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
+        </div>
+    </div>
+    
+    <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
+        <span>Tarefa concluída!</span>
+        <button id="undoTaskButton" class="undo-button">Desfazer</button>
+        <div class="progress-line"></div>
+    </div>
 
-                    <!-- MUDANÇA CRÍTICA: DUAS TABELAS SEPARADAS para cabeçalho fixo e corpo rolável -->
-                    <div class="table-wrapper">
-                        <table class="fixed-header-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 5%;"></th> <!-- Ajuste de width para JS sync -->
-                                    <th style="width: 15%;">Atividade</th>
-                                    <th style="width: 35%;">Descrição/Observações</th>
-                                    <th style="width: 15%;">Data limite</th>
-                                    <th style="width: 15%;">Status</th> 
-                                    <th style="width: 15%;">Ações</th>
-                                </tr>
-                            </thead>
-                        </table>
-                        <div class="scrollable-body-wrapper">
-                            <table class="scrollable-body-table">
-                                <tbody id="activitiesTableBody">
-                                    <!-- Conteúdo do corpo da tabela será inserido aqui pelo JavaScript -->
-                                </tbody>
-                            </table>
-                            <div id="loadingActivities" class="loading-message">Carregando atividades...</div>
-                            <div id="noActivitiesMessage" class="empty-state-message" style="display: none;">Nenhuma atividade encontrada para os critérios selecionados.</div>
-                        </div>
-                    </div>
-                    
-                    <div id="taskCompletedNotification" class="notification-bar" style="display: none;">
-                        <span>Tarefa concluída!</span>
-                        <button id="undoTaskButton" class="undo-button">Desfazer</button>
-                        <div class="progress-line"></div>
-                    </div>
-
-                    <div id="activityModal" class="modal" style="display: none;">
-                        <div class="modal-content">
-                            <span class="close-button" id="closeActivityModal">&times;</span>
-                            <h2 id="modalTitle">Adicionar Nova Atividade</h2>
-                            <form id="activityForm">
-                                <input type="hidden" id="activityId" name="activityId">
-                                <div class="form-group">
-                                    <label for="activityName">Atividade</label>
-                                    <input type="text" id="activityName" name="activityName" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="activityDescription">Descrição/Observações</label>
-                                    <textarea id="activityDescription" name="activityDescription"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="activityDueDate">Data limite</label>
-                                    <input type="date" id="activityDueDate" name="activityDueDate" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="activityStatus">Status</label>
-                                    <select id="activityStatus" name="activityStatus">
-                                        <option value="Não iniciada">Não iniciada</option>
-                                        <option value="Executando">Executando</option>
-                                        <option value="Concluída">Concluída</option>
-                                        <option value="Atrasada">Atrasada</option>
-                                        <option value="Perto de expirar">Perto de expirar</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="button">Salvar Atividade</button>
-                            </form>
-                        </div>
-                    </div>
-                </section>
+    <div id="activityModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button" id="closeActivityModal">&times;</span>
+            <h2 id="modalTitle">Adicionar Nova Atividade</h2>
+            <form id="activityForm">
+                <input type="hidden" id="activityId" name="activityId">
+                <div class="form-group">
+                    <label for="activityName">Atividade</label>
+                    <input type="text" id="activityName" name="activityName" required>
+                </div>
+                <div class="form-group">
+                    <label for="activityDescription">Descrição/Observações</label>
+                    <textarea id="activityDescription" name="activityDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="activityDueDate">Data limite</label>
+                    <input type="date" id="activityDueDate" name="activityDueDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="activityStatus">Status</label>
+                    <select id="activityStatus" name="activityStatus">
+                        <option value="Não iniciada">Não iniciada</option>
+                        <option value="Executando">Executando</option>
+                        <option value="Concluída">Concluída</option>
+                        <option value="Atrasada">Atrasada</option>
+                        <option value="Perto de expirar">Perto de expirar</option>
+                    </select>
+                </div>
+                <button type="submit" class="button">Salvar Atividade</button>
+            </form>
+        </div>
+    </div>
+</section>
+                
+<!-- =================================================================
+=======================Inicio da sessão Sessões=======================
+=======================================================================-->
+                
                 <section class="content-section" id="section-sessions" style="display: none;">
                     <p>Conteúdo das sessões aqui.</p>
                 </section>
+
+<!-- =================================================================
+=======================Inicio da sessão Anotações =======================
+=======================================================================-->
                 <section class="content-section" id="section-notes" style="display: none;">
                     <p>Conteúdo das anotações aqui.</p>
                 </section>
+                
+<!-- =================================================================
+====================== Inicio da sessão Perfil/ Contato ==============
+=======================================================================-->
+                
                 <section class="content-section" id="section-profile" style="display: none;">
                     <p>Conteúdo do perfil aqui.</p>
                 </section>
