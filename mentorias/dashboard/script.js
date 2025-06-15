@@ -48,7 +48,8 @@ function getStatusClass(status) {
 // Comunicação com Google Apps Script (GAS)
 // ===============================================================
 
-const webAppUrl = "https://script.google.com/macros/s/AKfycbxac_E54M7LJJm9M5VgUI1SgSiJJxx_YbI_9SlSukJKn1daKXFvBBNTlCAaV0Nv1Ocu-g/exec"; // Sua URL do Web App
+// MUDANÇA: Atualize este URL para o do seu NOVO Web App
+const webAppUrl = "https://script.google.com/macros/s/AKfycbwxweNQUDALWE7Ai7-u73WbUFKsjtH-RlqQQJGGYcBo372PClCIN3MMrNzDcoogfCpq/exec"; 
 
 async function callAppsScript(action, data = {}) {
     const formData = new FormData();
@@ -63,26 +64,23 @@ async function callAppsScript(action, data = {}) {
             body: formData
         });
         if (!response.ok) {
-            // MUDANÇA: Tenta ler a resposta como JSON se for um erro HTTP, caso contrário, usa statusText
             let errorDetails = {};
-            let responseText = await response.text().catch(() => null); // Tenta ler o texto bruto
+            let responseText = await response.text().catch(() => null); 
             
             if (responseText) {
                 try {
-                    errorDetails = JSON.parse(responseText); // Tenta parsear como JSON
+                    errorDetails = JSON.parse(responseText); 
                 } catch (jsonError) {
-                    errorDetails.message = responseText; // Se falhar, usa o texto bruto
+                    errorDetails.message = responseText; 
                 }
             } else {
                 errorDetails.message = response.statusText || 'Erro desconhecido';
             }
-            // MUDANÇA: Lança um erro com a mensagem do servidor
             throw new Error(`Erro no servidor (${response.status}): ${errorDetails.message || 'Erro desconhecido'}`);
         }
         return await response.json();
     } catch (error) {
         console.error(`Erro ao chamar Apps Script para ação ${action}:`, error);
-        // MUDANÇA: Exibe a mensagem de erro detalhada da exceção
         showNotification(`Erro de comunicação: ${error.message}. Por favor, verifique sua conexão ou tente novamente.`, false);
         return { status: 'error', message: error.message }; 
     }
@@ -99,7 +97,6 @@ const toggleCompletedTasksBtn = document.getElementById('toggleCompletedTasksBtn
 const toggleTextSpan = toggleCompletedTasksBtn.querySelector('.toggle-text');
 const toggleIconSpan = toggleCompletedTasksBtn.querySelector('.mdi');
 
-// Função para renderizar as atividades na tabela
 function renderActivities(activitiesToRender) {
     activitiesTableBody.innerHTML = ''; 
 
@@ -139,7 +136,6 @@ function renderActivities(activitiesToRender) {
     addActivityEventListeners();
 }
 
-// Filtra e busca as atividades carregadas
 function filterAndSearchActivities() {
     let filtered = allActivities.filter(activity => {
         if (!showCompletedTasks && activity.StatusAtual === 'Concluída') {
@@ -160,7 +156,6 @@ function filterAndSearchActivities() {
     renderActivities(filtered);
 }
 
-// Carregar atividades do Apps Script
 async function loadActivities() {
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
     if (!usuario || !usuario.cpf) {
