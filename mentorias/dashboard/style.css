@@ -1145,22 +1145,26 @@ table input[type="checkbox"]:checked::before {
         color: #000;
     }
 
-    /* MUDANÇA CRÍTICA: Estilo do .whatsapp-button conforme fornecido pelo usuário e imagem */
-    /* Usamos !important em algumas propriedades para garantir a aplicação sobre o .profile-contact-btn */
     .whatsapp-button {
-        background-color: #FFCE00 !important; /* Fundo amarelo exato da imagem */
-        color: #000 !important; /* Texto preto exato da imagem */
-        border: none !important; /* Sem borda */
-        /* Outras propriedades (padding, border-radius, font-size, etc.) já são herdadas de .profile-contact-btn */
+      background-color: #ffc000;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background-color 0.3s ease;
     }
     .whatsapp-button:hover {
-        background-color: #e6b800 !important; /* Amarelo mais escuro no hover */
+      background-color: #e6c200;
     }
-    .whatsapp-button img { /* Estilo para a imagem do WhatsApp */
-        width: 20px;
-        height: 20px;
-        display: inline-block; /* Garante que a imagem seja exibida */
-        vertical-align: middle; /* Ajuda a alinhar a imagem com o texto */
+    .whatsapp-button img {
+      width: 20px;
+      height: 20px;
     }
 
     .linkedin-btn {
@@ -1196,4 +1200,9 @@ table input[type="checkbox"]:checked::before {
         .profile-bio {
             font-size: 0.9rem;
         }
+        .whatsapp-button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
     }
