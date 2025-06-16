@@ -1082,6 +1082,7 @@ table input[type="checkbox"]:checked::before {
     text-align: center;
     padding: 2rem;
     flex-grow: 1; /* Para ocupar o espaço vertical disponível */
+    overflow-y: auto; /* Permite rolagem se o conteúdo do perfil for muito longo */
 }
 
 .profile-picture-lg {
@@ -1110,11 +1111,12 @@ table input[type="checkbox"]:checked::before {
 
 .profile-buttons-container {
     display: flex;
-    flex-wrap: wrap; /* Quebra para próxima linha em telas menores */
+    /* MUDANÇA CRÍTICA: Manter em uma única linha no desktop */
+    flex-wrap: nowrap; /* Impede que os botões quebrem linha no desktop */
     justify-content: center;
     gap: 1rem; /* Espaçamento entre os botões */
     width: 100%;
-    max-width: 600px;
+    max-width: 600px; /* Limita a largura total dos botões */
 }
 
 .profile-contact-btn {
@@ -1128,8 +1130,9 @@ table input[type="checkbox"]:checked::before {
     text-decoration: none;
     font-size: 1rem;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    flex-grow: 1; /* Permite que os botões cresçam para ocupar espaço */
-    min-width: 180px; /* Largura mínima para botões em linha */
+    /* MUDANÇA: Não crescem para ocupar espaço, apenas se ajustam ao conteúdo + padding */
+    flex-shrink: 0; /* Impede que o item encolha */
+    flex-basis: auto; /* Permite que o tamanho seja baseado no conteúdo */
 }
 
 /* Estilos Específicos para cada botão */
@@ -1143,27 +1146,20 @@ table input[type="checkbox"]:checked::before {
     color: #000;
 }
 
-    .whatsapp-button {
-      background-color: #ffc000;
-      color: black;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-size: 16px;
-      cursor: pointer;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: background-color 0.3s ease;
-    }
-    .whatsapp-button:hover {
-      background-color: #e6c200;
-    }
-    .whatsapp-button img {
-      width: 20px;
-      height: 20px;
-    }
+/* MUDANÇA: Estilo do .whatsapp-button conforme fornecido pelo usuário */
+.whatsapp-button {
+    background-color: #ffc000; /* Usar o #ffc000 fornecido pelo usuário */
+    color: black;
+    border: none;
+    /* Padding, border-radius, font-size, cursor, text-decoration, display, align-items, gap, transition já estão em .profile-contact-btn */
+}
+.whatsapp-button:hover {
+    background-color: #e6c200;
+}
+.whatsapp-button img { /* Manter para o ícone específico do WhatsApp */
+    width: 20px;
+    height: 20px;
+}
 
 .linkedin-btn {
     background-color: #0A66C2; /* Fundo azul do LinkedIn */
@@ -1175,9 +1171,9 @@ table input[type="checkbox"]:checked::before {
 }
 
 .profile-contact-btn .mdi,
-.profile-contact-btn img {
-    font-size: 1.25rem;
-    width: 20px; /* Garante tamanho consistente para a imagem do WhatsApp */
+.profile-contact-btn img { /* Garante tamanho consistente para ícones/imagens */
+    font-size: 1.25rem; /* Para ícones */
+    width: 20px; /* Para imagens (como o WhatsApp) */
     height: 20px;
 }
 
@@ -1185,6 +1181,7 @@ table input[type="checkbox"]:checked::before {
 @media (max-width: 480px) {
     .profile-buttons-container {
         flex-direction: column; /* Botões empilhados em telas pequenas */
+        flex-wrap: wrap; /* Permite que os botões quebrem linha e empilhem em mobile */
         gap: 0.75rem;
     }
     .profile-contact-btn {
