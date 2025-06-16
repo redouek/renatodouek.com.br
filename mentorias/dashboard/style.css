@@ -1143,16 +1143,27 @@ table input[type="checkbox"]:checked::before {
     color: #000;
 }
 
-/* O estilo do .whatsapp-button já existe em style.css e será aplicado.
-   Garante que o fundo seja amarelo conforme solicitado. */
-.whatsapp-button { /* Re-aplicado para garantir especificidade, se houver conflito */
-    background-color: #FFCE00; /* Fundo amarelo */
-    color: #000; /* Texto preto */
-    border: none; /* Remove borda, se houver */
-}
-.whatsapp-button:hover {
-    background-color: #e6b800; /* Amarelo mais escuro no hover */
-}
+    .whatsapp-button {
+      background-color: #ffc000;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background-color 0.3s ease;
+    }
+    .whatsapp-button:hover {
+      background-color: #e6c200;
+    }
+    .whatsapp-button img {
+      width: 20px;
+      height: 20px;
+    }
 
 .linkedin-btn {
     background-color: #0A66C2; /* Fundo azul do LinkedIn */
