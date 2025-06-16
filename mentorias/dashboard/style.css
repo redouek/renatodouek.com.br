@@ -1111,7 +1111,7 @@ table input[type="checkbox"]:checked::before {
 
 .profile-buttons-container {
     display: flex;
-    flex-wrap: nowrap; /* Impede que os botões quebrem linha no desktop */
+    flex-wrap: nowrap; /* Garante que os botões fiquem na mesma linha no desktop */
     justify-content: center;
     gap: 1rem; /* Espaçamento entre os botões */
     width: 100%;
@@ -1119,18 +1119,18 @@ table input[type="checkbox"]:checked::before {
 }
 
 .profile-contact-btn {
-    display: flex;
+    display: flex; /* Permite alinhamento interno de ícone e texto */
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
     padding: 0.75rem 1.5rem;
-    border-radius: 32px;
+    border-radius: 32px; /* Botão pílula */
     font-weight: bold;
     text-decoration: none;
     font-size: 1rem;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     flex-shrink: 0; /* Impede que o item encolha */
-    flex-basis: auto; /* Permite que o tamanho seja baseado no conteúdo */
+    /* REMOVIDO flex-grow e flex-basis aqui, para que os botões tenham largura baseada no conteúdo */
 }
 
 /* Estilos Específicos para cada botão */
@@ -1144,21 +1144,21 @@ table input[type="checkbox"]:checked::before {
     color: #000;
 }
 
-/* MUDANÇA CRÍTICA: Estilo do .whatsapp-button conforme fornecido pelo usuário,
-   aplicando .profile-contact-btn como base e sobrescrevendo onde necessário. */
+/* MUDANÇA CRÍTICA: Estilo do .whatsapp-button conforme fornecido pelo usuário e imagem */
 .whatsapp-button {
-    background-color: #ffc000; /* Fundo amarelo conforme fornecido */
-    color: black; /* Texto preto conforme fornecido */
-    border: none; /* Sem borda conforme fornecido */
-    /* Outras propriedades (padding, border-radius, font-size, etc.) já são herdadas de .profile-contact-btn */
+    background-color: #FFCE00; /* Cor de fundo amarela exata da imagem */
+    color: #000; /* Texto preto exato da imagem */
+    border: none; /* Sem borda */
+    /* Herda padding, border-radius etc. de .profile-contact-btn */
 }
 .whatsapp-button:hover {
-    background-color: #e6c200; /* Amarelo mais escuro no hover */
+    background-color: #e6b800; /* Amarelo mais escuro no hover */
 }
-.whatsapp-button img { /* Manter para o ícone específico do WhatsApp */
+.whatsapp-button img { /* Estilo para a imagem do WhatsApp */
     width: 20px;
     height: 20px;
-    /* Este estilo pode ser sobreposto por .profile-contact-btn img, então garantimos aqui */
+    display: inline-block; /* Garante que a imagem seja exibida */
+    vertical-align: middle; /* Ajuda a alinhar a imagem com o texto */
 }
 
 .linkedin-btn {
@@ -1170,11 +1170,16 @@ table input[type="checkbox"]:checked::before {
     background-color: #085aab; /* Azul mais escuro no hover */
 }
 
-.profile-contact-btn .mdi,
-.profile-contact-btn img { /* Garante tamanho consistente para ícones/imagens */
-    font-size: 1.25rem; /* Para ícones */
-    width: 20px; /* Para imagens (como o WhatsApp) */
-    height: 20px;
+/* Estilo para os ícones e imagens dentro dos botões de contato */
+.profile-contact-btn .mdi {
+    font-size: 1.25rem; /* Tamanho dos ícones */
+    line-height: 1; /* Ajuda no alinhamento vertical */
+}
+/* MUDANÇA: Regra geral para imagens dentro de profile-contact-btn para garantir alinhamento */
+.profile-contact-btn img {
+    display: inline-block; /* Garante que a imagem seja tratada como um bloco de linha */
+    vertical-align: middle; /* Alinha verticalmente */
+    /* width e height já definidos em .whatsapp-button img */
 }
 
 /* Responsividade para botões de perfil */
