@@ -995,3 +995,36 @@ table input[type="checkbox"]:checked::before {
 ::-webkit-scrollbar-thumb:hover {
     background: #e6b800;
 }
+
+
+/* Tabela responsiva para mobile */
+@media (max-width: 768px) {
+  #activitiesTable thead {
+    display: none;
+  }
+
+  #activitiesTable tr {
+    display: block;
+    margin-bottom: 1rem;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+
+  #activitiesTable td {
+    display: block;
+    text-align: left;
+    padding: 0.5rem 0;
+    border: none;
+    border-bottom: 1px solid #444;
+    font-size: 0.9rem;
+  }
+
+  #activitiesTable td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: bold;
+    color: #FFCE00;
+    margin-bottom: 0.25rem;
+  }
+}
