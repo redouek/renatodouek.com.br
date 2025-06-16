@@ -1071,132 +1071,129 @@ table input[type="checkbox"]:checked::before {
     margin-top: 0.5rem;
   }
 }
-/* ===============================================================
-// Estilos da Seção de Perfil (#section-profile)
-=============================================================== */
-.profile-content-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 2rem;
-    flex-grow: 1; /* Para ocupar o espaço vertical disponível */
-    overflow-y: auto; /* Permite rolagem se o conteúdo do perfil for muito longo */
-}
-
-.profile-picture-lg {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%; /* Torna a imagem circular */
-    object-fit: cover; /* Garante que a imagem preencha o círculo */
-    border: 4px solid #FFCE00; /* Borda amarela */
-    margin-bottom: 1.5rem;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Sombra suave */
-}
-
-.profile-name {
-    color: #FFCE00;
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-.profile-bio {
-    color: #CCCCCC;
-    font-size: 1rem;
-    margin-bottom: 2rem;
-    max-width: 400px;
-    line-height: 1.5;
-}
-
-.profile-buttons-container {
-    display: flex;
-    flex-wrap: nowrap; /* Garante que os botões fiquem na mesma linha no desktop */
-    justify-content: center;
-    gap: 1rem; /* Espaçamento entre os botões */
-    width: 100%;
-    max-width: 600px; /* Limita a largura total dos botões */
-}
-
-.profile-contact-btn {
-    display: flex; /* Permite alinhamento interno de ícone e texto */
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 32px; /* Botão pílula */
-    font-weight: bold;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    flex-shrink: 0; /* Impede que o item encolha */
-    /* REMOVIDO flex-grow e flex-basis aqui, para que os botões tenham largura baseada no conteúdo */
-}
-
-/* Estilos Específicos para cada botão */
-.email-btn {
-    background-color: #000; /* Fundo preto */
-    color: #FFCE00; /* Texto amarelo */
-    border: 2px solid #FFCE00; /* Borda amarela */
-}
-.email-btn:hover {
-    background-color: #FFCE00; /* Inverte cores no hover */
-    color: #000;
-}
-
-/* MUDANÇA CRÍTICA: Estilo do .whatsapp-button conforme fornecido pelo usuário e imagem */
-.whatsapp-button {
-    background-color: #FFCE00; /* Cor de fundo amarela exata da imagem */
-    color: #000; /* Texto preto exato da imagem */
-    border: none; /* Sem borda */
-    /* Herda padding, border-radius etc. de .profile-contact-btn */
-}
-.whatsapp-button:hover {
-    background-color: #e6b800; /* Amarelo mais escuro no hover */
-}
-.whatsapp-button img { /* Estilo para a imagem do WhatsApp */
-    width: 20px;
-    height: 20px;
-    display: inline-block; /* Garante que a imagem seja exibida */
-    vertical-align: middle; /* Ajuda a alinhar a imagem com o texto */
-}
-
-.linkedin-btn {
-    background-color: #0A66C2; /* Fundo azul do LinkedIn */
-    color: #FFFFFF; /* Texto branco */
-    border: none; /* Sem borda */
-}
-.linkedin-btn:hover {
-    background-color: #085aab; /* Azul mais escuro no hover */
-}
-
-/* Estilo para os ícones e imagens dentro dos botões de contato */
-.profile-contact-btn .mdi {
-    font-size: 1.25rem; /* Tamanho dos ícones */
-    line-height: 1; /* Ajuda no alinhamento vertical */
-}
-/* MUDANÇA: Regra geral para imagens dentro de profile-contact-btn para garantir alinhamento */
-.profile-contact-btn img {
-    display: inline-block; /* Garante que a imagem seja tratada como um bloco de linha */
-    vertical-align: middle; /* Alinha verticalmente */
-    /* width e height já definidos em .whatsapp-button img */
-}
-
-/* Responsividade para botões de perfil */
-@media (max-width: 480px) {
-    .profile-buttons-container {
-        flex-direction: column; /* Botões empilhados em telas pequenas */
-        flex-wrap: wrap; /* Permite que os botões quebrem linha e empilhem em mobile */
-        gap: 0.75rem;
+    /* ===============================================================
+    // Estilos da Seção de Perfil (#section-profile)
+    =============================================================== */
+    .profile-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        flex-grow: 1; /* Para ocupar o espaço vertical disponível */
+        overflow-y: auto; /* Permite rolagem se o conteúdo do perfil for muito longo */
     }
-    .profile-contact-btn {
-        width: 100%; /* Ocupa largura total */
-        min-width: unset; /* Remove largura mínima */
+
+    .profile-picture-lg {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%; /* Torna a imagem circular */
+        object-fit: cover; /* Garante que a imagem preencha o círculo */
+        border: 4px solid #FFCE00; /* Borda amarela */
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Sombra suave */
     }
+
     .profile-name {
-        font-size: 1.6rem;
+        color: #FFCE00;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
     }
+
     .profile-bio {
-        font-size: 0.9rem;
+        color: #CCCCCC;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        max-width: 400px;
+        line-height: 1.5;
     }
-}
+
+    .profile-buttons-container {
+        display: flex;
+        flex-wrap: nowrap; /* Garante que os botões fiquem na mesma linha no desktop */
+        justify-content: center;
+        gap: 1.5rem; /* Aumenta o espaçamento entre os botões para combinar com a imagem */
+        width: 100%;
+        max-width: 650px; /* Aumenta a largura máxima para acomodar os 3 botões na linha */
+    }
+
+    .profile-contact-btn {
+        display: flex; /* Permite alinhamento interno de ícone e texto */
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 32px; /* Botão pílula */
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        flex-shrink: 0; /* Impede que o item encolha */
+        flex-grow: 0; /* Impede que o item cresça desnecessariamente */
+        white-space: nowrap; /* Garante que o texto não quebre linha dentro do botão */
+    }
+
+    /* Estilos Específicos para cada botão */
+    .email-btn {
+        background-color: #000; /* Fundo preto */
+        color: #FFCE00; /* Texto amarelo */
+        border: 2px solid #FFCE00; /* Borda amarela */
+    }
+    .email-btn:hover {
+        background-color: #FFCE00; /* Inverte cores no hover */
+        color: #000;
+    }
+
+    /* MUDANÇA CRÍTICA: Estilo do .whatsapp-button conforme fornecido pelo usuário e imagem */
+    /* Usamos !important em algumas propriedades para garantir a aplicação sobre o .profile-contact-btn */
+    .whatsapp-button {
+        background-color: #FFCE00 !important; /* Fundo amarelo exato da imagem */
+        color: #000 !important; /* Texto preto exato da imagem */
+        border: none !important; /* Sem borda */
+        /* Outras propriedades (padding, border-radius, font-size, etc.) já são herdadas de .profile-contact-btn */
+    }
+    .whatsapp-button:hover {
+        background-color: #e6b800 !important; /* Amarelo mais escuro no hover */
+    }
+    .whatsapp-button img { /* Estilo para a imagem do WhatsApp */
+        width: 20px;
+        height: 20px;
+        display: inline-block; /* Garante que a imagem seja exibida */
+        vertical-align: middle; /* Ajuda a alinhar a imagem com o texto */
+    }
+
+    .linkedin-btn {
+        background-color: #0A66C2; /* Fundo azul do LinkedIn */
+        color: #FFFFFF; /* Texto branco */
+        border: none; /* Sem borda */
+    }
+    .linkedin-btn:hover {
+        background-color: #085aab; /* Azul mais escuro no hover */
+    }
+
+    /* Estilo para os ícones e imagens dentro dos botões de contato */
+    .profile-contact-btn .mdi,
+    .profile-contact-btn img { /* Garante tamanho consistente para ícones/imagens */
+        font-size: 1.25rem; /* Tamanho dos ícones */
+        line-height: 1; /* Ajuda no alinhamento vertical */
+    }
+
+    /* Responsividade para botões de perfil */
+    @media (max-width: 768px) { /* MUDANÇA: Quebra para coluna em tablets e mobile */
+        .profile-buttons-container {
+            flex-direction: column; /* Botões empilhados */
+            flex-wrap: wrap; /* Permite que os botões quebrem linha e empilhem em mobile */
+            gap: 0.75rem;
+        }
+        .profile-contact-btn {
+            width: 100%; /* Ocupa largura total */
+            min-width: unset; /* Remove largura mínima */
+        }
+        .profile-name {
+            font-size: 1.6rem;
+        }
+        .profile-bio {
+            font-size: 0.9rem;
+        }
+    }
