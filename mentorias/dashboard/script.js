@@ -110,26 +110,43 @@ function renderActivities(activitiesToRender) {
 
     activitiesToRender.forEach(activity => {
         const isCompleted = activity.StatusAtual === 'Concluída';
-        const row = document.createElement('tr');
-        row.classList.toggle('completed-task', isCompleted); 
+const row = document.createElement('tr');
+row.classList.toggle('completed-task', isCompleted);
 
-        row.innerHTML = `
-            <td data-label=""><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
-            <td data-label="Atividade">${activity.Atividade}</td>
-            <td data-label="Descrição/Observações">${activity.DescricaoObservacoes || ''}</td> <td data-label="Data limite">${formatarDataParaExibicao(activity.DataLimite)}</td>
-            <td data-label="Status">
-                <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
-            </td>
-            <td data-label="Ações">
-                <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
-                    <span class="mdi mdi-pencil"></span>
-                </button>
-                <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
-                    <span class="mdi mdi-delete"></span>
-                </button>
-            </td>
-        `;
-         document.getElementById('activitiesTableBody').appendChild(row);
+// Parte de cima: Checkbox + Ações (na mesma linha no mobile)
+const topRow = `
+  <td data-label="">
+    <input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}>
+  </td>
+  <td data-label="Ações">
+    <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
+      <span class="mdi mdi-pencil"></span>
+    </button>
+    <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
+      <span class="mdi mdi-delete"></span>
+    </button>
+  </td>
+`;
+
+// Parte do meio: Atividade + Descrição
+const middleRow = `
+  <td data-label="Atividade">${activity.Atividade}</td>
+  <td data-label="Descrição/Observações">${activity.DescricaoObservacoes || ''}</td>
+`;
+
+// Parte de baixo: Data Limite + Status (lado a lado no mobile)
+const bottomRow = `
+  <td data-label="Data limite">${formatarDataParaExibicao(activity.DataLimite)}</td>
+  <td data-label="Status">
+    <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">
+      ${activity.StatusAtual}
+    </span>
+  </td>
+`;
+
+row.innerHTML = topRow + middleRow + bottomRow;
+document.getElementById('activitiesTableBody').appendChild(row);
+
     });
 
     addActivityEventListeners();
