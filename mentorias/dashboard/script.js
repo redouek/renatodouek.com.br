@@ -114,13 +114,13 @@ function renderActivities(activitiesToRender) {
         row.classList.toggle('completed-task', isCompleted); 
 
         row.innerHTML = `
-            <td><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
-            <td>${activity.Atividade}</td>
-            <td>${activity.DescricaoObservacoes || ''}</td> <td>${formatarDataParaExibicao(activity.DataLimite)}</td>
-            <td>
+            <td data-label=""><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
+            <td data-label="Atividade">${activity.Atividade}</td>
+            <td data-label="Descrição/Observações">${activity.DescricaoObservacoes || ''}</td> <td data-label="Data limite">${formatarDataParaExibicao(activity.DataLimite)}</td>
+            <td data-label="Status">
                 <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
             </td>
-            <td>
+            <td data-label="Ações">
                 <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
                     <span class="mdi mdi-pencil"></span>
                 </button>
@@ -129,7 +129,7 @@ function renderActivities(activitiesToRender) {
                 </button>
             </td>
         `;
-        activitiesTableBody.appendChild(row);
+         document.getElementById('activitiesTableBody').appendChild(row);
     });
 
     addActivityEventListeners();
