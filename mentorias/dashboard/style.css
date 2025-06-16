@@ -1005,11 +1005,11 @@ table input[type="checkbox"]:checked::before {
 
   #activitiesTable tr {
     display: block;
-    margin-bottom: 1rem;
     background-color: #2a2a2a;
-    border-radius: 8px;
-    padding: 0.75rem;
     border: 1px solid #444;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
   }
 
   #activitiesTable td {
@@ -1019,55 +1019,28 @@ table input[type="checkbox"]:checked::before {
     font-size: 0.9rem;
   }
 
-  #activitiesTable td:first-child {
-    display: inline-block;
-    width: 60%;
-    vertical-align: middle;
-  }
-
-  /* Organização personalizada para o layout desejado */
-
-  #activitiesTable td[data-label="Atividade"]::before,
-  #activitiesTable td[data-label="Descrição/Observações"]::before,
-  #activitiesTable td[data-label="Data limite"]::before,
-  #activitiesTable td[data-label="Status"]::before {
-    display: inline-block;
-    font-weight: bold;
-    color: #FFCE00;
-    margin-right: 0.5rem;
-    min-width: 90px;
-  }
-
-  /* Remover os labels para os campos onde não queremos mostrar (como os botões) */
-  #activitiesTable td[data-label=""]::before,
-  #activitiesTable td[data-label="Ações"]::before {
-    display: none;
-  }
-
-  /* Layout específico da distribuição que você pediu */
-  #activitiesTable tr {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  #activitiesTable tr > td[data-label=""] {
+  #activitiesTable td[data-label=""] {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
-  #activitiesTable tr > td[data-label="Data limite"],
-  #activitiesTable tr > td[data-label="Status"] {
-    display: inline-block;
-    width: 48%;
+  #activitiesTable td[data-label="Atividade"]::before,
+  #activitiesTable td[data-label="Descrição/Observações"]::before,
+  #activitiesTable td[data-label="Data limite"]::before,
+  #activitiesTable td[data-label="Status"]::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: bold;
+    color: #FFCE00;
+    margin-bottom: 0.25rem;
   }
 
-  /* Alinhar os dois campos Data Limite + Status lado a lado */
-  #activitiesTable tr .date-status-group {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+  /* Data limite + Status lado a lado */
+  #activitiesTable td[data-label="Data limite"],
+  #activitiesTable td[data-label="Status"] {
+    display: inline-block;
+    width: 48%;
+    vertical-align: top;
   }
 }
