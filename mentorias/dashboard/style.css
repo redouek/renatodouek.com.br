@@ -1069,7 +1069,7 @@ table input[type="checkbox"] {
   #activitiesTable td[data-label="Data limite"],
   #activitiesTable td[data-label="Status"] {
     display: inline-block;
-    width: 48%;
+    width: 100%;
     vertical-align: top;
     font-size: 0.85rem;
   }
