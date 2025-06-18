@@ -880,7 +880,10 @@ table input[type="checkbox"]:checked::before {
         border-radius: 0;
         box-shadow: none;
     }
-
+.card-title {
+    color: #FFCE00;
+    font-size: 0.5rem;
+    
 .sidebar {
     position: fixed;
     bottom: 0;
