@@ -107,7 +107,7 @@ body {
     align-self: center;
     transition: all 0.3s ease;
     margin-left:16px;
-    margin-rigth:16px;
+    margin-right:16px;
 }
 
 .logout-btn:hover {
