@@ -101,6 +101,7 @@ function renderActivities(activities) {
   tableBody.innerHTML = '';
 
   activities.forEach(activity => {
+    const row = document.createElement('tr');
     const isCompleted = activity.StatusAtual === 'Concluída';
     const row = document.createElement('tr');
     row.classList.toggle('completed-task', isCompleted);
@@ -109,36 +110,56 @@ function renderActivities(activities) {
 // ===============================================================
 // Ajuste dos campos em dispositivos mobile
 // ===============================================================
-if (isMobile) {
-  row.innerHTML = `
-    <td data-label="" class="mobile-activity-card">
-      <div class="mobile-header-row">
-        <input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}>
-        <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
-        <div>
+    if (isMobile) {
+        row.innerHTML = `
+        <td data-label="" class="mobile-activity-card">
+          <div class="mobile-header-row">
+            <input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}>
+            <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
+            <div>
+              <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
+                <span class="mdi mdi-pencil"></span>
+              </button>
+              <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
+                <span class="mdi mdi-delete"></span>
+              </button>
+            </div>
+          </div>
+          <div>
+            <strong>Atividade:</strong>
+            <p>${activity.Atividade}</p>
+          </div>
+          <div>
+            <strong>Descrição:</strong>
+            <p>${activity.DescricaoObservacoes || ''}</p>
+          </div>
+          <div style="text-align: right;">
+            <strong>Data Limite:</strong> ${formatarDataParaExibicao(activity.DataLimite)}
+          </div>
+        </td>
+        `;
+    } else {
+        row.innerHTML = `
+        <td data-label=""><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
+        <td data-label="Atividade">${activity.Atividade}</td>
+        <td data-label="Descrição/Observações">${activity.DescricaoObservacoes || ''}</td>
+        <td data-label="Data limite">${formatarDataParaExibicao(activity.DataLimite)}</td>
+        <td data-label="Status">
+          <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
+        </td>
+        <td data-label="Ações">
           <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
             <span class="mdi mdi-pencil"></span>
           </button>
           <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
             <span class="mdi mdi-delete"></span>
           </button>
-        </div>
-      </div>
-      <div>
-        <strong>Atividade:</strong>
-        <p>${activity.Atividade}</p>
-      </div>
-      <div>
-        <strong>Descrição:</strong>
-        <p>${activity.DescricaoObservacoes || ''}</p>
-      </div>
-      <div style="text-align: right;">
-        <strong>Data Limite:</strong> ${formatarDataParaExibicao(activity.DataLimite)}
-      </div>
-    </td>
-  `;
-}
+        </td>
+        `;
+    }
 
+    document.getElementById('activitiesTableBody').appendChild(row);
+});
 // ===============================================================
 // layout Desktop mantido como estava
 // ===============================================================
