@@ -876,15 +876,19 @@ table input[type="checkbox"]:checked::before {
         box-shadow: none;
     }
 
-    .sidebar {
-        width: 100%;
-        height: auto;
-        flex-direction: row;
-        justify-content: center;
-        padding: 1rem 0;
-        border-bottom: 2px solid #FFCE00;
-        position: static;
-    }
+.sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+    border-top: 2px solid #FFCE00;
+    background-color: #1A1A1A;
+    z-index: 1000;
+}
 
     .sidebar-top {
         flex-direction: row;
@@ -909,6 +913,13 @@ table input[type="checkbox"]:checked::before {
         font-size: 1.1rem;
     }
 
+    .icon-btn:hover,
+    .icon-btn.active {
+    background-color: #FFCE00;
+    color: #000;
+}
+
+/*
     .hover-box {
         display: none;
     }
@@ -916,7 +927,7 @@ table input[type="checkbox"]:checked::before {
     .logout-btn {
         display: none;
     }
-
+*/
     .main-area {
         padding: 1rem;
     }
@@ -937,9 +948,14 @@ table input[type="checkbox"]:checked::before {
         width: 100%;
         min-width: unset;
     }
+.search-input-wrapper .search-input {
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
 
     .search-input-wrapper .search-input {
-        width: 100%;
+
     }
 
     .multi-select-filter-wrapper {
@@ -1010,6 +1026,7 @@ table input[type="checkbox"]:checked::before {
     border-radius: 8px;
     margin-bottom: 1rem;
     padding: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   }
 
   #activitiesTable td {
