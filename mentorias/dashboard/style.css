@@ -919,11 +919,11 @@ table input[type="checkbox"]:checked::before {
     color: #000;
 }
 
-/*
+
     .hover-box {
         display: none;
     }
-
+/*
     .logout-btn {
         display: none;
     }
