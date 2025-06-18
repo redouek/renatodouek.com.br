@@ -903,8 +903,9 @@ table input[type="checkbox"]:checked::before {
     .sidebar-menu {
         flex-direction: row;
         width: 100%;
-        justify-content: space-around;
+        justify-content: space-evenly;
         gap: 0.5rem;
+        padding: 0 1rem
     }
 
     .icon-btn {
