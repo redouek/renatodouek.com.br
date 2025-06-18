@@ -863,6 +863,9 @@ table input[type="checkbox"]:checked::before {
         min-height: 100vh;
         overflow-x: hidden;
     }
+    .status-badge {
+        margin-right:40px
+    }
     .app-background {
         height: auto;
         min-height: 100vh;
@@ -1039,7 +1042,10 @@ table input[type="checkbox"]:checked::before {
     margin-bottom: 1rem;
     background-color: #2a2a2a;
   }
-
+    
+table input[type="checkbox"] {
+    margin-right:70px;
+}
   #activitiesTable td {
     display: block;
     padding: 0.4rem 0;
