@@ -953,6 +953,7 @@ table input[type="checkbox"]:checked::before {
 .search-input-wrapper .search-input {
     width: 100%;
     padding-left: 2.5rem;
+    max-width: 350px
 }
 
   .search-icon {
