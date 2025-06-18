@@ -132,7 +132,7 @@ function renderActivities(activities) {
           <strong>Descrição/ Observações:</strong><br> ${activity.DescricaoObservacoes || ''}
         </td>
         <td data-label="Data limite" style="text-align: right;">
-          <strong>Data Limite:</strong> ${formatarDataParaExibicao(activity.DataLimite)}
+          <strong>Data Limite</strong><br> ${formatarDataParaExibicao(activity.DataLimite)}
         </td>
       `;
     } else {
