@@ -947,16 +947,22 @@ table input[type="checkbox"]:checked::before {
     .filter-dropdown-btn {
         width: 100%;
         min-width: unset;
+        position: relative;
     }
+    
 .search-input-wrapper .search-input {
     width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 2.5rem;
 }
 
-    .search-input-wrapper .search-input {
-
-    }
+  .search-icon {
+    left: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    pointer-events: none;
+  }
+}
 
     .multi-select-filter-wrapper {
         width: 100%;
