@@ -106,7 +106,9 @@ function renderActivities(activities) {
     row.classList.toggle('completed-task', isCompleted);
 
     const isMobile = window.innerWidth <= 768;
-
+// ===============================================================
+// Ajuste dos campos em dispositivos mobile
+// ===============================================================
     if (isMobile) {
       row.innerHTML = `
         <td data-label="">
@@ -134,7 +136,9 @@ function renderActivities(activities) {
         </td>
       `;
     } else {
-      // Layout Desktop (mantendo seu layout antigo intacto)
+// ===============================================================
+// layout Desktop mantido como estava
+// ===============================================================
       row.innerHTML = `
         <td data-label=""><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
         <td data-label="Atividade">${activity.Atividade}</td>
