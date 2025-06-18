@@ -106,6 +106,8 @@ body {
     cursor: pointer;
     align-self: center;
     transition: all 0.3s ease;
+    margin-left:16px;
+    margin-rigth:16px;
 }
 
 .logout-btn:hover {
@@ -925,10 +927,6 @@ table input[type="checkbox"]:checked::before {
         display: none;
     }
 
-    .logout-btn {
-      margin-left:16px;
-    }
-    
     .main-area {
         padding: 1rem;
     }
