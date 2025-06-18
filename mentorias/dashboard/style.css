@@ -924,11 +924,11 @@ table input[type="checkbox"]:checked::before {
     .hover-box {
         display: none;
     }
-/*
+
     .logout-btn {
-        display: none;
+      margin-left:16px;
     }
-*/
+    
     .main-area {
         padding: 1rem;
     }
