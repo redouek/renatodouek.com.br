@@ -126,13 +126,13 @@ function renderActivities(activities) {
           </div>
         </td>
         <td data-label="Atividade">
-          <strong>Atividade</strong><br> ${activity.Atividade}
+          <strong class="card-title">Atividade</strong><br> ${activity.Atividade}
         </td>
         <td data-label="Descrição/Observações">
-          <strong>Descrição/ Observações</strong><br> ${activity.DescricaoObservacoes || ''}
+          <strong class="card-title">Descrição/ Observações</strong><br> ${activity.DescricaoObservacoes || ''}
         </td>
         <td data-label="Data limite" style="text-align: right;">
-          <strong>Data Limite</strong><br> ${formatarDataParaExibicao(activity.DataLimite)}
+          <strong class="card-title">Data Limite</strong><br> ${formatarDataParaExibicao(activity.DataLimite)}
         </td>
       `;
     } else {
