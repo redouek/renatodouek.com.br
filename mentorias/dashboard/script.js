@@ -114,23 +114,31 @@ const row = document.createElement('tr');
 row.classList.toggle('completed-task', isCompleted);
 
 row.innerHTML = `
-  <td data-label=""><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
-  <td data-label="Ações">
-    <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
-      <span class="mdi mdi-pencil"></span>
-    </button>
-    <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
-      <span class="mdi mdi-delete"></span>
-    </button>
-  </td>
-  <td data-label="Atividade">${activity.Atividade}</td>
-  <td data-label="Descrição/Observações">${activity.DescricaoObservacoes || ''}</td>
-  <td data-label="Data limite">${formatarDataParaExibicao(activity.DataLimite)}</td>
-  <td data-label="Status">
-    <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">
-      ${activity.StatusAtual}
-    </span>
-  </td>
+    <td data-label="" style="display: flex; justify-content: space-between; align-items: center;">
+        <input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}>
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
+                <span class="mdi mdi-pencil"></span>
+            </button>
+            <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
+                <span class="mdi mdi-delete"></span>
+            </button>
+        </div>
+    </td>
+
+    <td data-label="Atividade" style="text-align: left; font-weight: bold;">${activity.Atividade}</td>
+
+    <td data-label="Descrição/Observações" style="text-align: left;">${activity.DescricaoObservacoes || ''}</td>
+
+    <td data-label="Data limite" style="display: inline-block; width: 48%; text-align: right;">
+        ${formatarDataParaExibicao(activity.DataLimite)}
+    </td>
+
+    <td data-label="Status" style="display: inline-block; width: 48%; text-align: left;">
+        <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}">
+            ${activity.StatusAtual}
+        </span>
+    </td>
 `;
 
 document.getElementById('activitiesTableBody').appendChild(row);
