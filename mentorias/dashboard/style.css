@@ -1082,5 +1082,9 @@ table input[type="checkbox"] {
   #activitiesTable td[data-label="Status"] {
     text-align: left;
   }
-
+    
+.card-title {
+    color: #FFCE00;
+    font-size: 0.5rem;
+    }
 }
