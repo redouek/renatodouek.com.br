@@ -96,50 +96,70 @@ const toggleCompletedTasksBtn = document.getElementById('toggleCompletedTasksBtn
 const toggleTextSpan = toggleCompletedTasksBtn.querySelector('.toggle-text');
 const toggleIconSpan = toggleCompletedTasksBtn.querySelector('.mdi');
 
-function renderActivities(activitiesToRender) {
-    activitiesTableBody.innerHTML = ''; 
+function renderActivities(activities) {
+  const tableBody = document.getElementById('activitiesTableBody');
+  tableBody.innerHTML = '';
 
-    if (activitiesToRender.length === 0) {
-        noActivitiesMessage.style.display = 'block';
-        loadingActivitiesMessage.style.display = 'none'; 
-        return;
+  activities.forEach(activity => {
+    const isCompleted = activity.StatusAtual === 'Concluída';
+    const row = document.createElement('tr');
+    row.classList.toggle('completed-task', isCompleted);
+
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+      row.innerHTML = `
+        <td data-label="">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}>
+            <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
+            <div>
+              <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
+                <span class="mdi mdi-pencil"></span>
+              </button>
+              <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
+                <span class="mdi mdi-delete"></span>
+              </button>
+            </div>
+          </div>
+        </td>
+        <td data-label="Atividade">
+          <strong>Atividade:</strong> ${activity.Atividade}
+        </td>
+        <td data-label="Descrição/Observações">
+          <strong>Descrição:</strong> ${activity.DescricaoObservacoes || ''}
+        </td>
+        <td data-label="Data limite" style="text-align: right;">
+          <strong>Data Limite:</strong> ${formatarDataParaExibicao(activity.DataLimite)}
+        </td>
+      `;
     } else {
-        noActivitiesMessage.style.display = 'none';
-        loadingActivitiesMessage.style.display = 'none'; 
+      // Layout Desktop (mantendo seu layout antigo intacto)
+      row.innerHTML = `
+        <td data-label=""><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
+        <td data-label="Atividade">${activity.Atividade}</td>
+        <td data-label="Descrição/Observações">${activity.DescricaoObservacoes || ''}</td>
+        <td data-label="Data limite">${formatarDataParaExibicao(activity.DataLimite)}</td>
+        <td data-label="Status">
+          <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">${activity.StatusAtual}</span>
+        </td>
+        <td data-label="Ações">
+          <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
+            <span class="mdi mdi-pencil"></span>
+          </button>
+          <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
+            <span class="mdi mdi-delete"></span>
+          </button>
+        </td>
+      `;
     }
 
-    activitiesToRender.forEach(activity => {
-        const isCompleted = activity.StatusAtual === 'Concluída';
-const row = document.createElement('tr');
-row.classList.toggle('completed-task', isCompleted);
+    tableBody.appendChild(row);
+  });
 
-row.innerHTML = `
-  <td data-label=""><input type="checkbox" data-activity-id="${activity.IDdaAtividade}" ${isCompleted ? 'checked' : ''}></td>
-  <td data-label="Ações">
-    <button class="edit-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Editar">
-      <span class="mdi mdi-pencil"></span>
-    </button>
-    <button class="delete-activity-btn icon-action-btn" data-activity-id="${activity.IDdaAtividade}" title="Excluir">
-      <span class="mdi mdi-delete"></span>
-    </button>
-  </td>
-  <td data-label="Atividade">${activity.Atividade}</td>
-  <td data-label="Descrição/Observações">${activity.DescricaoObservacoes || ''}</td>
-  <td data-label="Data limite">${formatarDataParaExibicao(activity.DataLimite)}</td>
-  <td data-label="Status">
-    <span class="status-badge ${getStatusClass(activity.StatusAtual)}" data-activity-id="${activity.IDdaAtividade}" title="Clique para editar status">
-      ${activity.StatusAtual}
-    </span>
-  </td>
-`;
-
-document.getElementById('activitiesTableBody').appendChild(row);
-
-
-    });
-
-    addActivityEventListeners();
+  addActivityEventListeners();
 }
+
 
 function filterAndSearchActivities() {
     let filtered = allActivities.filter(activity => {
