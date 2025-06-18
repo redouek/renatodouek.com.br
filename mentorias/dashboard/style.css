@@ -971,9 +971,10 @@ table input[type="checkbox"]:checked::before {
     pointer-events: none;
   }
 }
-
+/*
     .multi-select-filter-wrapper {
         width: 100%;
+*/
     }
     .filter-options-dropdown {
         min-width: 100%;
