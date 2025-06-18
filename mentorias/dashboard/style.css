@@ -974,7 +974,7 @@ table input[type="checkbox"]:checked::before {
     }
     .filter-options-dropdown {
         min-width: 100%;
-        left: 0px
+        lef: 0px
     }
 
 
@@ -1078,4 +1078,3 @@ table input[type="checkbox"]:checked::before {
   }
 
 }
-
