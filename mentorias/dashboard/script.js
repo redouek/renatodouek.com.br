@@ -126,10 +126,10 @@ function renderActivities(activities) {
           </div>
         </td>
         <td data-label="Atividade">
-          <strong>Atividade:</strong> ${activity.Atividade}
+          <strong>Atividade:</strong><br> ${activity.Atividade}
         </td>
         <td data-label="Descrição/Observações">
-          <strong>Descrição:</strong> ${activity.DescricaoObservacoes || ''}
+          <strong>Descrição/ Observações:</strong><br> ${activity.DescricaoObservacoes || ''}
         </td>
         <td data-label="Data limite" style="text-align: right;">
           <strong>Data Limite:</strong> ${formatarDataParaExibicao(activity.DataLimite)}
