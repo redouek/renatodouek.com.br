@@ -974,6 +974,7 @@ table input[type="checkbox"]:checked::before {
     }
     .filter-options-dropdown {
         min-width: 100%;
+        lef: 0px
     }
 
 
@@ -1075,5 +1076,6 @@ table input[type="checkbox"]:checked::before {
   #activitiesTable td[data-label="Status"] {
     text-align: left;
   }
+
 }
 
