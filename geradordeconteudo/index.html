@@ -5,137 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gerador de Conteúdo | Renato Douek</title>
 
-  <!-- Fonte (opcional; pode remover se já carregar no site principal) -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Estilo base preto + amarelo -->
+  <!-- Date picker -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+
+  <!-- DOCX -->
+  <script defer src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+
   <style>
     :root{
-      --bg:#0b0b0b;
-      --panel:#121212;
-      --muted:#9a9a9a;
-      --text:#f3f3f3;
-      --primary:#FAD961;
-      --primary-700:#d9b850;
-      --danger:#f05353;
-      --ok:#3cb371;
-      --border:#262626;
-      --radius:14px;
-      --max:3000;
+      --bg:#0b0b0b; --panel:#121212; --muted:#9a9a9a; --text:#f3f3f3;
+      --primary:#FAD961; --primary-700:#d9b850; --danger:#f05353;
+      --border:#262626; --radius:14px; --max:3000;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-    .wrap{max-width:980px;margin-inline:auto;padding:32px 20px}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
-    .brand{display:flex;align-items:center;gap:14px}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    .wrap{max-width:980px;margin:auto;padding:32px 20px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+    .brand{display:flex;gap:12px;align-items:center}
     .dot{width:14px;height:14px;border-radius:50%;background:var(--primary)}
-    h1{font-size:22px;margin:0;font-weight:700;letter-spacing:.2px}
-    .panel{
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:22px;
-      box-shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 6px 28px rgba(0,0,0,.25);
-    }
+    h1{margin:0;font-size:22px;font-weight:700}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
     .row.full{grid-template-columns:1fr}
     label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-    input[type="text"],input[type="url"],input[type="date"],select,textarea{
-      width:100%;
-      background:#0f0f0f;
-      color:var(--text);
-      border:1px solid var(--border);
-      outline:0;
-      border-radius:10px;
-      padding:12px 14px;
-      transition:border-color .15s ease, box-shadow .15s ease;
+    input[type="text"],input[type="url"],textarea{
+      width:100%;background:#0f0f0f;color:var(--text);border:1px solid var(--border);
+      border-radius:10px;padding:12px 14px;outline:0;transition:border-color .15s,box-shadow .15s
     }
-    input::placeholder,textarea::placeholder{color:#666}
-    input:focus,select:focus,textarea:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 3px rgba(250,217,97,.2);
+    input:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(250,217,97,.2)}
+    .fp-input{background:#0f0f0f !important;color:var(--text) !important;border:1px solid var(--border) !important}
+    textarea{min-height:260px;resize:vertical;line-height:1.6}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;background:#0f0f0f;border:1px dashed var(--border);
+      border-radius:999px;padding:10px 14px;min-height:44px
     }
-    textarea{
-      min-height:260px;
-      resize:vertical;
-      line-height:1.6;
-    }
-
-    .counter{
-      display:flex;align-items:center;justify-content:space-between;
-      gap:12px;margin-top:10px
-    }
-    .meter{
-      height:8px;border-radius:999px;background:#1c1c1c;overflow:hidden;flex:1
-    }
-    .meter>span{
-      display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-700));
-      width:0%;transition:width .15s ease
-    }
-    .count{
-      min-width:150px;text-align:right;font-variant-numeric:tabular-nums;
-      font-size:12px;color:var(--muted)
-    }
+    .badge .dot{width:8px;height:8px}
+    .counter{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:10px}
+    .meter{height:8px;border-radius:999px;background:#1c1c1c;flex:1;overflow:hidden}
+    .meter span{display:block;height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-700));width:0%}
+    .count{min-width:150px;text-align:right;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
     .count.danger{color:var(--danger);font-weight:600}
-
     .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-    button{
-      appearance:none;border:0;border-radius:12px;
-      padding:12px 16px;font-weight:700;cursor:pointer;
-      transition:transform .05s ease, filter .15s ease;
-    }
+    button{border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
     .btn-primary{background:var(--primary);color:#000}
     .btn-primary:hover{filter:brightness(1.05)}
     .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
     .btn-ghost:hover{border-color:#3a3a3a}
     .hint{margin-top:8px;color:var(--muted);font-size:12px}
-
-    footer{margin-top:26px;color:#717171;font-size:12px;text-align:center}
-    a{color:var(--primary)}
+    footer{margin-top:24px;color:#777;text-align:center;font-size:12px}
     @media (max-width:760px){.row{grid-template-columns:1fr}}
   </style>
-
-  <!-- Biblioteca para gerar DOCX (carregada do CDN) -->
-  <script defer src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="brand">
-        <span class="dot" aria-hidden="true"></span>
-        <h1>Gerador de Conteúdo</h1>
-      </div>
-      <div style="opacity:.85;font-size:12px">Limite: <strong>3.000</strong> caracteres (com espaços)</div>
+      <div class="brand"><span class="dot"></span><h1>Gerador de Conteúdo</h1></div>
+      <div style="opacity:.85;font-size:12px">Limite: <strong>3.000</strong> caracteres</div>
     </header>
 
     <section class="panel">
-      <form id="form">
+      <form id="form" autocomplete="off">
         <div class="row">
           <div>
             <label for="data">Data</label>
-            <input id="data" name="data" type="date" required>
+            <input id="data" name="data" type="text" class="fp-input" placeholder="Selecione a data" required>
           </div>
           <div>
-            <label for="tema">Tema</label>
-            <select id="tema" name="tema" required>
-              <!-- Edite os 7 itens como quiser -->
-              <option value="" disabled selected>Selecione um tema…</option>
-              <option>Inovação</option>
-              <option>Estratégia</option>
-              <option>Finanças</option>
-              <option>Inteligência Artificial</option>
-              <option>Marketing</option>
-              <option>Crescimento</option>
-              <option>Liderança</option>
-            </select>
+            <label>Tema (automático pela data)</label>
+            <div id="temaBadge" class="badge" title="Definido pelo dia da semana">
+              <span class="dot"></span><span id="temaText">— selecione a data —</span>
+            </div>
+            <!-- armazenamos o tema para uso no DOCX -->
+            <input type="hidden" id="tema" name="tema" value="">
           </div>
         </div>
 
@@ -150,12 +95,11 @@
           <div>
             <label for="texto">Texto (máx. 3.000 caracteres)</label>
             <textarea id="texto" name="texto" spellcheck="true" lang="pt-BR" placeholder="Escreva aqui seu conteúdo…"></textarea>
-
             <div class="counter">
-              <div class="meter" aria-hidden="true"><span id="meterBar"></span></div>
+              <div class="meter"><span id="meterBar"></span></div>
               <div id="count" class="count">0 / 3000</div>
             </div>
-            <div class="hint">Dica: o corretor ortográfico usa o dicionário do seu navegador. Garanta que o idioma <strong>Português (Brasil)</strong> esteja instalado.</div>
+            <div class="hint">Se o corretor não sublinhar, ative em <em>Configurações do navegador → Idiomas → Verificação ortográfica</em> e selecione <strong>Português (Brasil)</strong>.</div>
           </div>
         </div>
 
@@ -167,116 +111,120 @@
       </form>
     </section>
 
-    <footer>
-      © <span id="yy"></span> Renato Douek · renatodouek.com.br
-    </footer>
+    <footer>© <span id="yy"></span> Renato Douek · renatodouek.com.br</footer>
   </div>
 
   <script>
-    // Atualiza ano
+    // Ano
     document.getElementById('yy').textContent = new Date().getFullYear();
 
+    // Mapeamento de tema por dia da semana (getDay: 0=Dom, ... 6=Sáb)
+    const THEMES = {
+      0: 'Mercado',
+      1: 'Inspiracional, motivacional',
+      2: 'Gestão da inovação',
+      3: 'Liderança empresarial Estratégica',
+      4: 'Case',
+      5: 'Tecnologia e Inovação',
+      6: 'Assessoria de imprensa'
+    };
+
+    const temaHidden = document.getElementById('tema');
+    const temaText = document.getElementById('temaText');
+
+    function setThemeFromDate(dateObj){
+      if (!(dateObj instanceof Date) || isNaN(dateObj)) { temaHidden.value=''; temaText.textContent='— selecione a data —'; return; }
+      const day = dateObj.getDay();
+      const t = THEMES[day] || '';
+      temaHidden.value = t;
+      temaText.textContent = t || '—';
+    }
+
+    // Date picker
+    window.addEventListener('load', () => {
+      if (window.flatpickr) {
+        flatpickr('#data', {
+          locale: flatpickr.l10ns.pt,
+          dateFormat: 'd/m/Y',
+          disableMobile: false,
+          onChange: (selectedDates) => setThemeFromDate(selectedDates[0])
+        });
+      }
+    });
+
+    // Contador + limite
     const MAX = 3000;
     const textarea = document.getElementById('texto');
     const count = document.getElementById('count');
     const meterBar = document.getElementById('meterBar');
 
-    // contador em tempo real + hard-limit
-    const updateCount = () => {
+    function updateCount(){
       let val = textarea.value;
-      if (val.length > MAX) {
-        val = val.slice(0, MAX);
-        textarea.value = val;
-      }
+      if (val.length > MAX) { val = val.slice(0, MAX); textarea.value = val; }
       const used = val.length;
       count.textContent = used.toLocaleString('pt-BR') + ' / ' + MAX.toLocaleString('pt-BR');
-      const pct = Math.min(100, Math.round((used / MAX) * 100));
-      meterBar.style.width = pct + '%';
+      meterBar.style.width = Math.min(100, Math.round((used / MAX) * 100)) + '%';
       count.classList.toggle('danger', used >= MAX);
-    };
-    textarea.addEventListener('input', updateCount);
-    updateCount();
+    }
+    textarea.addEventListener('input', updateCount); updateCount();
 
-    // copiar texto
+    // Copiar
     document.getElementById('btnCopy').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(textarea.value);
-        count.textContent = 'Copiado para a área de transferência!';
-        setTimeout(updateCount, 1500);
-      } catch {
-        alert('Não foi possível copiar. Selecione o texto e use Ctrl/Cmd+C.');
-      }
+      try { await navigator.clipboard.writeText(textarea.value);
+        count.textContent = 'Copiado para a área de transferência!'; setTimeout(updateCount, 1500);
+      } catch { alert('Não foi possível copiar. Selecione o texto e use Ctrl/Cmd+C.'); }
     });
 
-    // gerar DOCX
+    // DOCX
     document.getElementById('btnDocx').addEventListener('click', async () => {
-      const data = document.getElementById('data').value;
-      const tema = document.getElementById('tema').value;
+      const dataStr = document.getElementById('data').value.trim();
+      const tema = temaHidden.value.trim();
       const url  = document.getElementById('url').value.trim();
       const corpo = textarea.value.trim();
 
-      if (!data || !tema || !corpo) {
-        alert('Preencha Data, Tema e o Texto antes de gerar o DOCX.');
+      if (!dataStr || !tema || !corpo) {
+        alert('Preencha a Data (para definir o tema automaticamente) e o Texto antes de gerar o DOCX.');
         return;
       }
+      // dd/mm/aaaa -> Date
+      const [d,m,y] = dataStr.split('/');
+      const titulo = `Conteúdo – ${tema} – ${d}/${m}/${y}`;
+      const fileName = `Conteudo_${tema.replace(/\s+/g,'-')}_${y}-${m}-${d}.docx`;
 
-      const titulo = `Conteúdo – ${tema} – ${new Date(data).toLocaleDateString('pt-BR')}`;
-      const fileName = `Conteudo_${tema.replace(/\s+/g,'-')}_${data}.docx`;
-
-      // tenta via biblioteca DOCX; se falhar, faz fallback .doc
       try {
         if (!window.docx) throw new Error('docx não carregado');
         const { Document, Packer, Paragraph, HeadingLevel, TextRun } = window.docx;
 
         const paras = [];
-        // Título
-        paras.push(new Paragraph({
-          children: [new TextRun({ text: titulo, bold: true })],
-          heading: HeadingLevel.HEADING_2,
-        }));
+        paras.push(new Paragraph({ children:[ new TextRun({ text: titulo, bold:true }) ], heading: HeadingLevel.HEADING_2 }));
         paras.push(new Paragraph(" "));
-
-        // Meta
         if (url) {
-          paras.push(new Paragraph({
-            children: [
-              new TextRun({ text: "URL final: ", bold: true }),
-              new TextRun({ text: url, color: "0563C1", underline: {} })
-            ]
-          }));
+          paras.push(new Paragraph({ children: [
+            new TextRun({ text: "URL final: ", bold:true }),
+            new TextRun({ text: url, color:"0563C1", underline:{} })
+          ]}));
           paras.push(new Paragraph(" "));
         }
-
-        // Corpo (quebra por linhas)
-        corpo.split(/\n/).forEach(linha => {
-          paras.push(new Paragraph(linha));
-        });
+        corpo.split(/\n/).forEach(l => paras.push(new Paragraph(l)));
 
         const doc = new Document({
-          sections: [{ properties: {}, children: paras }]
+          creator: "Renato Douek",
+          title: titulo,
+          description: "Gerado em renatodouek.com.br/geradordeconteudo",
+          styles: { default: { document: { run: { font: "Calibri", size: 24 } } } }, // 12pt
+          sections: [{ properties:{}, children: paras }]
         });
 
         const blob = await Packer.toBlob(doc);
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = fileName;
+        document.body.appendChild(a);
         a.click();
-        URL.revokeObjectURL(a.href);
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
       } catch (e) {
-        // fallback: .doc (HTML) – Word abre sem problema
-        const html = `
-          <html><head><meta charset="utf-8"><title>${titulo}</title></head>
-          <body>
-            <h2>${titulo}</h2>
-            ${url ? `<p><strong>URL final:</strong> <a href="${url}">${url}</a></p>` : ""}
-            ${corpo.split(/\\n/).map(p=>`<p>${p.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</p>`).join('')}
-          </body></html>`;
-        const blob = new Blob([html], { type: "application/msword" });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `${titulo.replace(/\s+/g,'_')}.doc`;
-        a.click();
-        URL.revokeObjectURL(a.href);
+        console.error(e);
+        alert('Não foi possível gerar o DOCX. Recarregue a página e tente novamente.');
       }
     });
   </script>
