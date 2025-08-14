@@ -63,7 +63,7 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="brand"><span class="dot"></span><h1>Gerador de Conteúdos</h1></div>
+      <div class="brand"><span class="dot"></span><h1>Gerador de Conteúdo</h1></div>
       <div style="opacity:.85;font-size:12px">Limite: <strong>3.000</strong> caracteres</div>
     </header>
 
@@ -176,57 +176,62 @@
     });
 
     // DOCX
-    document.getElementById('btnDocx').addEventListener('click', async () => {
-      const dataStr = document.getElementById('data').value.trim();
-      const tema = temaHidden.value.trim();
-      const url  = document.getElementById('url').value.trim();
-      const corpo = textarea.value.trim();
+document.getElementById('btnDocx').addEventListener('click', async () => {
+  const dataStr = document.getElementById('data').value.trim();
+  const tema = document.getElementById('tema').value.trim();
+  const url  = document.getElementById('url').value.trim();
+  const corpo = document.getElementById('texto').value.trim();
 
-      if (!dataStr || !tema || !corpo) {
-        alert('Preencha a Data (para definir o tema automaticamente) e o Texto antes de gerar o DOCX.');
-        return;
-      }
-      // dd/mm/aaaa -> Date
-      const [d,m,y] = dataStr.split('/');
-      const titulo = `Conteúdo – ${tema} – ${d}/${m}/${y}`;
-      const fileName = `Conteudo_${tema.replace(/\s+/g,'-')}_${y}-${m}-${d}.docx`;
+  if (!dataStr || !tema || !corpo) {
+    alert('Preencha a Data (para definir o tema automaticamente) e o Texto antes de gerar o DOCX.');
+    return;
+  }
 
-      try {
-        if (!window.docx) throw new Error('docx não carregado');
-        const { Document, Packer, Paragraph, HeadingLevel, TextRun } = window.docx;
+  const [d, m, y] = dataStr.split('/');
+  const yyyy = String(y).padStart(4, '0');
+  const mm   = String(m).padStart(2, '0');
+  const dd   = String(d).padStart(2, '0');
 
-        const paras = [];
-        paras.push(new Paragraph({ children:[ new TextRun({ text: titulo, bold:true }) ], heading: HeadingLevel.HEADING_2 }));
-        paras.push(new Paragraph(" "));
-        if (url) {
-          paras.push(new Paragraph({ children: [
-            new TextRun({ text: "URL final: ", bold:true }),
-            new TextRun({ text: url, color:"0563C1", underline:{} })
-          ]}));
-          paras.push(new Paragraph(" "));
-        }
-        corpo.split(/\n/).forEach(l => paras.push(new Paragraph(l)));
+  const temaParaArquivo = tema.replace(/^\s*[^-]+-\s*/, '').trim();
+  const fileName = `${yyyy}${mm}${dd} - ${temaParaArquivo}.docx`;
 
-        const doc = new Document({
-          creator: "Renato Douek",
-          title: titulo,
-          description: "Gerado em renatodouek.com.br/geradordeconteudo",
-          styles: { default: { document: { run: { font: "Calibri", size: 24 } } } }, // 12pt
-          sections: [{ properties:{}, children: paras }]
-        });
+  const titulo = `Conteúdo – ${tema} – ${d}/${m}/${y}`;
 
-        const blob = await Packer.toBlob(doc);
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
-      } catch (e) {
-        console.error(e);
-        alert('Não foi possível gerar o DOCX. Recarregue a página e tente novamente.');
-      }
+  try {
+    const { Document, Packer, Paragraph, HeadingLevel, TextRun } = window.docx;
+    const paras = [];
+    paras.push(new Paragraph({ children: [ new TextRun({ text: titulo, bold: true }) ], heading: HeadingLevel.HEADING_2 }));
+    paras.push(new Paragraph(" "));
+    if (url) {
+      paras.push(new Paragraph({ children: [
+        new TextRun({ text: "URL final: ", bold: true }),
+        new TextRun({ text: url, color: "0563C1", underline: {} })
+      ]}));
+      paras.push(new Paragraph(" "));
+    }
+    corpo.split(/\n/).forEach(l => paras.push(new Paragraph(l)));
+
+    const doc = new Document({
+      creator: "Renato Douek",
+      title: titulo,
+      description: "Gerado em renatodouek.com.br/geradordeconteudo",
+      styles: { default: { document: { run: { font: "Calibri", size: 24 } } } },
+      sections: [{ properties: {}, children: paras }]
     });
+
+    const blob = await Packer.toBlob(doc);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  } catch (e) {
+    console.error(e);
+    alert('Não foi possível gerar o DOCX. Recarregue a página e tente novamente.');
+  }
+});
+
   </script>
 </body>
 </html>
