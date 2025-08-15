@@ -7,7 +7,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
   <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
 
@@ -15,7 +15,6 @@
 
   <style>
     :root{
-      /* Cores ajustadas conforme solicitado */
       --bg:#1a1a1a; --panel:#2a2a2a; --muted:#9a9a9a; --text:#f3f3f3;
       --primary:#FAD961; --primary-700:#d9b850; --danger:#f05353;
       --border:#3a3a3a; --radius:14px; --max:3000;
@@ -56,10 +55,16 @@
     .btn-ghost:hover{border-color:#4f4f4f}
     .hint{margin-top:8px;color:var(--muted);font-size:12px}
     footer{margin-top:24px;color:#777;text-align:center;font-size:12px}
+
+    /* --- AJUSTE 4: Estilo do botão DOCX --- */
+    #btnDocx {
+        border-radius: 50px;
+        background-color: #FFC000;
+    }
     
     /* --- INÍCIO: ESTILOS DO INFOGRÁFICO DIÁRIO --- */
     .daily-guidance-container {
-      margin-top: 24px;
+      margin-bottom: 14px;
     }
     .day-block {
       background-color: var(--panel);
@@ -69,7 +74,8 @@
       display: none; /* Escondido por padrão */
     }
     .day-header {
-      padding: 20px 25px;
+      /* AJUSTE 5: Margin (padding) ajustado para 20px */
+      padding: 20px;
       color: #fff;
     }
     .day-header h2 {
@@ -86,7 +92,7 @@
       font-weight: 600;
     }
     .day-content {
-      padding: 0 25px 25px 25px;
+      padding: 0 20px 20px 20px;
     }
     .day-content ul {
       list-style-type: none;
@@ -147,18 +153,70 @@
           <div>
             <label>Tema (automático pela data)</label>
             <div id="temaBadge" class="badge" title="Definido pelo dia da semana">
-              <span class="dot"></span><span id="temaText">— selecione a data —</span>
+              <span class="dot"></span><span id="temaText"></span>
             </div>
             <input type="hidden" id="tema" name="tema" value="">
           </div>
         </div>
 
-        <div class="row full">
-          <div>
-            <label for="url">URL final da publicação (opcional)</label>
-            <input id="url" name="url" type="url" placeholder="https://exemplo.com/post" inputmode="url">
-          </div>
-        </div>
+        <section class="daily-guidance-container">
+            <div id="day-0" class="day-block">
+                <div class="day-header sunday"><h2 >Domingo</h2><p class="theme">Mercado (Brasil e exterior)</p></div>
+                <div class="day-content">
+                    <ul>
+                        <li>Dados e infográficos</li> <li>Mercados emergentes e cenários</li> <li>Tendências e legislação</li> <li>Modelos econômicos</li> <li>Comportamentos de mercado</li> <li>Futuro das organizações</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="day-1" class="day-block">
+                <div class="day-header monday"><h2>Segunda</h2><p class="theme">Motivacional | Inspiracional</p></div>
+                <div class="day-content">
+                    <ul>
+                        <li>Destacar seu lado mais humano</li> <li>Motivar as pessoas</li> <li>Trazer energia/inspiração</li> <li>Criar estímulos</li> <li>Destacar seus valores humanos mais fortes</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="day-2" class="day-block">
+                <div class="day-header tuesday"><h2>Terça</h2><p class="theme">Gestão da Inovação</p></div>
+                <div class="day-content">
+                    <ul>
+                        <li>Indicadores</li><li>Técnicas</li><li>Definição de metas</li><li>Reciclagem de conceitos</li><li>Produtividade, eficiência e redução de custos</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="day-3" class="day-block">
+                <div class="day-header wednesday"><h2>Quarta</h2><p class="theme">Liderança empresarial estratégica</p></div>
+                <div class="day-content">
+                    <ul>
+                        <li>O poder de liderar pelo exemplo</li> <li>Passar imagem de quem coordenou equipes</li> <li>Equipe como fator de mudança</li> <li>Dificuldades e erros na liderança</li> <li>A liderança na mudança do rumo empresarial</li> <li>Processos colaborativos na liderança</li> <li>Planejamento estratégico para liderar</li> <li>Competências gerenciais</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="day-4" class="day-block">
+                <div class="day-header thursday"><h2>Quinta</h2><p class="theme">Case (próprio ou não)</p></div>
+                <div class="day-content">
+                    <ul>
+                        <li>Situações que viveu</li><li>Erros e acertos que viu</li><li>Erros e acertos que viveu</li><li>Doar ensinamentos por meio de histórias</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="day-5" class="day-block">
+                <div class="day-header friday"><h2>Sexta</h2><p class="theme">Tecnologia e Inovação</p></div>
+                <div class="day-content">
+                    <ul>
+                        <li>O que há de novo em métodos e processos</li> <li>O que há de novo em equipamentos</li> <li>Em quem se espelhar e o que tem dado certo</li> <li>Tecnologias para agregar ao gestor</li> <li>Apps, IoT, Big Data, Cloud, 5G, IA...</li>
+                    </ul>
+                </div>
+            </div>
+            <div id="day-6" class="day-block">
+                <div class="day-header saturday"><h2>Sábado</h2><p class="theme">"Assessoria de imprensa"</p></div>
+                <div class="day-content">
+                    <ul>
+                        <li>Palestras e entrevistas</li><li>Treinamentos e eventos</li><li>TV, rádio, podcast</li><li>Certificados</li><li>Coluna em jornal ou blog</li><li>Viagens</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
         <div class="row full">
           <div>
@@ -180,84 +238,6 @@
       </form>
     </section>
 
-    <section class="daily-guidance-container">
-        <div id="day-0" class="day-block">
-            <div class="day-header sunday"><h2 >Domingo</h2><p class="theme">Mercado (Brasil e exterior)</p></div>
-            <div class="day-content">
-                <ul>
-                    <li>Dados e infográficos</li>
-                    <li>Mercados emergentes e cenários</li>
-                    <li>Tendências e legislação</li>
-                    <li>Modelos econômicos</li>
-                    <li>Comportamentos de mercado</li>
-                    <li>Futuro das organizações</li>
-                </ul>
-            </div>
-        </div>
-        <div id="day-1" class="day-block">
-            <div class="day-header monday"><h2>Segunda</h2><p class="theme">Inspiracional</p></div>
-            <div class="day-content">
-                <ul>
-                    <li>Destacar seu lado mais humano</li>
-                    <li>Motivar as pessoas</li>
-                    <li>Trazer energia/inspiração</li>
-                    <li>Criar estímulos</li>
-                    <li>Destacar seus valores humanos mais fortes</li>
-                </ul>
-            </div>
-        </div>
-        <div id="day-2" class="day-block">
-            <div class="day-header tuesday"><h2>Terça</h2><p class="theme">Gestão da Inovação</p></div>
-            <div class="day-content">
-                <ul>
-                    <li>Indicadores</li><li>Técnicas</li><li>Definição de metas</li><li>Reciclagem de conceitos</li><li>Produtividade, eficiência e redução de custos</li>
-                </ul>
-            </div>
-        </div>
-        <div id="day-3" class="day-block">
-            <div class="day-header wednesday"><h2>Quarta</h2><p class="theme">Liderança empresarial estratégica</p></div>
-            <div class="day-content">
-                <ul>
-                    <li>O poder de liderar pelo exemplo</li>
-                    <li>Passar imagem de quem coordenou equipes</li>
-                    <li>Equipe como fator de mudança</li>
-                    <li>Dificuldades e erros na liderança</li>
-                    <li>A liderança na mudança do rumo empresarial</li>
-                    <li>Processos colaborativos na liderança</li>
-                    <li>Planejamento estratégico para liderar</li>
-                    <li>Competências gerenciais</li>
-                </ul>
-            </div>
-        </div>
-        <div id="day-4" class="day-block">
-            <div class="day-header thursday"><h2>Quinta</h2><p class="theme">Case (próprio ou não)</p></div>
-            <div class="day-content">
-                <ul>
-                    <li>Situações que viveu</li><li>Erros e acertos que viu</li><li>Erros e acertos que viveu</li><li>Doar ensinamentos por meio de histórias</li>
-                </ul>
-            </div>
-        </div>
-        <div id="day-5" class="day-block">
-            <div class="day-header friday"><h2>Sexta</h2><p class="theme">Tecnologia e Inovação</p></div>
-            <div class="day-content">
-                <ul>
-                    <li>O que há de novo em métodos e processos</li>
-                    <li>O que há de novo em equipamentos</li>
-                    <li>Em quem se espelhar e o que tem dado certo</li>
-                    <li>Tecnologias para agregar ao gestor</li>
-                    <li>Apps, IoT, Big Data, Cloud, 5G, IA...</li>
-                </ul>
-            </div>
-        </div>
-        <div id="day-6" class="day-block">
-            <div class="day-header saturday"><h2>Sábado</h2><p class="theme">"Assessoria de imprensa"</p></div>
-            <div class="day-content">
-                <ul>
-                    <li>Palestras e entrevistas</li><li>Treinamentos e eventos</li><li>TV, rádio, podcast</li><li>Certificados</li><li>Coluna em jornal ou blog</li><li>Viagens</li>
-                </ul>
-            </div>
-        </div>
-    </section>
     <footer>© <span id="yy"></span> Renato Douek · renatodouek.com.br</footer>
   </div>
 
@@ -268,7 +248,7 @@
     // Mapeamento de tema por dia da semana (getDay: 0=Dom, ... 6=Sáb)
     const THEMES = {
       0: 'Mercado (Brasil e exterior)',
-      1: 'Inspiracional',
+      1: 'Motivacional | Inspiracional', // AJUSTE 2: Tema de Segunda alterado
       2: 'Gestão da Inovação',
       3: 'Liderança empresarial estratégica',
       4: 'Case (próprio ou não)',
@@ -281,23 +261,20 @@
     const allDayBlocks = document.querySelectorAll('.day-block');
 
     function setThemeFromDate(dateObj){
-      // Esconde todos os blocos de conteúdo
       allDayBlocks.forEach(block => { block.style.display = 'none'; });
 
       if (!(dateObj instanceof Date) || isNaN(dateObj)) {
         temaHidden.value='';
-        temaText.textContent='— selecione a data —';
+        temaText.textContent=''; // AJUSTE 1: Texto vazio quando sem data
         return;
       }
       
       const day = dateObj.getDay();
       const t = THEMES[day] || '';
       
-      // Atualiza o badge com o tema
       temaHidden.value = t;
       temaText.textContent = t || '—';
 
-      // Mostra o bloco de conteúdo do dia selecionado
       const blockToShow = document.getElementById(`day-${day}`);
       if (blockToShow) {
         blockToShow.style.display = 'block';
@@ -343,7 +320,7 @@
     document.querySelector('button[type="reset"]').addEventListener('click', () => {
         setTimeout(() => {
             updateCount();
-            setThemeFromDate(null); // Limpa o tema e esconde o bloco
+            setThemeFromDate(null);
         }, 0);
     });
 
@@ -351,7 +328,6 @@
     document.getElementById('btnDocx').addEventListener('click', async () => {
       const dataStr = document.getElementById('data').value.trim();
       const tema = document.getElementById('tema').value.trim();
-      const url  = document.getElementById('url').value.trim();
       const corpo = document.getElementById('texto').value.trim();
 
       if (!dataStr || !tema || !corpo) {
@@ -374,13 +350,7 @@
         const paras = [];
         paras.push(new Paragraph({ children: [ new TextRun({ text: titulo, bold: true }) ], heading: HeadingLevel.HEADING_2 }));
         paras.push(new Paragraph(" "));
-        if (url) {
-          paras.push(new Paragraph({ children: [
-            new TextRun({ text: "URL final: ", bold: true }),
-            new TextRun({ text: url, style: "Hyperlink" })
-          ]}));
-          paras.push(new Paragraph(" "));
-        }
+        
         corpo.split(/\n/).forEach(l => paras.push(new Paragraph(l)));
 
         const doc = new Document({
@@ -388,8 +358,7 @@
           title: titulo,
           description: "Gerado em renatodouek.com.br/geradordeconteudo",
           styles: {
-            default: { document: { run: { font: "Calibri", size: 24 } } },
-            hyperlink: { run: { color: "0563C1", underline: {} } }
+            default: { document: { run: { font: "Calibri", size: 24 } } }
           },
           sections: [{ properties: {}, children: paras }]
         });
