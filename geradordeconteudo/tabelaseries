@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico da Semana</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+
+        .infographic-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .day-block {
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .day-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .day-block h2 {
+            font-size: 1.1em;
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+        
+        .day-block .theme {
+            font-size: 1.6em;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+            padding-bottom: 10px;
+        }
+
+        .day-block ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .day-block li {
+            font-size: 0.95em;
+            line-height: 1.6;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .day-block li:not(:last-child) {
+            margin-bottom: 8px;
+        }
+        
+        .day-block li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Cores para cada dia */
+        .monday    { background: linear-gradient(135deg, #4e54c8, #8f94fb); }
+        .tuesday   { background: linear-gradient(135deg, #28a745, #20c997); }
+        .wednesday { background: linear-gradient(135deg, #884dff, #9b6dff); }
+        .thursday  { background: linear-gradient(135deg, #fd7e14, #ffc107); }
+        .friday    { background: linear-gradient(135deg, #17a2b8, #66d9e8); }
+        .saturday  { background: linear-gradient(135deg, #d9480f, #f76707); }
+        .sunday    { background: linear-gradient(135deg, #c92a2a, #ff6b6b); }
+
+    </style>
+</head>
+<body>
+
+    <h1>Plano de Conteúdo Semanal</h1>
+
+    <div class="infographic-container">
+        <div class="day-block monday">
+            <h2>Segunda</h2>
+            <p class="theme">Inspiracional</p>
+            <ul>
+                <li>Destacar seu lado mais humano</li>
+                <li>Motivar as pessoas</li>
+                <li>Trazer energia/inspiração</li>
+                <li>Criar estímulos</li>
+                <li>Destacar seus valores humanos mais fortes</li>
+            </ul>
+        </div>
+
+        <div class="day-block tuesday">
+            <h2>Terça</h2>
+            <p class="theme">Gestão da Inovação</p>
+            <ul>
+                <li>Indicadores</li>
+                <li>Técnicas</li>
+                <li>Definição de metas</li>
+                <li>Reciclagem de conceitos</li>
+                <li>Produtividade, eficiência e redução de custos</li>
+            </ul>
+        </div>
+
+        <div class="day-block wednesday">
+            <h2>Quarta</h2>
+            <p class="theme">Liderança empresarial estratégica</p>
+            <ul>
+                <li>O poder de liderar pelo exemplo</li>
+                <li>Passar imagem de quem coordenou equipes</li>
+                <li>Equipe como fator de mudança</li>
+                <li>Dificuldades e erros na liderança</li>
+                <li>A liderança na mudança do rumo empresarial</li>
+                <li>Processos colaborativos na liderança</li>
+                <li>Planejamento estratégico para liderar</li>
+                <li>Competências gerenciais</li>
+            </ul>
+        </div>
+
+        <div class="day-block thursday">
+            <h2>Quinta</h2>
+            <p class="theme">Case (próprio ou não)</p>
+            <ul>
+                <li>Situações que viveu</li>
+                <li>Erros e acertos que viu</li>
+                <li>Erros e acertos que viveu</li>
+                <li>Doar ensinamentos por meio de histórias</li>
+            </ul>
+        </div>
+
+        <div class="day-block friday">
+            <h2>Sexta</h2>
+            <p class="theme">Tecnologia e Inovação</p>
+            <ul>
+                <li>O que há de novo em métodos e processos</li>
+                <li>O que há de novo em equipamentos</li>
+                <li>Em quem se espelhar e o que tem dado certo</li>
+                <li>Tecnologias para agregar ao gestor</li>
+                <li>Apps, IoT, Big Data, Cloud, 5G, IA...</li>
+            </ul>
+        </div>
+
+        <div class="day-block saturday">
+            <h2>Sábado</h2>
+            <p class="theme">"Assessoria de imprensa"</p>
+            <ul>
+                <li>Palestras e entrevistas</li>
+                <li>Treinamentos e eventos</li>
+                <li>TV, rádio, podcast</li>
+                <li>Certificados</li>
+                <li>Coluna em jornal ou blog</li>
+                <li>Viagens</li>
+            </ul>
+        </div>
+        
+        <div class="day-block sunday">
+            <h2>Domingo</h2>
+            <p class="theme">Mercado (Brasil e exterior)</p>
+            <ul>
+                <li>Dados e infográficos</li>
+                <li>Mercados emergentes e cenários</li>
+                <li>Tendências e legislação</li>
+                <li>Modelos econômicos</li>
+                <li>Comportamentos de mercado</li>
+                <li>Futuro das organizações</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>
