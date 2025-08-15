@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infográfico da Semana (Versão 2)</title>
+    <title>Infográfico da Semana (Tema Escuro)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
+            background-color: #2c3e50; /* Fundo escuro */
+            color: #ecf0f1; /* Cor de texto principal clara */
             padding: 20px;
         }
 
         h1 {
             text-align: center;
-            color: #2c3e50;
+            color: #ffffff; /* Título principal branco */
             margin-bottom: 40px;
         }
 
@@ -29,18 +29,18 @@
         }
 
         .day-block {
-            background-color: #fff;
+            background-color: #34495e; /* Fundo escuro para os blocos */
             border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden; /* Garante que o conteúdo interno respeite as bordas arredondadas */
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
         }
         
         .day-block:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
 
         .day-header {
@@ -78,7 +78,7 @@
             line-height: 1.6;
             padding-left: 20px;
             position: relative;
-            color: #495057;
+            color: #ecf0f1; /* Texto do conteúdo claro */
         }
 
         .day-content li:not(:last-child) {
@@ -102,13 +102,13 @@
         .sunday    { background: linear-gradient(135deg, #c92a2a, #ff6b6b); }
 
         /* Cores dos marcadores (check) correspondendo ao dia */
-        .day-block.is-monday .day-content li::before { color: #4e54c8; }
+        .day-block.is-monday .day-content li::before { color: #8f94fb; }
         .day-block.is-tuesday .day-content li::before { color: #28a745; }
-        .day-block.is-wednesday .day-content li::before { color: #884dff; }
+        .day-block.is-wednesday .day-content li::before { color: #9b6dff; }
         .day-block.is-thursday .day-content li::before { color: #fd7e14; }
         .day-block.is-friday .day-content li::before { color: #17a2b8; }
         .day-block.is-saturday .day-content li::before { color: #f76707; }
-        .day-block.is-sunday .day-content li::before { color: #c92a2a; }
+        .day-block.is-sunday .day-content li::before { color: #ff6b6b; }
 
     </style>
 </head>
