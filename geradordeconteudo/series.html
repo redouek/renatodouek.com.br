@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infográfico da Semana</title>
+    <title>Infográfico da Semana (Versão 2)</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
@@ -29,11 +29,13 @@
         }
 
         .day-block {
-            padding: 25px;
+            background-color: #fff;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            color: #fff;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden; /* Garante que o conteúdo interno respeite as bordas arredondadas */
+            display: flex;
+            flex-direction: column;
         }
         
         .day-block:hover {
@@ -41,56 +43,72 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         }
 
-        .day-block h2 {
+        .day-header {
+            padding: 20px 25px;
+            color: #fff;
+        }
+
+        .day-header h2 {
             font-size: 1.1em;
-            margin-top: 0;
-            margin-bottom: 5px;
+            margin: 0;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 400;
+            opacity: 0.9;
         }
         
-        .day-block .theme {
+        .day-header .theme {
             font-size: 1.6em;
-            margin-top: 0;
-            margin-bottom: 20px;
+            margin: 5px 0 0 0;
             font-weight: 600;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.5);
-            padding-bottom: 10px;
+        }
+        
+        .day-content {
+            padding: 25px;
         }
 
-        .day-block ul {
+        .day-content ul {
             list-style-type: none;
             padding: 0;
             margin: 0;
         }
 
-        .day-block li {
+        .day-content li {
             font-size: 0.95em;
             line-height: 1.6;
             padding-left: 20px;
             position: relative;
+            color: #495057;
         }
 
-        .day-block li:not(:last-child) {
+        .day-content li:not(:last-child) {
             margin-bottom: 8px;
         }
         
-        .day-block li::before {
+        .day-content li::before {
             content: '✓';
             position: absolute;
             left: 0;
             font-weight: bold;
         }
 
-        /* Cores para cada dia */
+        /* Cores dos cabeçalhos e dos marcadores */
         .monday    { background: linear-gradient(135deg, #4e54c8, #8f94fb); }
-        .tuesday   { background: linear-gradient(135deg, #28a745, #20c997); }
+        .tuesday   { background: linear-gradient(135deg, #1e9638, #28a745); }
         .wednesday { background: linear-gradient(135deg, #884dff, #9b6dff); }
-        .thursday  { background: linear-gradient(135deg, #fd7e14, #ffc107); }
-        .friday    { background: linear-gradient(135deg, #17a2b8, #66d9e8); }
+        .thursday  { background: linear-gradient(135deg, #e67700, #fd7e14); }
+        .friday    { background: linear-gradient(135deg, #0c8599, #17a2b8); }
         .saturday  { background: linear-gradient(135deg, #d9480f, #f76707); }
         .sunday    { background: linear-gradient(135deg, #c92a2a, #ff6b6b); }
+
+        /* Cores dos marcadores (check) correspondendo ao dia */
+        .day-block.is-monday .day-content li::before { color: #4e54c8; }
+        .day-block.is-tuesday .day-content li::before { color: #28a745; }
+        .day-block.is-wednesday .day-content li::before { color: #884dff; }
+        .day-block.is-thursday .day-content li::before { color: #fd7e14; }
+        .day-block.is-friday .day-content li::before { color: #17a2b8; }
+        .day-block.is-saturday .day-content li::before { color: #f76707; }
+        .day-block.is-sunday .day-content li::before { color: #c92a2a; }
 
     </style>
 </head>
@@ -99,92 +117,120 @@
     <h1>Plano de Conteúdo Semanal</h1>
 
     <div class="infographic-container">
-        <div class="day-block monday">
-            <h2>Segunda</h2>
-            <p class="theme">Inspiracional</p>
-            <ul>
-                <li>Destacar seu lado mais humano</li>
-                <li>Motivar as pessoas</li>
-                <li>Trazer energia/inspiração</li>
-                <li>Criar estímulos</li>
-                <li>Destacar seus valores humanos mais fortes</li>
-            </ul>
+        <div class="day-block is-monday">
+            <div class="day-header monday">
+                <h2>Segunda</h2>
+                <p class="theme">Inspiracional</p>
+            </div>
+            <div class="day-content">
+                <ul>
+                    <li>Destacar seu lado mais humano</li>
+                    <li>Motivar as pessoas</li>
+                    <li>Trazer energia/inspiração</li>
+                    <li>Criar estímulos</li>
+                    <li>Destacar seus valores humanos mais fortes</li>
+                </ul>
+            </div>
         </div>
 
-        <div class="day-block tuesday">
-            <h2>Terça</h2>
-            <p class="theme">Gestão da Inovação</p>
-            <ul>
-                <li>Indicadores</li>
-                <li>Técnicas</li>
-                <li>Definição de metas</li>
-                <li>Reciclagem de conceitos</li>
-                <li>Produtividade, eficiência e redução de custos</li>
-            </ul>
+        <div class="day-block is-tuesday">
+            <div class="day-header tuesday">
+                <h2>Terça</h2>
+                <p class="theme">Gestão da Inovação</p>
+            </div>
+            <div class="day-content">
+                <ul>
+                    <li>Indicadores</li>
+                    <li>Técnicas</li>
+                    <li>Definição de metas</li>
+                    <li>Reciclagem de conceitos</li>
+                    <li>Produtividade, eficiência e redução de custos</li>
+                </ul>
+            </div>
         </div>
 
-        <div class="day-block wednesday">
-            <h2>Quarta</h2>
-            <p class="theme">Liderança empresarial estratégica</p>
-            <ul>
-                <li>O poder de liderar pelo exemplo</li>
-                <li>Passar imagem de quem coordenou equipes</li>
-                <li>Equipe como fator de mudança</li>
-                <li>Dificuldades e erros na liderança</li>
-                <li>A liderança na mudança do rumo empresarial</li>
-                <li>Processos colaborativos na liderança</li>
-                <li>Planejamento estratégico para liderar</li>
-                <li>Competências gerenciais</li>
-            </ul>
+        <div class="day-block is-wednesday">
+            <div class="day-header wednesday">
+                <h2>Quarta</h2>
+                <p class="theme">Liderança empresarial estratégica</p>
+            </div>
+            <div class="day-content">
+                <ul>
+                    <li>O poder de liderar pelo exemplo</li>
+                    <li>Passar imagem de quem coordenou equipes</li>
+                    <li>Equipe como fator de mudança</li>
+                    <li>Dificuldades e erros na liderança</li>
+                    <li>A liderança na mudança do rumo empresarial</li>
+                    <li>Processos colaborativos na liderança</li>
+                    <li>Planejamento estratégico para liderar</li>
+                    <li>Competências gerenciais</li>
+                </ul>
+            </div>
         </div>
 
-        <div class="day-block thursday">
-            <h2>Quinta</h2>
-            <p class="theme">Case (próprio ou não)</p>
-            <ul>
-                <li>Situações que viveu</li>
-                <li>Erros e acertos que viu</li>
-                <li>Erros e acertos que viveu</li>
-                <li>Doar ensinamentos por meio de histórias</li>
-            </ul>
+        <div class="day-block is-thursday">
+            <div class="day-header thursday">
+                <h2>Quinta</h2>
+                <p class="theme">Case (próprio ou não)</p>
+            </div>
+            <div class="day-content">
+                <ul>
+                    <li>Situações que viveu</li>
+                    <li>Erros e acertos que viu</li>
+                    <li>Erros e acertos que viveu</li>
+                    <li>Doar ensinamentos por meio de histórias</li>
+                </ul>
+            </div>
         </div>
 
-        <div class="day-block friday">
-            <h2>Sexta</h2>
-            <p class="theme">Tecnologia e Inovação</p>
-            <ul>
-                <li>O que há de novo em métodos e processos</li>
-                <li>O que há de novo em equipamentos</li>
-                <li>Em quem se espelhar e o que tem dado certo</li>
-                <li>Tecnologias para agregar ao gestor</li>
-                <li>Apps, IoT, Big Data, Cloud, 5G, IA...</li>
-            </ul>
+        <div class="day-block is-friday">
+            <div class="day-header friday">
+                <h2>Sexta</h2>
+                <p class="theme">Tecnologia e Inovação</p>
+            </div>
+            <div class="day-content">
+                <ul>
+                    <li>O que há de novo em métodos e processos</li>
+                    <li>O que há de novo em equipamentos</li>
+                    <li>Em quem se espelhar e o que tem dado certo</li>
+                    <li>Tecnologias para agregar ao gestor</li>
+                    <li>Apps, IoT, Big Data, Cloud, 5G, IA...</li>
+                </ul>
+            </div>
         </div>
 
-        <div class="day-block saturday">
-            <h2>Sábado</h2>
-            <p class="theme">"Assessoria de imprensa"</p>
-            <ul>
-                <li>Palestras e entrevistas</li>
-                <li>Treinamentos e eventos</li>
-                <li>TV, rádio, podcast</li>
-                <li>Certificados</li>
-                <li>Coluna em jornal ou blog</li>
-                <li>Viagens</li>
-            </ul>
+        <div class="day-block is-saturday">
+            <div class="day-header saturday">
+                <h2>Sábado</h2>
+                <p class="theme">"Assessoria de imprensa"</p>
+            </div>
+            <div class="day-content">
+                <ul>
+                    <li>Palestras e entrevistas</li>
+                    <li>Treinamentos e eventos</li>
+                    <li>TV, rádio, podcast</li>
+                    <li>Certificados</li>
+                    <li>Coluna em jornal ou blog</li>
+                    <li>Viagens</li>
+                </ul>
+            </div>
         </div>
         
-        <div class="day-block sunday">
-            <h2>Domingo</h2>
-            <p class="theme">Mercado (Brasil e exterior)</p>
-            <ul>
-                <li>Dados e infográficos</li>
-                <li>Mercados emergentes e cenários</li>
-                <li>Tendências e legislação</li>
-                <li>Modelos econômicos</li>
-                <li>Comportamentos de mercado</li>
-                <li>Futuro das organizações</li>
-            </ul>
+        <div class="day-block is-sunday">
+            <div class="day-header sunday">
+                <h2>Domingo</h2>
+                <p class="theme">Mercado (Brasil e exterior)</p>
+            </div>
+            <div class="day-content">
+                <ul>
+                    <li>Dados e infográficos</li>
+                    <li>Mercados emergentes e cenários</li>
+                    <li>Tendências e legislação</li>
+                    <li>Modelos econômicos</li>
+                    <li>Comportamentos de mercado</li>
+                    <li>Futuro das organizações</li>
+                </ul>
+            </div>
         </div>
     </div>
 
