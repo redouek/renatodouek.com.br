@@ -53,69 +53,23 @@
     .btn-primary:hover{filter:brightness(1.05)}
     .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
     .btn-ghost:hover{border-color:#4f4f4f}
+    #btnDocx { background-color: #FFC000; }
     .hint{margin-top:8px;color:var(--muted);font-size:12px}
     footer{margin-top:24px;color:#777;text-align:center;font-size:12px}
-
-    /* --- AJUSTE 4: Estilo do botão DOCX --- */
-    #btnDocx {
-        border-radius: 50px;
-        background-color: #FFC000;
-    }
     
-    /* --- INÍCIO: ESTILOS DO INFOGRÁFICO DIÁRIO --- */
-    .daily-guidance-container {
-      margin-bottom: 14px;
-    }
+    .daily-guidance-container { margin-bottom: 14px; }
     .day-block {
-      background-color: var(--panel);
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      overflow: hidden;
-      display: none; /* Escondido por padrão */
+      background-color: var(--panel); border-radius: var(--radius); border: 1px solid var(--border);
+      overflow: hidden; display: none;
     }
-    .day-header {
-      /* AJUSTE 5: Margin (padding) ajustado para 20px */
-      padding: 20px;
-      color: #fff;
-    }
-    .day-header h2 {
-      font-size: 1.1em;
-      margin: 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 400;
-      opacity: 0.9;
-    }
-    .day-header .theme {
-      font-size: 1.6em;
-      margin: 5px 0 0 0;
-      font-weight: 600;
-    }
-    .day-content {
-      padding: 20px;
-    }
-    .day-content ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
-    .day-content li {
-      font-size: 0.95em;
-      line-height: 1.6;
-      padding-left: 20px;
-      position: relative;
-      color: var(--muted);
-    }
-    .day-content li:not(:last-child) {
-      margin-bottom: 8px;
-    }
-    .day-content li::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      font-weight: bold;
-    }
-    /* Cores dos cabeçalhos e marcadores */
+    .day-header { padding: 20px; color: #fff; }
+    .day-header h2 { font-size: 1.1em; margin: 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 400; opacity: 0.9; }
+    .day-header .theme { font-size: 1.6em; margin: 5px 0 0 0; font-weight: 600; }
+    .day-content { padding: 20px; }
+    .day-content ul { list-style-type: none; padding: 0; margin: 0; }
+    .day-content li { font-size: 0.95em; line-height: 1.6; padding-left: 20px; position: relative; color: var(--muted); }
+    .day-content li:not(:last-child) { margin-bottom: 8px; }
+    .day-content li::before { content: '✓'; position: absolute; left: 0; font-weight: bold; }
     .monday    { background: linear-gradient(135deg, #4e54c8, #8f94fb); }
     .tuesday   { background: linear-gradient(135deg, #1e9638, #28a745); }
     .wednesday { background: linear-gradient(135deg, #884dff, #9b6dff); }
@@ -123,15 +77,25 @@
     .friday    { background: linear-gradient(135deg, #0c8599, #17a2b8); }
     .saturday  { background: linear-gradient(135deg, #d9480f, #f76707); }
     .sunday    { background: linear-gradient(135deg, #c92a2a, #ff6b6b); }
-
-    #day-1 .day-content li::before { color: #8f94fb; }
-    #day-2 .day-content li::before { color: #28a745; }
-    #day-3 .day-content li::before { color: #9b6dff; }
-    #day-4 .day-content li::before { color: #fd7e14; }
-    #day-5 .day-content li::before { color: #17a2b8; }
-    #day-6 .day-content li::before { color: #f76707; }
+    #day-1 .day-content li::before { color: #8f94fb; } #day-2 .day-content li::before { color: #28a745; }
+    #day-3 .day-content li::before { color: #9b6dff; } #day-4 .day-content li::before { color: #fd7e14; }
+    #day-5 .day-content li::before { color: #17a2b8; } #day-6 .day-content li::before { color: #f76707; }
     #day-0 .day-content li::before { color: #ff6b6b; }
-    /* --- FIM: ESTILOS DO INFOGRÁFICO DIÁRIO --- */
+
+    /* --- ESTILOS PARA INTERAÇÃO COM A IA --- */
+    .gemini-interaction-panel {
+      background: #1f1f1f; border: 1px dashed var(--border); border-radius: var(--radius);
+      padding: 20px; margin-top: 14px;
+    }
+    .gemini-interaction-panel h3 { margin-top: 0; font-size: 16px; color: var(--primary); }
+    .gemini-interaction-panel .loading { text-align: center; color: var(--muted); padding: 20px 0; }
+    .gemini-interaction-panel .topic-suggestion { margin-bottom: 15px; }
+    .gemini-interaction-panel .topic-suggestion label { display: flex; align-items: flex-start; font-size: 14px; }
+    .gemini-interaction-panel .topic-suggestion input { margin-right: 12px; margin-top: 4px; }
+    .gemini-interaction-panel .topic-suggestion p { margin: 2px 0 0 0; color: var(--muted); font-size: 12px; }
+    .gemini-interaction-panel .draft-review-area { border: 1px solid var(--border); border-radius: 10px; padding: 15px; background: #2a2a2a; margin-bottom: 15px; white-space: pre-wrap; font-size: 14px; line-height: 1.6; }
+    .gemini-interaction-panel textarea { width: 100%; min-height: 100px; margin-top: 10px; }
+
 
     @media (max-width:760px){.row{grid-template-columns:1fr}}
   </style>
@@ -159,69 +123,15 @@
           </div>
         </div>
 
-        <section class="daily-guidance-container">
-            <div id="day-0" class="day-block">
-                <div class="day-header sunday"><h2 >Domingo</h2><p class="theme">Mercado (Brasil e exterior)</p></div>
-                <div class="day-content">
-                    <ul>
-                        <li>Dados e infográficos</li> <li>Mercados emergentes e cenários</li> <li>Tendências e legislação</li> <li>Modelos econômicos</li> <li>Comportamentos de mercado</li> <li>Futuro das organizações</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="day-1" class="day-block">
-                <div class="day-header monday"><h2>Segunda</h2><p class="theme">Motivacional | Inspiracional</p></div>
-                <div class="day-content">
-                    <ul>
-                        <li>Destacar seu lado mais humano</li> <li>Motivar as pessoas</li> <li>Trazer energia/inspiração</li> <li>Criar estímulos</li> <li>Destacar seus valores humanos mais fortes</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="day-2" class="day-block">
-                <div class="day-header tuesday"><h2>Terça</h2><p class="theme">Gestão da Inovação</p></div>
-                <div class="day-content">
-                    <ul>
-                        <li>Indicadores</li><li>Técnicas</li><li>Definição de metas</li><li>Reciclagem de conceitos</li><li>Produtividade, eficiência e redução de custos</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="day-3" class="day-block">
-                <div class="day-header wednesday"><h2>Quarta</h2><p class="theme">Liderança empresarial estratégica</p></div>
-                <div class="day-content">
-                    <ul>
-                        <li>O poder de liderar pelo exemplo</li> <li>Passar imagem de quem coordenou equipes</li> <li>Equipe como fator de mudança</li> <li>Dificuldades e erros na liderança</li> <li>A liderança na mudança do rumo empresarial</li> <li>Processos colaborativos na liderança</li> <li>Planejamento estratégico para liderar</li> <li>Competências gerenciais</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="day-4" class="day-block">
-                <div class="day-header thursday"><h2>Quinta</h2><p class="theme">Case (próprio ou não)</p></div>
-                <div class="day-content">
-                    <ul>
-                        <li>Situações que viveu</li><li>Erros e acertos que viu</li><li>Erros e acertos que viveu</li><li>Doar ensinamentos por meio de histórias</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="day-5" class="day-block">
-                <div class="day-header friday"><h2>Sexta</h2><p class="theme">Tecnologia e Inovação</p></div>
-                <div class="day-content">
-                    <ul>
-                        <li>O que há de novo em métodos e processos</li> <li>O que há de novo em equipamentos</li> <li>Em quem se espelhar e o que tem dado certo</li> <li>Tecnologias para agregar ao gestor</li> <li>Apps, IoT, Big Data, Cloud, 5G, IA...</li>
-                    </ul>
-                </div>
-            </div>
-            <div id="day-6" class="day-block">
-                <div class="day-header saturday"><h2>Sábado</h2><p class="theme">"Assessoria de imprensa"</p></div>
-                <div class="day-content">
-                    <ul>
-                        <li>Palestras e entrevistas</li><li>Treinamentos e eventos</li><li>TV, rádio, podcast</li><li>Certificados</li><li>Coluna em jornal ou blog</li><li>Viagens</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
+        <section class="daily-guidance-container"></section>
+
+        <div id="gemini-interaction-panel" class="gemini-interaction-panel" style="display: none;"></div>
+
 
         <div class="row full">
           <div>
             <label for="texto">Texto (máx. 3.000 caracteres)</label>
-            <textarea id="texto" name="texto" spellcheck="true" lang="pt-BR" placeholder="Escreva aqui seu conteúdo…"></textarea>
+            <textarea id="texto" name="texto" spellcheck="true" lang="pt-BR" placeholder="Selecione uma data para iniciar a geração de conteúdo com IA..."></textarea>
             <div class="counter">
               <div class="meter"><span id="meterBar"></span></div>
               <div id="count" class="count">0 / 3000</div>
@@ -241,141 +151,263 @@
     <footer>© <span id="yy"></span> Renato Douek · renatodouek.com.br</footer>
   </div>
 
-  <script>
-    // Ano
-    document.getElementById('yy').textContent = new Date().getFullYear();
+<script>
+// --- CONFIGURAÇÕES E ELEMENTOS GLOBAIS ---
+const CLOUD_FUNCTION_URL = 'https://gerador-de-conteudo-proxy-965564957987.southamerica-east1.run.app';
 
-    // Mapeamento de tema por dia da semana (getDay: 0=Dom, ... 6=Sáb)
-    const THEMES = {
-      0: 'Mercado (Brasil e exterior)',
-      1: 'Motivacional | Inspiracional', // AJUSTE 2: Tema de Segunda alterado
-      2: 'Gestão da Inovação',
-      3: 'Liderança empresarial estratégica',
-      4: 'Case (próprio ou não)',
-      5: 'Tecnologia e Inovação',
-      6: '"Assessoria de imprensa"'
+const THEMES = {
+  0: { title: 'Mercado (Brasil e exterior)', content: `<ul><li>Dados e infográficos</li> <li>Mercados emergentes e cenários</li> <li>Tendências e legislação</li> <li>Modelos econômicos</li> <li>Comportamentos de mercado</li> <li>Futuro das organizações</li></ul>`},
+  1: { title: 'Motivacional | Inspiracional', content: `<ul><li>Destacar seu lado mais humano</li> <li>Motivar as pessoas</li> <li>Trazer energia/inspiração</li> <li>Criar estímulos</li> <li>Destacar seus valores humanos mais fortes</li></ul>`},
+  2: { title: 'Gestão da Inovação', content: `<ul><li>Indicadores</li><li>Técnicas</li><li>Definição de metas</li><li>Reciclagem de conceitos</li><li>Produtividade, eficiência e redução de custos</li></ul>`},
+  3: { title: 'Liderança empresarial estratégica', content: `<ul><li>O poder de liderar pelo exemplo</li> <li>Passar imagem de quem coordenou equipes</li> <li>Equipe como fator de mudança</li> <li>Dificuldades e erros na liderança</li> <li>A liderança na mudança do rumo empresarial</li> <li>Processos colaborativos</li></ul>`},
+  4: { title: 'Case (próprio ou não)', content: `<ul><li>Situações que viveu</li><li>Erros e acertos que viu</li><li>Erros e acertos que viveu</li><li>Doar ensinamentos por meio de histórias</li></ul>`},
+  5: { title: 'Tecnologia e Inovação', content: `<ul><li>O que há de novo em métodos e processos</li> <li>O que há de novo em equipamentos</li> <li>Em quem se espelhar</li> <li>Tecnologias para agregar ao gestor</li> <li>Apps, IoT, Big Data, Cloud, 5G, IA...</li></ul>`},
+  6: { title: '"Assessoria de imprensa"', content: `<ul><li>Palestras e entrevistas</li><li>Treinamentos e eventos</li><li>TV, rádio, podcast</li><li>Certificados</li><li>Coluna em jornal ou blog</li><li>Viagens</li></ul>`}
+};
+
+const temaHidden = document.getElementById('tema');
+const temaText = document.getElementById('temaText');
+const guidanceContainer = document.querySelector('.daily-guidance-container');
+const geminiPanel = document.getElementById('gemini-interaction-panel');
+const mainTextarea = document.getElementById('texto');
+
+// --- FUNÇÃO PRINCIPAL DE COMUNICAÇÃO COM A IA ---
+async function callGemini(prompt) {
+  try {
+    const response = await fetch(CLOUD_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: prompt })
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.response;
+  } catch (error) {
+    console.error('Erro ao chamar a Cloud Function:', error);
+    return `Ocorreu um erro ao comunicar com a IA. Detalhes: ${error.message}`;
+  }
+}
+
+// --- ETAPAS DO FLUXO DE GERAÇÃO DE CONTEÚDO ---
+
+// ETAPA 1: Gerar e exibir sugestões de tópicos
+async function generateTopicSuggestions(theme) {
+  geminiPanel.style.display = 'block';
+  geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando sugestões de tópicos...</h3><div class="loading">Aguarde, consultando a IA.</div>`;
+  
+  const prompt = `Você é um especialista em conteúdo para LinkedIn. Para o tema "${theme}", sugira 4 tópicos específicos e atraentes para um post. Para cada tópico, forneça um breve parágrafo explicativo (1-2 frases). Formate a resposta exatamente como: [TÓPICO]: [EXPLICAÇÃO] e separe cada um com uma nova linha.`;
+  const responseText = await callGemini(prompt);
+  
+  // Parse da resposta
+  const suggestions = responseText.split('\n').filter(s => s.trim() !== '').map(line => {
+    const parts = line.split(':');
+    return {
+      topic: parts[0].trim(),
+      description: parts.slice(1).join(':').trim()
     };
+  });
 
-    const temaHidden = document.getElementById('tema');
-    const temaText = document.getElementById('temaText');
-    const allDayBlocks = document.querySelectorAll('.day-block');
+  let suggestionsHtml = `<h3><span class="dot"></span> 1. Escolha os tópicos para o rascunho:</h3>`;
+  suggestions.forEach((s, index) => {
+    suggestionsHtml += `
+      <div class="topic-suggestion">
+        <label>
+          <input type="checkbox" name="topic" value="${s.topic}">
+          <div>
+            <strong>${s.topic}</strong>
+            <p>${s.description}</p>
+          </div>
+        </label>
+      </div>
+    `;
+  });
+  suggestionsHtml += `<button type="button" class="btn-primary" id="btnGenerateDraft">Gerar Rascunho</button>`;
+  geminiPanel.innerHTML = suggestionsHtml;
 
-    function setThemeFromDate(dateObj){
-      allDayBlocks.forEach(block => { block.style.display = 'none'; });
+  document.getElementById('btnGenerateDraft').addEventListener('click', generateDraft);
+}
 
-      if (!(dateObj instanceof Date) || isNaN(dateObj)) {
-        temaHidden.value='';
-        temaText.textContent=''; // AJUSTE 1: Texto vazio quando sem data
+// ETAPA 2: Gerar rascunho com base nos tópicos selecionados
+async function generateDraft() {
+  const selectedTopics = Array.from(document.querySelectorAll('input[name="topic"]:checked')).map(cb => cb.value);
+  if (selectedTopics.length === 0) {
+    alert('Por favor, selecione pelo menos um tópico.');
+    return;
+  }
+  
+  geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando rascunho do texto...</h3><div class="loading">Aguarde, a IA está escrevendo.</div>`;
+
+  const prompt = `Você é um especialista em conteúdo para LinkedIn. Crie um rascunho de post para LinkedIn combinando os seguintes tópicos: "${selectedTopics.join(', ')}". O texto deve ser profissional, usar parágrafos curtos, emojis relevantes e ser estruturado para engajamento. Não adicione hashtags ainda.`;
+  const draftText = await callGemini(prompt);
+
+  displayDraftForFeedback(draftText);
+}
+
+// ETAPA 3: Exibir rascunho e pedir feedback
+function displayDraftForFeedback(draftText) {
+  geminiPanel.innerHTML = `
+    <h3><span class="dot"></span> 2. Adicione suas ideias para refinar o rascunho:</h3>
+    <div class="draft-review-area">${draftText}</div>
+    <label for="userFeedback">Adicione informações pessoais, histórias, dados ou correções:</label>
+    <textarea id="userFeedback" placeholder="Ex: 'No terceiro parágrafo, citar o projeto XPTO que realizamos...' ou 'Adicionar um dado sobre o crescimento de 25% no setor...'"></textarea>
+    <button type="button" class="btn-primary" id="btnGenerateFinal">Gerar Versão Final</button>
+  `;
+  
+  // Guardar o rascunho para a próxima etapa
+  geminiPanel.dataset.draft = draftText;
+
+  document.getElementById('btnGenerateFinal').addEventListener('click', generateFinalVersion);
+}
+
+// ETAPA 4: Gerar versão final com base no feedback
+async function generateFinalVersion() {
+    const draftText = geminiPanel.dataset.draft;
+    const userFeedback = document.getElementById('userFeedback').value;
+
+    if (!userFeedback.trim()) {
+        alert('Por favor, adicione alguma informação para refinar o texto.');
         return;
-      }
-      
-      const day = dateObj.getDay();
-      const t = THEMES[day] || '';
-      
-      temaHidden.value = t;
-      temaText.textContent = t || '—';
-
-      const blockToShow = document.getElementById(`day-${day}`);
-      if (blockToShow) {
-        blockToShow.style.display = 'block';
-      }
     }
 
-    // Date picker
-    window.addEventListener('load', () => {
-      if (window.flatpickr) {
-        flatpickr('#data', {
-          locale: flatpickr.l10ns.pt,
-          dateFormat: 'd/m/Y',
-          disableMobile: false,
-          onChange: (selectedDates) => setThemeFromDate(selectedDates[0])
-        });
-      }
+    geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando versão final...</h3><div class="loading">Aguarde, a IA está personalizando seu texto.</div>`;
+
+    const prompt = `Você é um especialista em conteúdo para LinkedIn. Refine o seguinte rascunho de post:\n\n---RASCUNHO---\n${draftText}\n\n---FIM DO RASCUNHO---\n\nAplique as seguintes instruções e adições do usuário para personalizar e enriquecer o texto:\n\n---INSTRUÇÕES DO USUÁRIO---\n${userFeedback}\n\n---FIM DAS INSTRUÇÕES---\n\nReescreva o post de forma coesa, incorporando as novas informações. Ao final, adicione 3 a 5 hashtags relevantes.`;
+    const finalText = await callGemini(prompt);
+
+    mainTextarea.value = finalText;
+    updateCount(); // Atualiza o contador de caracteres
+    geminiPanel.style.display = 'none'; // Esconde o painel de interação
+    geminiPanel.innerHTML = '';
+}
+
+
+// --- LÓGICA DA PÁGINA E EVENTOS ---
+
+function setThemeFromDate(dateObj) {
+  guidanceContainer.innerHTML = '';
+  geminiPanel.style.display = 'none';
+  geminiPanel.innerHTML = '';
+
+  if (!(dateObj instanceof Date) || isNaN(dateObj)) {
+    temaHidden.value = '';
+    temaText.textContent = '';
+    return;
+  }
+  
+  const day = dateObj.getDay();
+  const themeData = THEMES[day] || { title: '', content: '' };
+  
+  temaHidden.value = themeData.title;
+  temaText.textContent = themeData.title || '—';
+
+  // Exibe o bloco de dicas do dia
+  const dayClass = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][day];
+  const dayName = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][day];
+
+  const dayBlockHtml = `
+    <div id="day-${day}" class="day-block" style="display: block;">
+      <div class="day-header ${dayClass}">
+        <h2>${dayName}</h2>
+        <p class="theme">${themeData.title}</p>
+      </div>
+      <div class="day-content">${themeData.content}</div>
+    </div>
+  `;
+  guidanceContainer.innerHTML = dayBlockHtml;
+  
+  // Inicia a interação com a IA
+  if(themeData.title) {
+    generateTopicSuggestions(themeData.title);
+  }
+}
+
+// Date picker
+window.addEventListener('load', () => {
+  if (window.flatpickr) {
+    flatpickr('#data', {
+      locale: flatpickr.l10ns.pt,
+      dateFormat: 'd/m/Y',
+      disableMobile: false,
+      onChange: (selectedDates) => setThemeFromDate(selectedDates[0])
+    });
+  }
+});
+
+// Contador + limite
+document.getElementById('yy').textContent = new Date().getFullYear();
+const MAX = 3000;
+const count = document.getElementById('count');
+const meterBar = document.getElementById('meterBar');
+
+function updateCount(){
+  let val = mainTextarea.value;
+  if (val.length > MAX) { val = val.slice(0, MAX); mainTextarea.value = val; }
+  const used = val.length;
+  count.textContent = used.toLocaleString('pt-BR') + ' / ' + MAX.toLocaleString('pt-BR');
+  meterBar.style.width = Math.min(100, Math.round((used / MAX) * 100)) + '%';
+  count.classList.toggle('danger', used >= MAX);
+}
+mainTextarea.addEventListener('input', updateCount); updateCount();
+
+// Ações dos botões
+document.getElementById('btnCopy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(mainTextarea.value);
+    count.textContent = 'Copiado para a área de transferência!'; setTimeout(updateCount, 1500);
+  } catch { alert('Não foi possível copiar. Selecione o texto e use Ctrl/Cmd+C.'); }
+});
+
+document.querySelector('button[type="reset"]').addEventListener('click', () => {
+    setTimeout(() => {
+        updateCount();
+        setThemeFromDate(null);
+    }, 0);
+});
+
+document.getElementById('btnDocx').addEventListener('click', async () => {
+  const dataStr = document.getElementById('data').value.trim();
+  const tema = document.getElementById('tema').value.trim();
+  const corpo = mainTextarea.value.trim();
+
+  if (!dataStr || !tema || !corpo) {
+    alert('Preencha a Data, o Tema e o Texto antes de gerar o DOCX.');
+    return;
+  }
+
+  const [d, m, y] = dataStr.split('/');
+  const yyyy = String(y).padStart(4, '0');
+  const mm   = String(m).padStart(2, '0');
+  const dd   = String(d).padStart(2, '0');
+
+  const temaParaArquivo = tema.replace(/[^\w\s]/gi, '').trim();
+  const fileName = `${yyyy}${mm}${dd} - ${temaParaArquivo}.docx`;
+  const titulo = `Conteúdo – ${tema} – ${d}/${m}/${y}`;
+
+  try {
+    const { Document, Packer, Paragraph, HeadingLevel, TextRun } = window.docx;
+    const paras = [];
+    paras.push(new Paragraph({ children: [ new TextRun({ text: titulo, bold: true }) ], heading: HeadingLevel.HEADING_2 }));
+    paras.push(new Paragraph(" "));
+    corpo.split(/\n/).forEach(l => paras.push(new Paragraph(l)));
+
+    const doc = new Document({
+      creator: "Renato Douek", title: titulo,
+      description: "Gerado a partir da ferramenta de conteúdo",
+      styles: { default: { document: { run: { font: "Calibri", size: 24 } } } },
+      sections: [{ properties: {}, children: paras }]
     });
 
-    // Contador + limite
-    const MAX = 3000;
-    const textarea = document.getElementById('texto');
-    const count = document.getElementById('count');
-    const meterBar = document.getElementById('meterBar');
-
-    function updateCount(){
-      let val = textarea.value;
-      if (val.length > MAX) { val = val.slice(0, MAX); textarea.value = val; }
-      const used = val.length;
-      count.textContent = used.toLocaleString('pt-BR') + ' / ' + MAX.toLocaleString('pt-BR');
-      meterBar.style.width = Math.min(100, Math.round((used / MAX) * 100)) + '%';
-      count.classList.toggle('danger', used >= MAX);
-    }
-    textarea.addEventListener('input', updateCount); updateCount();
-
-    // Copiar
-    document.getElementById('btnCopy').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(textarea.value);
-        count.textContent = 'Copiado para a área de transferência!'; setTimeout(updateCount, 1500);
-      } catch { alert('Não foi possível copiar. Selecione o texto e use Ctrl/Cmd+C.'); }
-    });
-    
-    // Limpar formulário
-    document.querySelector('button[type="reset"]').addEventListener('click', () => {
-        setTimeout(() => {
-            updateCount();
-            setThemeFromDate(null);
-        }, 0);
-    });
-
-    // DOCX
-    document.getElementById('btnDocx').addEventListener('click', async () => {
-      const dataStr = document.getElementById('data').value.trim();
-      const tema = document.getElementById('tema').value.trim();
-      const corpo = document.getElementById('texto').value.trim();
-
-      if (!dataStr || !tema || !corpo) {
-        alert('Preencha a Data (para definir o tema automaticamente) e o Texto antes de gerar o DOCX.');
-        return;
-      }
-
-      const [d, m, y] = dataStr.split('/');
-      const yyyy = String(y).padStart(4, '0');
-      const mm   = String(m).padStart(2, '0');
-      const dd   = String(d).padStart(2, '0');
-
-      const temaParaArquivo = tema.replace(/[^\w\s]/gi, '').trim();
-      const fileName = `${yyyy}${mm}${dd} - ${temaParaArquivo}.docx`;
-
-      const titulo = `Conteúdo – ${tema} – ${d}/${m}/${y}`;
-
-      try {
-        const { Document, Packer, Paragraph, HeadingLevel, TextRun } = window.docx;
-        const paras = [];
-        paras.push(new Paragraph({ children: [ new TextRun({ text: titulo, bold: true }) ], heading: HeadingLevel.HEADING_2 }));
-        paras.push(new Paragraph(" "));
-        
-        corpo.split(/\n/).forEach(l => paras.push(new Paragraph(l)));
-
-        const doc = new Document({
-          creator: "Renato Douek",
-          title: titulo,
-          description: "Gerado em renatodouek.com.br/geradordeconteudo",
-          styles: {
-            default: { document: { run: { font: "Calibri", size: 24 } } }
-          },
-          sections: [{ properties: {}, children: paras }]
-        });
-
-        const blob = await Packer.toBlob(doc);
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
-      } catch (e) {
-        console.error(e);
-        alert('Não foi possível gerar o DOCX. Recarregue a página e tente novamente.');
-      }
-    });
-
-  </script>
+    const blob = await Packer.toBlob(doc);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  } catch (e) { console.error(e); alert('Não foi possível gerar o DOCX.'); }
+});
+</script>
 </body>
 </html>
