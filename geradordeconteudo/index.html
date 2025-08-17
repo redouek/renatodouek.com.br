@@ -82,7 +82,7 @@
     #day-5 .day-content li::before { color: #17a2b8; } #day-6 .day-content li::before { color: #f76707; }
     #day-0 .day-content li::before { color: #ff6b6b; }
 
-    /* --- ESTILOS PARA INTERAÇÃO COM A IA --- */
+    /* --- IA --- */
     .gemini-interaction-panel {
       background: #1f1f1f; border: 1px dashed var(--border); border-radius: var(--radius);
       padding: 20px; margin-top: 14px;
@@ -96,6 +96,9 @@
     .gemini-interaction-panel .draft-review-area { border: 1px solid var(--border); border-radius: 10px; padding: 15px; background: #2a2a2a; margin-bottom: 15px; white-space: pre-wrap; font-size: 14px; line-height: 1.6; }
     .gemini-interaction-panel textarea { width: 100%; min-height: 100px; margin-top: 10px; }
 
+    /* Botão entre temas e textarea */
+    #gemini-trigger { display:none; margin-top: 8px; }
+    #gemini-trigger .btn-primary { padding-left:18px; padding-right:18px; }
 
     @media (max-width:760px){.row{grid-template-columns:1fr}}
   </style>
@@ -125,13 +128,17 @@
 
         <section class="daily-guidance-container"></section>
 
-        <div id="gemini-interaction-panel" class="gemini-interaction-panel" style="display: none;"></div>
+        <!-- Botão que passa a aparecer após escolher a data/tema -->
+        <div id="gemini-trigger" class="actions">
+          <button type="button" class="btn-primary" id="btnShowSuggestions">Gerar sugestões com Gemini</button>
+        </div>
 
+        <div id="gemini-interaction-panel" class="gemini-interaction-panel" style="display: none;"></div>
 
         <div class="row full">
           <div>
             <label for="texto">Texto (máx. 3.000 caracteres)</label>
-            <textarea id="texto" name="texto" spellcheck="true" lang="pt-BR" placeholder="Selecione uma data para iniciar a geração de conteúdo com IA..."></textarea>
+            <textarea id="texto" name="texto" spellcheck="true" lang="pt-BR" placeholder="Selecione uma data, veja o tema do dia e use a IA quando quiser."></textarea>
             <div class="counter">
               <div class="meter"><span id="meterBar"></span></div>
               <div id="count" class="count">0 / 3000</div>
@@ -152,7 +159,9 @@
   </div>
 
 <script>
-// --- CONFIGURAÇÕES E ELEMENTOS GLOBAIS ---
+/* ==========================
+   CONFIG E ELEMENTOS GLOBAIS
+   ========================== */
 const CLOUD_FUNCTION_URL = 'https://gerador-de-conteudo-proxy-965564957987.southamerica-east1.run.app';
 
 const THEMES = {
@@ -168,54 +177,108 @@ const THEMES = {
 const temaHidden = document.getElementById('tema');
 const temaText = document.getElementById('temaText');
 const guidanceContainer = document.querySelector('.daily-guidance-container');
+const geminiTrigger = document.getElementById('gemini-trigger');
+const btnShowSuggestions = document.getElementById('btnShowSuggestions');
 const geminiPanel = document.getElementById('gemini-interaction-panel');
 const mainTextarea = document.getElementById('texto');
 
-// --- FUNÇÃO PRINCIPAL DE COMUNICAÇÃO COM A IA ---
-async function callGemini(prompt) {
-  try {
-    const response = await fetch(CLOUD_FUNCTION_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: prompt })
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return data.response;
-  } catch (error) {
-    console.error('Erro ao chamar a Cloud Function:', error);
-    return `Ocorreu um erro ao comunicar com a IA. Detalhes: ${error.message}`;
+/* ==========================
+   IA: CHAMADA AO BACKEND
+   ========================== */
+async function callGemini(prompt, { modelId = 'gemini-2.5-pro', generationConfig = {} } = {}) {
+  const response = await fetch(CLOUD_FUNCTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, modelId, generationConfig })
+  });
+  if (!response.ok) {
+    let msg = `HTTP ${response.status}`;
+    try { const e = await response.json(); msg = e?.message || e?.error || msg; } catch {}
+    throw new Error(msg);
   }
+  const data = await response.json();
+  console.info('[IA]', data.provider || '-', data.model || '-'); // apikey/vertex
+  return data.response;
 }
 
-// --- ETAPAS DO FLUXO DE GERAÇÃO DE CONTEÚDO ---
+/* ==========================
+   PROMPT MESTRE (sua voz)
+   ========================== */
+const MASTER_STYLE = (tema) => `
+[PROMPT MESTRE DE ESTILO - RENATO DOUEK]
+1. PERSONA:
+Assuma a persona de Renato Douek, um C-Level, estrategista de negócios e líder de pensamento. Sua escrita é uma mistura de analista de mercado, mentor de liderança e inovador pragmático. A voz é sofisticada, mas acessível; provocativa, mas sempre construtiva.
 
-// ETAPA 1: Gerar e exibir sugestões de tópicos
+2. OBJETIVO:
+Criar um post para o LinkedIn com até 3000 caracteres sobre o tema: "${tema}". O post deve seguir rigorosamente a estrutura e as regras de estilo abaixo.
+
+3. ESTRUTURA NARRATIVA OBRIGATÓRIA (A Jornada do Leitor):
+Passo 1: O Gancho de Loop Aberto (1–2 linhas). Traga um paradoxo/pergunta. NÃO entregue a conclusão no gancho.
+Passo 2: O Contexto/Problema (valide a dor).
+Passo 3: A Virada (tese/história/case/análise) com exemplos concretos e storytelling.
+Passo 4: O Ensinamento Universal (lição clara e aplicável).
+Passo 5: O Fechamento de Impacto (frase curta, memorável).
+Passo 6: A Pergunta de Engajamento (aberta e inteligente).
+
+4. REGRAS DE ESTILO:
+- Parágrafos curtos (1–3 linhas). Use quebras de linha para ritmo/pausas.
+- Linguagem direta e ativa. Metáforas/analogias de negócio quando ajudarem (sem exagero).
+- Não use emojis. Gramática impecável. Evite jargão vazio.
+- Hashtags: bloco final com 4–5, começando por #renatodouek. Pode usar 1–2 hashtags orgânicas no corpo quando fizer sentido.
+
+(IMPORTANTE) Saída: apenas o texto final do post. Sem rótulos de seção e sem explicações.
+`;
+
+/* ==========================
+   ETAPAS DO FLUXO COM IA
+   ========================== */
+
+// 1) Sugestões (geradas só quando você clicar no botão)
 async function generateTopicSuggestions(theme) {
+  const tema = (temaHidden.value || temaText.textContent || theme || '').trim();
+  if (!tema) {
+    alert('Selecione uma data para definir o tema do dia.');
+    return;
+  }
+
   geminiPanel.style.display = 'block';
   geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando sugestões de tópicos...</h3><div class="loading">Aguarde, consultando a IA.</div>`;
-  
-  const prompt = `Você é um especialista em conteúdo para LinkedIn. Para o tema "${theme}", sugira 4 tópicos específicos e atraentes para um post. Para cada tópico, forneça um breve parágrafo explicativo (1-2 frases). Formate a resposta exatamente como: [TÓPICO]: [EXPLICAÇÃO] e separe cada um com uma nova linha.`;
-  const responseText = await callGemini(prompt);
-  
-  // Parse da resposta
-  const suggestions = responseText.split('\n').filter(s => s.trim() !== '').map(line => {
-    const parts = line.split(':');
-    return {
-      topic: parts[0].trim(),
-      description: parts.slice(1).join(':').trim()
-    };
+
+  const prompt = `
+${MASTER_STYLE(tema)}
+Gere exatamente 4 ideias de posts sobre "${tema}".
+Para cada ideia, traga:
+- "topic": título conciso;
+- "description": 1 frase de ângulo/abordagem.
+
+Responda ESTRITAMENTE em JSON no formato:
+[
+  {"topic":"...", "description":"..."},
+  {"topic":"...", "description":"..."},
+  {"topic":"...", "description":"..."},
+  {"topic":"...", "description":"..."}
+]
+  `;
+
+  const responseText = await callGemini(prompt, {
+    modelId: 'gemini-2.5-flash',
+    generationConfig: { temperature: 0.95, topP: 0.9, maxOutputTokens: 600, responseMimeType: 'application/json' }
   });
 
-  let suggestionsHtml = `<h3><span class="dot"></span> 1. Escolha os tópicos para o rascunho:</h3>`;
+  let suggestions;
+  try { suggestions = JSON.parse(responseText); } catch { suggestions = []; }
+
+  if (!Array.isArray(suggestions) || suggestions.length === 0) {
+    geminiPanel.innerHTML = `<div class="loading">Não consegui gerar sugestões. Tente novamente.</div>`;
+    return;
+  }
+
+  let suggestionsHtml = `<h3><span class="dot"></span> 1. Selecione até 2 tópicos:</h3>`;
   suggestions.forEach((s, index) => {
     suggestionsHtml += `
       <div class="topic-suggestion">
         <label>
-          <input type="checkbox" name="topic" value="${s.topic}">
+          <input type="checkbox" name="topic" value="${s.topic}" ${index < 2 ? 'checked' : ''}>
           <div>
             <strong>${s.topic}</strong>
             <p>${s.description}</p>
@@ -230,82 +293,119 @@ async function generateTopicSuggestions(theme) {
   document.getElementById('btnGenerateDraft').addEventListener('click', generateDraft);
 }
 
-// ETAPA 2: Gerar rascunho com base nos tópicos selecionados
+// 2) Rascunho (modelo Pro)
 async function generateDraft() {
+  const tema = (temaHidden.value || temaText.textContent || '').trim();
   const selectedTopics = Array.from(document.querySelectorAll('input[name="topic"]:checked')).map(cb => cb.value);
   if (selectedTopics.length === 0) {
     alert('Por favor, selecione pelo menos um tópico.');
     return;
   }
-  
-  geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando rascunho do texto...</h3><div class="loading">Aguarde, a IA está escrevendo.</div>`;
 
-  const prompt = `Você é um especialista em conteúdo para LinkedIn. Crie um rascunho de post para LinkedIn combinando os seguintes tópicos: "${selectedTopics.join(', ')}". O texto deve ser profissional, usar parágrafos curtos, emojis relevantes e ser estruturado para engajamento. Não adicione hashtags ainda.`;
-  const draftText = await callGemini(prompt);
+  geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando rascunho...</h3><div class="loading">Aguarde, a IA está escrevendo.</div>`;
+
+  const prompt = `
+${MASTER_STYLE(tema)}
+Baseie-se nestes tópicos: ${selectedTopics.map(t => `"${t}"`).join(', ')}.
+
+Produza o post completo seguindo a Jornada do Leitor, com até 3000 caracteres.
+Parágrafos de 1–3 linhas. Linguagem direta. Sem rótulos de seção e SEM hashtags nesta etapa.
+  `;
+
+  const draftText = await callGemini(prompt, {
+    modelId: 'gemini-2.5-pro',
+    generationConfig: { temperature: 0.7, topP: 0.9, maxOutputTokens: 1100 }
+  });
 
   displayDraftForFeedback(draftText);
 }
 
-// ETAPA 3: Exibir rascunho e pedir feedback
+// 3) Exibir rascunho e solicitar feedback
 function displayDraftForFeedback(draftText) {
   geminiPanel.innerHTML = `
-    <h3><span class="dot"></span> 2. Adicione suas ideias para refinar o rascunho:</h3>
+    <h3><span class="dot"></span> 2. Adicione suas instruções para refinar:</h3>
     <div class="draft-review-area">${draftText}</div>
-    <label for="userFeedback">Adicione informações pessoais, histórias, dados ou correções:</label>
-    <textarea id="userFeedback" placeholder="Ex: 'No terceiro parágrafo, citar o projeto XPTO que realizamos...' ou 'Adicionar um dado sobre o crescimento de 25% no setor...'"></textarea>
+    <label for="userFeedback">Instruções do autor (o que ajustar, dados, exemplos etc.):</label>
+    <textarea id="userFeedback" placeholder="Ex.: 'No 3º parágrafo, citar o projeto XPTO e trocar o fecho por algo mais direto.'"></textarea>
     <button type="button" class="btn-primary" id="btnGenerateFinal">Gerar Versão Final</button>
   `;
-  
-  // Guardar o rascunho para a próxima etapa
   geminiPanel.dataset.draft = draftText;
-
   document.getElementById('btnGenerateFinal').addEventListener('click', generateFinalVersion);
 }
 
-// ETAPA 4: Gerar versão final com base no feedback
-async function generateFinalVersion() {
-    const draftText = geminiPanel.dataset.draft;
-    const userFeedback = document.getElementById('userFeedback').value;
-
-    if (!userFeedback.trim()) {
-        alert('Por favor, adicione alguma informação para refinar o texto.');
-        return;
-    }
-
-    geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando versão final...</h3><div class="loading">Aguarde, a IA está personalizando seu texto.</div>`;
-
-    const prompt = `Você é um especialista em conteúdo para LinkedIn. Refine o seguinte rascunho de post:\n\n---RASCUNHO---\n${draftText}\n\n---FIM DO RASCUNHO---\n\nAplique as seguintes instruções e adições do usuário para personalizar e enriquecer o texto:\n\n---INSTRUÇÕES DO USUÁRIO---\n${userFeedback}\n\n---FIM DAS INSTRUÇÕES---\n\nReescreva o post de forma coesa, incorporando as novas informações. Ao final, adicione 3 a 5 hashtags relevantes.`;
-    const finalText = await callGemini(prompt);
-
-    mainTextarea.value = finalText;
-    updateCount(); // Atualiza o contador de caracteres
-    geminiPanel.style.display = 'none'; // Esconde o painel de interação
-    geminiPanel.innerHTML = '';
+// Auxiliar para garantir <= 3000 chars
+function clipTo(text, limit = 3000) {
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  const last = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('!\n'), cut.lastIndexOf('?\n'));
+  return last > 1000 ? cut.slice(0, last + 1) : cut;
 }
 
+// 4) Versão final (Pro + hashtags)
+async function generateFinalVersion() {
+  const tema = (temaHidden.value || temaText.textContent || '').trim();
+  const draftText = geminiPanel.dataset.draft;
+  const userFeedback = document.getElementById('userFeedback').value || '';
 
-// --- LÓGICA DA PÁGINA E EVENTOS ---
+  if (!userFeedback.trim()) {
+    alert('Por favor, adicione alguma informação para refinar o texto.');
+    return;
+  }
 
+  geminiPanel.innerHTML = `<h3><span class="dot"></span> Refinando...</h3><div class="loading">Aguarde, a IA está personalizando seu texto.</div>`;
+
+  const prompt = `
+${MASTER_STYLE(tema)}
+Refine o rascunho abaixo incorporando SOMENTE as instruções do autor (entre aspas) e mantendo o limite de 3000 caracteres:
+"${userFeedback}"
+
+Regras:
+- Preserve a estrutura (gancho → contexto → virada → ensinamento → fechamento → pergunta).
+- Parágrafos curtos (1–3 linhas). Linguagem direta, sem jargão vazio. Sem emojis.
+- Sem rótulos de seção.
+- Ao final, adicione um bloco com 4–5 hashtags (a primeira deve ser #renatodouek) e, se fizer sentido, 1–2 hashtags orgânicas no corpo.
+
+--- RASCUNHO ---
+${draftText}
+--- FIM RASCUNHO ---
+  `;
+
+  const finalText = await callGemini(prompt, {
+    modelId: 'gemini-2.5-pro',
+    generationConfig: { temperature: 0.65, topP: 0.9, maxOutputTokens: 1200 }
+  });
+
+  const clipped = clipTo(finalText, 3000);
+  mainTextarea.value = clipped;
+  updateCount();
+  // Mantenho o painel aberto para novo refinamento, caso queira; para esconder:
+  // geminiPanel.style.display = 'none'; geminiPanel.innerHTML = '';
+}
+
+/* ==========================
+   LÓGICA DA PÁGINA / EVENTOS
+   ========================== */
 function setThemeFromDate(dateObj) {
   guidanceContainer.innerHTML = '';
   geminiPanel.style.display = 'none';
   geminiPanel.innerHTML = '';
+  geminiTrigger.style.display = 'none';
 
   if (!(dateObj instanceof Date) || isNaN(dateObj)) {
     temaHidden.value = '';
     temaText.textContent = '';
     return;
   }
-  
+
   const day = dateObj.getDay();
   const themeData = THEMES[day] || { title: '', content: '' };
-  
+
   temaHidden.value = themeData.title;
   temaText.textContent = themeData.title || '—';
 
-  // Exibe o bloco de dicas do dia
-  const dayClass = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][day];
-  const dayName = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][day];
+  // Bloco de dicas do dia
+  const dayClass = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][day];
+  const dayName  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][day];
 
   const dayBlockHtml = `
     <div id="day-${day}" class="day-block" style="display: block;">
@@ -317,10 +417,11 @@ function setThemeFromDate(dateObj) {
     </div>
   `;
   guidanceContainer.innerHTML = dayBlockHtml;
-  
-  // Inicia a interação com a IA
-  if(themeData.title) {
-    generateTopicSuggestions(themeData.title);
+
+  // Exibe o botão para gerar sugestões (só quando houver tema)
+  if (themeData.title) {
+    geminiTrigger.style.display = 'flex';
+    btnShowSuggestions.onclick = () => generateTopicSuggestions(themeData.title);
   }
 }
 
@@ -352,7 +453,7 @@ function updateCount(){
 }
 mainTextarea.addEventListener('input', updateCount); updateCount();
 
-// Ações dos botões
+// Botões
 document.getElementById('btnCopy').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(mainTextarea.value);
     count.textContent = 'Copiado para a área de transferência!'; setTimeout(updateCount, 1500);
@@ -360,10 +461,10 @@ document.getElementById('btnCopy').addEventListener('click', async () => {
 });
 
 document.querySelector('button[type="reset"]').addEventListener('click', () => {
-    setTimeout(() => {
-        updateCount();
-        setThemeFromDate(null);
-    }, 0);
+  setTimeout(() => {
+    updateCount();
+    setThemeFromDate(null);
+  }, 0);
 });
 
 document.getElementById('btnDocx').addEventListener('click', async () => {
