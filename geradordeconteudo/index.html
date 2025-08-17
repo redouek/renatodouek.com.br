@@ -97,8 +97,25 @@
     .gemini-interaction-panel textarea { width: 100%; min-height: 100px; margin-top: 10px; }
 
     /* Botão entre temas e textarea */
-    #gemini-trigger { display:none; margin-top: 8px; }
-    #gemini-trigger .btn-primary { padding-left:18px; padding-right:18px; }
+/* container do botão: aparece à direita e com espaço abaixo */
+#gemini-trigger {
+  display: none;
+  margin-top: 8px;
+  margin-bottom: 10px;         /* novo */
+  justify-content: flex-end;   /* novo (alinha à direita) */
+}
+
+/* botão com estilo “ghost”, mas borda amarela */
+#gemini-trigger .btn-ghost {
+  padding-left: 18px;
+  padding-right: 18px;
+  border-color: #fcc000;       /* linha amarela */
+}
+
+/* (opcional) leve destaque no hover mantendo o amarelo */
+#gemini-trigger .btn-ghost:hover {
+  border-color: #ffd24d;
+}
 
     @media (max-width:760px){.row{grid-template-columns:1fr}}
   </style>
@@ -130,7 +147,7 @@
 
         <!-- Botão que passa a aparecer após escolher a data/tema -->
         <div id="gemini-trigger" class="actions">
-          <button type="button" class="btn-primary" id="btnShowSuggestions">Gerar sugestões com Gemini</button>
+          <button type="button" class="btn-ghost" id="btnShowSuggestions">Gerar sugestões com Gemini</button>
         </div>
 
         <div id="gemini-interaction-panel" class="gemini-interaction-panel" style="display: none;"></div>
