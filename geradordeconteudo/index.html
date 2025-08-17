@@ -203,13 +203,11 @@ const mainTextarea = document.getElementById('texto');
    IA: CHAMADA AO BACKEND
    ========================== */
 // Substitua toda a função callGemini por esta versão com timeout e logs
-async function callGemini(prompt, { modelId = 'gemini-2.5-pro', generationConfig = {} } = {}) {
+async function callGemini(prompt, { modelId = 'gemini-2.5-flash', generationConfig = {} } = {}) {
   const controller = new AbortController();
-  const timeoutMs = 30000; // 30s
-  const timer = setTimeout(() => controller.abort('timeout'), timeoutMs);
+  const timer = setTimeout(() => controller.abort('timeout'), 30000);
 
   try {
-    console.info('[IA] request →', { modelId, generationConfig });
     const response = await fetch(CLOUD_FUNCTION_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -217,27 +215,16 @@ async function callGemini(prompt, { modelId = 'gemini-2.5-pro', generationConfig
       signal: controller.signal
     });
 
-    let payloadText = '';
-    try { payloadText = await response.clone().text(); } catch {}
-    console.info('[IA] raw payload:', payloadText?.slice(0, 400));
-
     if (!response.ok) {
       let msg = `HTTP ${response.status}`;
-      try {
-        const e = await response.json();
-        msg = e?.message || e?.error || msg;
-      } catch {}
+      try { const e = await response.json(); msg = e?.message || e?.error || msg; } catch {}
       throw new Error(msg);
     }
 
     const data = await response.json();
-    console.info('[IA] provider/model →', data.provider || '-', data.model || '-');
+    console.info('[IA] provider/model:', data.provider, data.model);
     return data.response;
 
-  } catch (err) {
-    console.error('[IA] erro na chamada:', err?.message || err);
-    // Propaga o erro para a tela de sugestões lidar
-    throw err;
   } finally {
     clearTimeout(timer);
   }
