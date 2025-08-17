@@ -202,20 +202,45 @@ const mainTextarea = document.getElementById('texto');
 /* ==========================
    IA: CHAMADA AO BACKEND
    ========================== */
+// Substitua toda a função callGemini por esta versão com timeout e logs
 async function callGemini(prompt, { modelId = 'gemini-2.5-pro', generationConfig = {} } = {}) {
-  const response = await fetch(CLOUD_FUNCTION_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, modelId, generationConfig })
-  });
-  if (!response.ok) {
-    let msg = `HTTP ${response.status}`;
-    try { const e = await response.json(); msg = e?.message || e?.error || msg; } catch {}
-    throw new Error(msg);
+  const controller = new AbortController();
+  const timeoutMs = 30000; // 30s
+  const timer = setTimeout(() => controller.abort('timeout'), timeoutMs);
+
+  try {
+    console.info('[IA] request →', { modelId, generationConfig });
+    const response = await fetch(CLOUD_FUNCTION_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, modelId, generationConfig }),
+      signal: controller.signal
+    });
+
+    let payloadText = '';
+    try { payloadText = await response.clone().text(); } catch {}
+    console.info('[IA] raw payload:', payloadText?.slice(0, 400));
+
+    if (!response.ok) {
+      let msg = `HTTP ${response.status}`;
+      try {
+        const e = await response.json();
+        msg = e?.message || e?.error || msg;
+      } catch {}
+      throw new Error(msg);
+    }
+
+    const data = await response.json();
+    console.info('[IA] provider/model →', data.provider || '-', data.model || '-');
+    return data.response;
+
+  } catch (err) {
+    console.error('[IA] erro na chamada:', err?.message || err);
+    // Propaga o erro para a tela de sugestões lidar
+    throw err;
+  } finally {
+    clearTimeout(timer);
   }
-  const data = await response.json();
-  console.info('[IA]', data.provider || '-', data.model || '-'); // apikey/vertex
-  return data.response;
 }
 
 /* ==========================
@@ -251,6 +276,7 @@ Passo 6: A Pergunta de Engajamento (aberta e inteligente).
    ========================== */
 
 // 1) Sugestões (geradas só quando você clicar no botão)
+// Substitua toda a função generateTopicSuggestions por esta versão robusta
 async function generateTopicSuggestions(theme) {
   const tema = (temaHidden.value || temaText.textContent || theme || '').trim();
   if (!tema) {
@@ -261,7 +287,25 @@ async function generateTopicSuggestions(theme) {
   geminiPanel.style.display = 'block';
   geminiPanel.innerHTML = `<h3><span class="dot"></span> Gerando sugestões de tópicos...</h3><div class="loading">Aguarde, consultando a IA.</div>`;
 
-  const prompt = `
+  // helpers de parse
+  const extractJsonArray = (txt) => {
+    const start = txt.indexOf('[');
+    const end   = txt.lastIndexOf(']');
+    if (start !== -1 && end !== -1 && end > start) {
+      return txt.slice(start, end + 1);
+    }
+    return null;
+  };
+  const parseRelaxed = (txt) => {
+    // fallback: linhas "TOPICO: explicação"
+    return txt.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+      const [head, ...rest] = line.split(':');
+      return { topic: (head || '').trim(), description: (rest.join(':') || '').trim() };
+    }).filter(x => x.topic);
+  };
+
+  try {
+    const prompt = `
 ${MASTER_STYLE(tema)}
 Gere exatamente 4 ideias de posts sobre "${tema}".
 Para cada ideia, traga:
@@ -275,40 +319,68 @@ Responda ESTRITAMENTE em JSON no formato:
   {"topic":"...", "description":"..."},
   {"topic":"...", "description":"..."}
 ]
-  `;
-
-  const responseText = await callGemini(prompt, {
-    modelId: 'gemini-2.5-flash',
-    generationConfig: { temperature: 0.95, topP: 0.9, maxOutputTokens: 600, responseMimeType: 'application/json' }
-  });
-
-  let suggestions;
-  try { suggestions = JSON.parse(responseText); } catch { suggestions = []; }
-
-  if (!Array.isArray(suggestions) || suggestions.length === 0) {
-    geminiPanel.innerHTML = `<div class="loading">Não consegui gerar sugestões. Tente novamente.</div>`;
-    return;
-  }
-
-  let suggestionsHtml = `<h3><span class="dot"></span> 1. Selecione até 2 tópicos:</h3>`;
-  suggestions.forEach((s, index) => {
-    suggestionsHtml += `
-      <div class="topic-suggestion">
-        <label>
-          <input type="checkbox" name="topic" value="${s.topic}" ${index < 2 ? 'checked' : ''}>
-          <div>
-            <strong>${s.topic}</strong>
-            <p>${s.description}</p>
-          </div>
-        </label>
-      </div>
     `;
-  });
-  suggestionsHtml += `<button type="button" class="btn-primary" id="btnGenerateDraft">Gerar Rascunho</button>`;
-  geminiPanel.innerHTML = suggestionsHtml;
 
-  document.getElementById('btnGenerateDraft').addEventListener('click', generateDraft);
+    // dica: usar flash aqui melhora criatividade e velocidade
+    const responseText = await callGemini(prompt, {
+      modelId: 'gemini-2.5-flash',
+      // alguns ambientes podem não respeitar responseMimeType → mantemos só limites/temperatura
+      generationConfig: { temperature: 0.95, topP: 0.9, maxOutputTokens: 600 }
+    });
+
+    console.info('[IA] sugestões (raw):', responseText);
+
+    let suggestions = [];
+    // 1) tenta JSON direto
+    try { suggestions = JSON.parse(responseText); } catch {}
+    // 2) tenta extrair JSON de dentro do texto
+    if ((!Array.isArray(suggestions) || !suggestions.length)) {
+      const inner = extractJsonArray(responseText);
+      if (inner) {
+        try { suggestions = JSON.parse(inner); } catch {}
+      }
+    }
+    // 3) fallback: parse por linhas
+    if ((!Array.isArray(suggestions) || !suggestions.length)) {
+      suggestions = parseRelaxed(responseText);
+    }
+
+    if (!Array.isArray(suggestions) || !suggestions.length) {
+      throw new Error('A resposta não trouxe sugestões utilizáveis.');
+    }
+
+    // render
+    let suggestionsHtml = `<h3><span class="dot"></span> 1. Selecione até 2 tópicos:</h3>`;
+    suggestions.slice(0, 4).forEach((s, index) => {
+      suggestionsHtml += `
+        <div class="topic-suggestion">
+          <label>
+            <input type="checkbox" name="topic" value="${s.topic}" ${index < 2 ? 'checked' : ''}>
+            <div>
+              <strong>${s.topic}</strong>
+              <p>${s.description}</p>
+            </div>
+          </label>
+        </div>
+      `;
+    });
+    suggestionsHtml += `<button type="button" class="btn-primary" id="btnGenerateDraft">Gerar Rascunho</button>`;
+    geminiPanel.innerHTML = suggestionsHtml;
+
+    document.getElementById('btnGenerateDraft').addEventListener('click', generateDraft);
+
+  } catch (e) {
+    console.error('[IA] falha ao gerar sugestões:', e);
+    geminiPanel.innerHTML = `
+      <h3><span class="dot"></span> Não foi possível gerar sugestões</h3>
+      <div class="loading" style="margin-bottom:10px;">${e?.message || 'Erro desconhecido'}</div>
+      <button type="button" class="btn-ghost" id="btnRetryIA" style="border-color:#fcc000">Tentar novamente</button>
+    `;
+    const btnRetry = document.getElementById('btnRetryIA');
+    if (btnRetry) btnRetry.onclick = () => generateTopicSuggestions(theme);
+  }
 }
+
 
 // 2) Rascunho (modelo Pro)
 async function generateDraft() {
