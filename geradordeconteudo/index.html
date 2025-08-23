@@ -6,7 +6,7 @@
   <title>Gerador de Conteúdo Linkedin | Renato Douek</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
   <script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
@@ -110,6 +110,20 @@
     #gemini-trigger .btn-ghost:hover{ border-color:#ffd24d; }
 
     @media (max-width:760px){.row{grid-template-columns:1fr}}
+    /* Caixa de texto principal e pré-visualização do rascunho */
+#texto,
+.gemini-interaction-panel .draft-review-area {
+  font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  letter-spacing: 0; /* opcional, mantém nítido */
+}
+
+/* Placeholder um pouquinho menor e mais suave (opcional) */
+#texto::placeholder {
+  font-size: 15px;
+  color: var(--muted);
+}
   </style>
 </head>
 <body>
