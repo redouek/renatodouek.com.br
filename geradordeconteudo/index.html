@@ -566,7 +566,7 @@ document.getElementById('btnDocx').addEventListener('click', async () => {
   const mm   = String(m).padStart(2, '0');
   const dd   = String(d).padStart(2, '0');
 
-  const temaParaArquivo = tema.replace(/[^\w\s]/gi, '').trim();
+  const temaParaArquivo = tema.replace(/[\\/:*?"<>|]/g, '').trim();
   const fileName = `${yyyy}${mm}${dd} - ${temaParaArquivo}.docx`;
   const titulo = `Conteúdo – ${tema} – ${d}/${m}/${y}`;
 
